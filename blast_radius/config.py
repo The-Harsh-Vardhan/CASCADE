@@ -14,29 +14,36 @@ class Settings(BaseSettings):
         extra="ignore"
     )
 
-    # LLM — Google Gemini (supports up to 5 keys in rotation via GEMINI_API_KEY_1..5)
+    # LLM — Google Gemini (supports up to 10 keys in rotation via GEMINI_API_KEY_1..10)
     # Falls back to GEMINI_API_KEY for single-key backward compatibility.
-    gemini_api_key:   str = Field("", description="Fallback single Gemini API key")
-    gemini_api_key_1: str = Field("", alias="GEMINI_API_KEY_1")
-    gemini_api_key_2: str = Field("", alias="GEMINI_API_KEY_2")
-    gemini_api_key_3: str = Field("", alias="GEMINI_API_KEY_3")
-    gemini_api_key_4: str = Field("", alias="GEMINI_API_KEY_4")
-    gemini_api_key_5: str = Field("", alias="GEMINI_API_KEY_5")
+    gemini_api_key:    str = Field("", description="Fallback single Gemini API key")
+    gemini_api_key_1:  str = Field("", alias="GEMINI_API_KEY_1")
+    gemini_api_key_2:  str = Field("", alias="GEMINI_API_KEY_2")
+    gemini_api_key_3:  str = Field("", alias="GEMINI_API_KEY_3")
+    gemini_api_key_4:  str = Field("", alias="GEMINI_API_KEY_4")
+    gemini_api_key_5:  str = Field("", alias="GEMINI_API_KEY_5")
+    gemini_api_key_6:  str = Field("", alias="GEMINI_API_KEY_6")
+    gemini_api_key_7:  str = Field("", alias="GEMINI_API_KEY_7")
+    gemini_api_key_8:  str = Field("", alias="GEMINI_API_KEY_8")
+    gemini_api_key_9:  str = Field("", alias="GEMINI_API_KEY_9")
+    gemini_api_key_10: str = Field("", alias="GEMINI_API_KEY_10")
     gemini_model: str = Field("gemini-flash-latest", description="Gemini model name")
 
     @property
     def gemini_api_keys(self) -> list[str]:
         """Return all configured Gemini API keys in order (non-empty only)."""
         numbered = [
-            self.gemini_api_key_1, self.gemini_api_key_2, self.gemini_api_key_3,
-            self.gemini_api_key_4, self.gemini_api_key_5,
+            self.gemini_api_key_1,  self.gemini_api_key_2,  self.gemini_api_key_3,
+            self.gemini_api_key_4,  self.gemini_api_key_5,  self.gemini_api_key_6,
+            self.gemini_api_key_7,  self.gemini_api_key_8,  self.gemini_api_key_9,
+            self.gemini_api_key_10,
         ]
         keys = [k for k in numbered if k]
         if not keys and self.gemini_api_key:
             keys = [self.gemini_api_key]  # backward compat
         if not keys:
             raise EnvironmentError(
-                "No Gemini API key configured. Set GEMINI_API_KEY_1 (through _5) or GEMINI_API_KEY in .env"
+                "No Gemini API key configured. Set GEMINI_API_KEY_1 (through _10) or GEMINI_API_KEY in .env"
             )
         return keys
 
