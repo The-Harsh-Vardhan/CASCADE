@@ -1,0 +1,7 @@
+id: trpc-procedures
+language: TypeScript
+rule:
+  any:
+    - pattern: $PROCEDURE.query($$$ARGS)
+    - pattern: $PROCEDURE.mutation($$$ARGS)
+    - pattern: $PROCEDURE.subscription($$$ARGS)

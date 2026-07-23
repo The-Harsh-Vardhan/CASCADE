@@ -1,0 +1,7 @@
+id: ts-functions
+language: TypeScript
+rule:
+  any:
+    - kind: function_declaration
+    - kind: arrow_function
+    - kind: method_definition

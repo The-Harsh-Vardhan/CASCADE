@@ -10,6 +10,11 @@ import argparse
 import sys
 import subprocess
 from pathlib import Path
+
+# Ensure UTF-8 stdout on Windows
+if sys.platform == "win32":
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 from rich.console import Console
 
 console = Console()
@@ -27,7 +32,7 @@ PHASES = {
 
 def run_phase(n: int) -> bool:
     name, module = PHASES[n]
-    console.print(f"\n[bold cyan]━━━ Phase {n}: {name} ━━━[/bold cyan]")
+    console.print(f"\n[bold cyan]=== Phase {n}: {name} ===[/bold cyan]")
     result = subprocess.run(
         [sys.executable, module],
         cwd=Path(__file__).parent.parent,

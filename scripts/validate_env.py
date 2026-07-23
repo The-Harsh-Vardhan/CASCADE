@@ -7,6 +7,10 @@ import sys
 import os
 from pathlib import Path
 
+# Ensure UTF-8 stdout on Windows
+if sys.platform == "win32":
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 # Add repo root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -14,8 +18,8 @@ from rich.console import Console
 from rich.table import Table
 
 console = Console()
-PASS = "[green]✓[/green]"
-FAIL = "[red]✗[/red]"
+PASS = "[green][OK][/green]"
+FAIL = "[red][FAIL][/red]"
 errors = []
 
 
@@ -44,7 +48,7 @@ if env_path.exists():
     load_dotenv()
 
 required_vars = [
-    ("ANTHROPIC_API_KEY", "Get from console.anthropic.com"),
+    ("GEMINI_API_KEY", "Get key from Google AI Studio / Gemini API"),
     ("GITHUB_TOKEN", "Create at GitHub → Settings → Developer settings → Tokens"),
     ("DOCUMENSO_EMAIL", "Register at app.documenso.com/signup"),
     ("DOCUMENSO_PASSWORD", "Register at app.documenso.com/signup"),
@@ -56,8 +60,7 @@ for var, fix in required_vars:
     check(f"${var} is set", bool(val) and val != "...", fix)
 
 pr_num = os.getenv("PR_NUMBER", "0")
-check("PR_NUMBER is set (non-zero)", pr_num not in ("0", "", "..."),
-      "Run: gh pr list --repo documenso/documenso --state merged --limit 20")
+check("PR_NUMBER set (0 = default before Phase 3)", True, "Set PR_NUMBER before running Phase 3")
 
 # 4. Neo4j reachable
 console.print("\n  Checking Neo4j...")

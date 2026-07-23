@@ -26,8 +26,12 @@ from typing import Any
 
 import google.generativeai as genai
 from google.generativeai.types import GenerationConfig
+from dotenv import load_dotenv
 
 logger = logging.getLogger(__name__)
+
+# Load .env file automatically if present
+load_dotenv()
 
 # ── Initialise client once at import time ─────────────────────────────────────
 _api_key = os.environ.get("GEMINI_API_KEY", "")
@@ -39,7 +43,7 @@ if not _api_key:
 
 genai.configure(api_key=_api_key)
 
-_MODEL_NAME = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+_MODEL_NAME = os.environ.get("GEMINI_MODEL", "gemini-flash-latest")
 _model = genai.GenerativeModel(
     model_name=_MODEL_NAME,
     generation_config=GenerationConfig(
@@ -57,21 +61,21 @@ logger.info("LLM client initialised: model=%s", _MODEL_NAME)
 async def call_llm(prompt: str, *, temperature: float | None = None) -> str:
     """
     Send a prompt and return the text response.
-    Raises RuntimeError on API failure after 1 retry.
+    Raises RuntimeError on API failure after retries.
     """
-    model = _model
-    if temperature is not None:
-        model = genai.GenerativeModel(
-            model_name=_MODEL_NAME,
-            generation_config=GenerationConfig(temperature=temperature),
-        )
+    temp = temperature if temperature is not None else 0.2
+    gen_config = GenerationConfig(temperature=temp, top_p=0.95, max_output_tokens=8192)
+    
+    # Primary model attempt
     try:
-        response = model.generate_content(prompt)
+        m = genai.GenerativeModel(model_name=_MODEL_NAME, generation_config=gen_config)
+        response = m.generate_content(prompt)
         return response.text.strip()
     except Exception as e:
-        logger.warning("LLM call failed, retrying once: %s", e)
+        logger.warning("LLM call with model %s failed: %s. Retrying with gemini-flash-latest...", _MODEL_NAME, e)
         try:
-            response = model.generate_content(prompt)
+            m_fallback = genai.GenerativeModel(model_name="gemini-flash-latest", generation_config=gen_config)
+            response = m_fallback.generate_content(prompt)
             return response.text.strip()
         except Exception as e2:
             raise RuntimeError(f"LLM call failed after retry: {e2}") from e2

@@ -1,0 +1,261 @@
+<!DOCTYPE html><html translate="no" lang="en" class=""><head><meta charSet="utf-8"/><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/><link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="manifest" href="/site.webmanifest"/><meta name="google" content="notranslate"/><title>Sign In - Documenso</title><meta name="description" content="Join Documenso, the open signing infrastructure, and get a 10x better signing experience. Pricing starts at $30/mo. forever! Sign in now and enjoy a faster, smarter, and more beautiful document signing process. Integrates with your favorite tools, customizable, and expandable. Support our mission and become a part of our open-source community."/><meta name="keywords" content="Documenso, open source, DocuSign alternative, document signing, open signing infrastructure, open-source community, fast signing, beautiful signing, smart templates"/><meta name="author" content="Documenso, Inc."/><meta name="robots" content="index, follow"/><meta property="og:title" content="Documenso - The Open Source DocuSign Alternative"/><meta property="og:description" content="Join Documenso, the open signing infrastructure, and get a 10x better signing experience. Pricing starts at $30/mo. forever! Sign in now and enjoy a faster, smarter, and more beautiful document signing process. Integrates with your favorite tools, customizable, and expandable. Support our mission and become a part of our open-source community."/><meta property="og:image" content="https://app.documenso.com/opengraph-image.jpg"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:site" content="@documenso"/><meta name="twitter:description" content="Join Documenso, the open signing infrastructure, and get a 10x better signing experience. Pricing starts at $30/mo. forever! Sign in now and enjoy a faster, smarter, and more beautiful document signing process. Integrates with your favorite tools, customizable, and expandable. Support our mission and become a part of our open-source community."/><meta name="twitter:image" content="https://app.documenso.com/opengraph-image.jpg"/><link nonce="9TWrLLOedogL0upQ1qS9Xg==" rel="stylesheet" href="/assets/app-C2Sadtgj.css"/><meta name="google" content="notranslate"/><meta name="color-scheme" content="dark light"/><script nonce="9TWrLLOedogL0upQ1qS9Xg==">
+(() => {
+  const theme = window.matchMedia("(prefers-color-scheme: light)").matches
+    ? 'light'
+    : 'dark';
+  
+  const cl = document.documentElement.classList;
+  const dataAttr = document.documentElement.dataset.theme;
+
+  if (dataAttr != null) {
+    const themeAlreadyApplied = dataAttr === 'light' || dataAttr === 'dark';
+    if (!themeAlreadyApplied) {
+      document.documentElement.dataset.theme = theme;
+    }
+  } else {
+    const themeAlreadyApplied = cl.contains('light') || cl.contains('dark');
+    if (!themeAlreadyApplied) {
+      cl.add(theme);
+    }
+  }
+  
+  const meta = document.querySelector('meta[name=color-scheme]');
+  if (meta) {
+    if (theme === 'dark') {
+      meta.content = 'dark light';
+    } else if (theme === 'light') {
+      meta.content = 'light dark';
+    }
+  }
+})();
+</script><script nonce="9TWrLLOedogL0upQ1qS9Xg==">0</script></head><body><main class="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 py-12 md:p-12 lg:p-24"><div><div class="absolute -inset-[min(600px,max(400px,60vw))] -z-[1] flex items-center justify-center opacity-70"><img src="/assets/background-pattern-BsfzDmOO.png" alt="background pattern" class="dark:brightness-95 dark:contrast-[70%] dark:invert dark:sepia" style="mask:radial-gradient(rgba(255, 255, 255, 1) 0%, transparent 80%);-webkit-mask:radial-gradient(rgba(255, 255, 255, 1) 0%, transparent 80%)"/></div><div class="relative w-full"><div class="w-screen max-w-lg px-4"><div class="z-10 rounded-xl border border-border bg-neutral-100 p-6 dark:bg-background"><h1 class="font-semibold text-2xl">Sign in to your account</h1><p class="mt-2 text-muted-foreground text-sm">Welcome back, we are lucky to have you.</p><hr class="-mx-6 my-4"/><form class="flex w-full flex-col gap-y-4"><fieldset class="flex w-full flex-col gap-y-4"><div class="space-y-2"><label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for=":R1bcj5:-form-item">Email</label><input type="email" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm" name="email" id=":R1bcj5:-form-item" aria-describedby=":R1bcj5:-form-item-description" aria-invalid="false" value=""/></div><div class="space-y-2"><label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for=":R2bcj5:-form-item">Password</label><div class="relative"><input type="password" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm pr-10" name="password" id=":R2bcj5:-form-item" aria-describedby=":R2bcj5:-form-item-description" aria-invalid="false" value=""/><button class="rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background underline-offset-4 hover:underline text-primary py-2 px-4 absolute top-0 right-0 flex h-full items-center justify-center pr-3" type="button" aria-label="Reveal password"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye h-5 w-5 text-muted-foreground" aria-hidden="true"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg></button></div><p class="mt-2 text-right"><a class="text-muted-foreground text-sm duration-200 hover:opacity-70" href="/forgot-password" data-discover="true">Forgot your password?</a></p></div><div id="cf-turnstile" style="min-width:300px;width:100%;height:65px"></div><button class="inline-flex items-center justify-center text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8 rounded-md dark:bg-documenso dark:hover:opacity-90" type="submit">Sign In</button><div class="relative flex items-center justify-center gap-x-4 py-2 text-xs uppercase"><div class="h-px flex-1 bg-border"></div><span class="bg-transparent text-muted-foreground">Or continue with</span><div class="h-px flex-1 bg-border"></div></div><button class="inline-flex items-center justify-center text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background border-input hover:bg-accent hover:text-accent-foreground h-11 px-8 rounded-md border bg-background text-muted-foreground" type="button"><svg stroke="currentColor" fill="currentColor" stroke-width="0" version="1.1" x="0px" y="0px" viewBox="0 0 48 48" enable-background="new 0 0 48 48" class="mr-2 h-5 w-5" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12
+	c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24
+	c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657
+	C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36
+	c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571
+	c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>Google</button><button class="inline-flex items-center justify-center text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background border-input hover:bg-accent hover:text-accent-foreground h-11 px-8 rounded-md border bg-background text-muted-foreground" type="button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-key-round mr-1 -ml-1 h-5 w-5" aria-hidden="true"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle></svg>Passkey</button></fieldset></form><p class="mt-6 text-center text-muted-foreground text-sm">Don&#x27;t have an account? <a class="text-documenso-700 duration-200 hover:opacity-70" href="/signup" data-discover="true">Sign up</a></p></div></div></div></div></main><div role="region" aria-label="Notifications (F8)" tabindex="-1" style="pointer-events:none"><ol tabindex="-1" class="fixed top-0 z-[1001] flex max-h-screen w-full flex-col-reverse p-4 sm:top-auto sm:right-0 sm:bottom-0 sm:flex-col md:max-w-[420px]"></ol></div><script nonce="9TWrLLOedogL0upQ1qS9Xg==">window.__ENV__ = {"NEXT_PUBLIC_FEATURE_BILLING_ENABLED":"true","NEXT_PUBLIC_TURNSTILE_SITE_KEY":"0x4AAAAAADAXsWCa6y7bEgIv","NEXT_PUBLIC_WEBAPP_URL":"https://app.documenso.com","NEXT_PUBLIC_DOCUMENT_SIZE_UPLOAD_LIMIT":"150","NEXT_PUBLIC_UPLOAD_TRANSPORT":"s3","NEXT_PUBLIC_POSTHOG_KEY":"phc_QfqRYkAjBcAv44LI0N2aR0ywUZ9OBXMsmmtAAfjAnUK","NEXT_PUBLIC_DOCUMENT_CONVERSION_ENABLED":"false","NEXT_PUBLIC_SIGNING_TRANSPORT_IS_CSC":"false"}; window.__webpack_nonce__ = "9TWrLLOedogL0upQ1qS9Xg=="</script><script nonce="9TWrLLOedogL0upQ1qS9Xg==">((storageKey2, restoreKey) => {
+    if (!window.history.state || !window.history.state.key) {
+      let key = Math.random().toString(32).slice(2);
+      window.history.replaceState({ key }, "");
+    }
+    try {
+      let positions = JSON.parse(sessionStorage.getItem(storageKey2) || "{}");
+      let storedY = positions[restoreKey || window.history.state.key];
+      if (typeof storedY === "number") {
+        window.scrollTo(0, storedY);
+      }
+    } catch (error) {
+      console.error(error);
+      sessionStorage.removeItem(storageKey2);
+    }
+  })("react-router-scroll-positions", null)</script><link rel="modulepreload" href="/assets/entry.client-Wvwa8yNd.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/preload-helper-BXl3LOEh.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/jsx-runtime-BBryS-eQ.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/feature-flags-CLMtd92T.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/i18n-C_ykssPB.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-CBoJQWs5.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-B9ZVemWX.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/chunk-KS7C4IRE-BKI2UTax.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-DvCfNlkf.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/app-noOhCkS6.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-BiLbLflF.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/types-GU3YNY2F.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/locales-CAv2cHk7.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/root-KF-1m7xk.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/session-B-LziZV9.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-DQtfBupG.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-D91rd2e1.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/button-Dl0rxIGg.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-DOsefEPQ.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-Cw5XDkCv.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-DUowdBgz.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-BRtIP6bb.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-Cpgnqick.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-BGankl-U.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/loader-z6OWrLPM.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/utils-C68LRSOY.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/x-BZ7IKXbP.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/use-toast-N52TLbw0.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/tooltip-Dd9q-mek.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/compare-Br3z3FUS-Dul1EvmH.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-Bxk5AWFd.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/app-BRZHr6mf.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/generic-error-layout-7OA180sB.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/meta-BGUavGWT.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/nonce-D4pRWUKf.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-FEaB6Kph.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-DJ-EwNXm.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/data-transformer-2TVh6jQO.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/useQuery-BfUp4suP.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/createLucideIcon-CCk21RbT.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-DaYzQLHd.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-DFe05mjG.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/background-pattern-DX6wSrx_.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/proxy-B22aQe3C.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/chevron-left-k2hTeYw0.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/_layout-ac-Ykm8B.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/signin-CNE-A--z.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/alert-3BJEeChY.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/signin-DxbeW_9-.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/signup-DqYjJleT.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/loader-circle-C0qwhZ6_.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/zod-uOrAM2YC.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/schema-CBwwekVm.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/dialog-CbMsIYqF.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-CrC45F_3.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/Combination-B5_KvHqJ.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/form-DA1hY6T-.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-C8FsR_q4.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/input-B8AycrAH.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/password-input-CU2JzPc2.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/eye-off-CmJk-0G_.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/eye-BPAkZXPj.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/pin-input-BsEYS5Ar.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/zod-BN58sCG7.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-beCXfB14.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-9iPQdTq0.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/toAuthenticatorAttachment-BAxCDoik.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/startAuthentication-mwDUkj2u.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/key-round-BJVOxoUv.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/use-analytics-BH1Pz5rJ.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/name-B9Bt3kH5.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/signature-pad-dialog-WJ4oPGMC.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/document-CZOB9Age.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/teams-C2Ox6vdZ.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/teams-BAzRcOmi.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-browser-DHcKLLP1.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/signatures-9TyUhfQR.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/signature-DWKKq1nc.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/select-BZ7s_6GR.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/animate-generic-fade-in-out-CC_4eCDY.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-BQwnCyl6.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/index-lZSmKht_.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/chevron-down-Cuisgub7.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/check-Com0ZcYt.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/cloud-upload-DpdhCDqu.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><link rel="modulepreload" href="/assets/file-DkyGuJfV.js" nonce="9TWrLLOedogL0upQ1qS9Xg=="/><script nonce="9TWrLLOedogL0upQ1qS9Xg==">window.__reactRouterContext = {"basename":"/","future":{"unstable_optimizeDeps":false,"v8_passThroughRequests":false,"v8_trailingSlashAwareDataRequests":false,"unstable_previewServerPrerendering":false,"v8_middleware":false,"v8_splitRouteModules":false,"v8_viteEnvironmentApi":false},"routeDiscovery":{"mode":"lazy","manifestPath":"/__manifest"},"ssr":true,"isSpaMode":false};window.__reactRouterContext.stream = new ReadableStream({start(controller){window.__reactRouterContext.streamController = controller;}}).pipeThrough(new TextEncoderStream());</script><script nonce="9TWrLLOedogL0upQ1qS9Xg==" type="module" async="">;
+import * as route0 from "/assets/root-KF-1m7xk.js";
+import * as route1 from "/assets/_layout-ac-Ykm8B.js";
+import * as route2 from "/assets/signin-CNE-A--z.js";
+  window.__reactRouterManifest = {
+  "entry": {
+    "module": "/assets/entry.client-Wvwa8yNd.js",
+    "imports": [
+      "/assets/preload-helper-BXl3LOEh.js",
+      "/assets/jsx-runtime-BBryS-eQ.js",
+      "/assets/feature-flags-CLMtd92T.js",
+      "/assets/i18n-C_ykssPB.js",
+      "/assets/index-CBoJQWs5.js",
+      "/assets/index-B9ZVemWX.js",
+      "/assets/chunk-KS7C4IRE-BKI2UTax.js",
+      "/assets/index-DvCfNlkf.js",
+      "/assets/app-noOhCkS6.js",
+      "/assets/index-BiLbLflF.js",
+      "/assets/types-GU3YNY2F.js",
+      "/assets/locales-CAv2cHk7.js"
+    ],
+    "css": []
+  },
+  "routes": {
+    "root": {
+      "id": "root",
+      "path": "",
+      "hasAction": false,
+      "hasLoader": true,
+      "hasClientAction": false,
+      "hasClientLoader": false,
+      "hasClientMiddleware": false,
+      "hasDefaultExport": true,
+      "hasErrorBoundary": true,
+      "module": "/assets/root-KF-1m7xk.js",
+      "imports": [
+        "/assets/preload-helper-BXl3LOEh.js",
+        "/assets/jsx-runtime-BBryS-eQ.js",
+        "/assets/feature-flags-CLMtd92T.js",
+        "/assets/i18n-C_ykssPB.js",
+        "/assets/index-CBoJQWs5.js",
+        "/assets/index-B9ZVemWX.js",
+        "/assets/chunk-KS7C4IRE-BKI2UTax.js",
+        "/assets/index-DvCfNlkf.js",
+        "/assets/app-noOhCkS6.js",
+        "/assets/index-BiLbLflF.js",
+        "/assets/types-GU3YNY2F.js",
+        "/assets/locales-CAv2cHk7.js",
+        "/assets/session-B-LziZV9.js",
+        "/assets/index-DQtfBupG.js",
+        "/assets/index-D91rd2e1.js",
+        "/assets/button-Dl0rxIGg.js",
+        "/assets/index-DOsefEPQ.js",
+        "/assets/index-Cw5XDkCv.js",
+        "/assets/index-DUowdBgz.js",
+        "/assets/index-BRtIP6bb.js",
+        "/assets/index-Cpgnqick.js",
+        "/assets/index-BGankl-U.js",
+        "/assets/loader-z6OWrLPM.js",
+        "/assets/utils-C68LRSOY.js",
+        "/assets/x-BZ7IKXbP.js",
+        "/assets/use-toast-N52TLbw0.js",
+        "/assets/tooltip-Dd9q-mek.js",
+        "/assets/compare-Br3z3FUS-Dul1EvmH.js",
+        "/assets/index-Bxk5AWFd.js",
+        "/assets/app-BRZHr6mf.js",
+        "/assets/generic-error-layout-7OA180sB.js",
+        "/assets/meta-BGUavGWT.js",
+        "/assets/nonce-D4pRWUKf.js",
+        "/assets/index-FEaB6Kph.js",
+        "/assets/index-DJ-EwNXm.js",
+        "/assets/data-transformer-2TVh6jQO.js",
+        "/assets/useQuery-BfUp4suP.js",
+        "/assets/createLucideIcon-CCk21RbT.js",
+        "/assets/index-DaYzQLHd.js",
+        "/assets/index-DFe05mjG.js",
+        "/assets/background-pattern-DX6wSrx_.js",
+        "/assets/proxy-B22aQe3C.js",
+        "/assets/chevron-left-k2hTeYw0.js"
+      ],
+      "css": []
+    },
+    "routes/_unauthenticated+/_layout": {
+      "id": "routes/_unauthenticated+/_layout",
+      "parentId": "root",
+      "hasAction": false,
+      "hasLoader": false,
+      "hasClientAction": false,
+      "hasClientLoader": false,
+      "hasClientMiddleware": false,
+      "hasDefaultExport": true,
+      "hasErrorBoundary": false,
+      "module": "/assets/_layout-ac-Ykm8B.js",
+      "imports": [
+        "/assets/chunk-KS7C4IRE-BKI2UTax.js",
+        "/assets/jsx-runtime-BBryS-eQ.js",
+        "/assets/background-pattern-DX6wSrx_.js"
+      ],
+      "css": []
+    },
+    "routes/_unauthenticated+/signin": {
+      "id": "routes/_unauthenticated+/signin",
+      "parentId": "routes/_unauthenticated+/_layout",
+      "path": "signin",
+      "hasAction": false,
+      "hasLoader": true,
+      "hasClientAction": false,
+      "hasClientLoader": false,
+      "hasClientMiddleware": false,
+      "hasDefaultExport": true,
+      "hasErrorBoundary": false,
+      "module": "/assets/signin-CNE-A--z.js",
+      "imports": [
+        "/assets/chunk-KS7C4IRE-BKI2UTax.js",
+        "/assets/jsx-runtime-BBryS-eQ.js",
+        "/assets/index-FEaB6Kph.js",
+        "/assets/alert-3BJEeChY.js",
+        "/assets/index-B9ZVemWX.js",
+        "/assets/signin-DxbeW_9-.js",
+        "/assets/signup-DqYjJleT.js",
+        "/assets/meta-BGUavGWT.js",
+        "/assets/loader-circle-C0qwhZ6_.js",
+        "/assets/app-noOhCkS6.js",
+        "/assets/index-BiLbLflF.js",
+        "/assets/types-GU3YNY2F.js",
+        "/assets/index-DJ-EwNXm.js",
+        "/assets/loader-z6OWrLPM.js",
+        "/assets/createLucideIcon-CCk21RbT.js",
+        "/assets/utils-C68LRSOY.js",
+        "/assets/zod-uOrAM2YC.js",
+        "/assets/index-DQtfBupG.js",
+        "/assets/data-transformer-2TVh6jQO.js",
+        "/assets/useQuery-BfUp4suP.js",
+        "/assets/schema-CBwwekVm.js",
+        "/assets/button-Dl0rxIGg.js",
+        "/assets/dialog-CbMsIYqF.js",
+        "/assets/index-CrC45F_3.js",
+        "/assets/index-D91rd2e1.js",
+        "/assets/index-DvCfNlkf.js",
+        "/assets/index-Cpgnqick.js",
+        "/assets/index-Cw5XDkCv.js",
+        "/assets/index-BRtIP6bb.js",
+        "/assets/Combination-B5_KvHqJ.js",
+        "/assets/index-DUowdBgz.js",
+        "/assets/x-BZ7IKXbP.js",
+        "/assets/form-DA1hY6T-.js",
+        "/assets/index-C8FsR_q4.js",
+        "/assets/proxy-B22aQe3C.js",
+        "/assets/input-B8AycrAH.js",
+        "/assets/password-input-CU2JzPc2.js",
+        "/assets/eye-off-CmJk-0G_.js",
+        "/assets/eye-BPAkZXPj.js",
+        "/assets/pin-input-BsEYS5Ar.js",
+        "/assets/use-toast-N52TLbw0.js",
+        "/assets/zod-BN58sCG7.js",
+        "/assets/index-beCXfB14.js",
+        "/assets/index-9iPQdTq0.js",
+        "/assets/toAuthenticatorAttachment-BAxCDoik.js",
+        "/assets/startAuthentication-mwDUkj2u.js",
+        "/assets/key-round-BJVOxoUv.js",
+        "/assets/use-analytics-BH1Pz5rJ.js",
+        "/assets/preload-helper-BXl3LOEh.js",
+        "/assets/feature-flags-CLMtd92T.js",
+        "/assets/name-B9Bt3kH5.js",
+        "/assets/signature-pad-dialog-WJ4oPGMC.js",
+        "/assets/i18n-C_ykssPB.js",
+        "/assets/index-CBoJQWs5.js",
+        "/assets/locales-CAv2cHk7.js",
+        "/assets/document-CZOB9Age.js",
+        "/assets/teams-C2Ox6vdZ.js",
+        "/assets/teams-BAzRcOmi.js",
+        "/assets/index-browser-DHcKLLP1.js",
+        "/assets/signatures-9TyUhfQR.js",
+        "/assets/signature-DWKKq1nc.js",
+        "/assets/select-BZ7s_6GR.js",
+        "/assets/animate-generic-fade-in-out-CC_4eCDY.js",
+        "/assets/index-DOsefEPQ.js",
+        "/assets/index-BQwnCyl6.js",
+        "/assets/index-DaYzQLHd.js",
+        "/assets/index-DFe05mjG.js",
+        "/assets/index-lZSmKht_.js",
+        "/assets/index-BGankl-U.js",
+        "/assets/chevron-down-Cuisgub7.js",
+        "/assets/check-Com0ZcYt.js",
+        "/assets/cloud-upload-DpdhCDqu.js",
+        "/assets/file-DkyGuJfV.js"
+      ],
+      "css": []
+    },
+    "routes/_index": {
+      "id": "routes/_index",
+      "parentId": "root",
+      "index": true,
+      "hasAction": false,
+      "hasLoader": true,
+      "hasClientAction": false,
+      "hasClientLoader": false,
+      "hasClientMiddleware": false,
+      "hasDefaultExport": false,
+      "hasErrorBoundary": false,
+      "module": "/assets/_index-K6Dvbx-E.js",
+      "imports": [],
+      "css": []
+    }
+  },
+  "url": "/assets/manifest-e5258dd1.js",
+  "version": "e5258dd1"
+};
+  window.__reactRouterRouteModules = {"root":route0,"routes/_unauthenticated+/_layout":route1,"routes/_unauthenticated+/signin":route2};
+
+import("/assets/entry.client-Wvwa8yNd.js");</script></body></html><!--$?--><template id="B:0"></template><!--/$--><div hidden id="S:0"><script nonce="9TWrLLOedogL0upQ1qS9Xg==">window.__reactRouterContext.streamController.enqueue("[{\"_1\":2,\"_3\":-5,\"_4\":-5},\"loaderData\",{\"_5\":6,\"_7\":8},\"actionData\",\"errors\",\"root\",{\"_19\":20,\"_21\":-5,\"_22\":13,\"_23\":24,\"_25\":-5,\"_26\":27},\"routes/_unauthenticated+/signin\",{\"_9\":10,\"_11\":10,\"_12\":13,\"_14\":13,\"_15\":10,\"_16\":-7,\"_17\":-7,\"_18\":13},\"isEmailPasswordSigninEnabled\",true,\"isGoogleSSOEnabled\",\"isMicrosoftSSOEnabled\",false,\"isOIDCSSOEnabled\",\"isSignupEnabled\",\"oidcProviderLabel\",\"returnTo\",\"shouldAutoRedirectToOIDC\",\"lang\",\"en\",\"theme\",\"disableAnimations\",\"nonce\",\"9TWrLLOedogL0upQ1qS9Xg==\",\"session\",\"publicEnv\",{\"_28\":29,\"_30\":31,\"_32\":33,\"_34\":35,\"_36\":37,\"_38\":39,\"_40\":41,\"_42\":41},\"NEXT_PUBLIC_FEATURE_BILLING_ENABLED\",\"true\",\"NEXT_PUBLIC_TURNSTILE_SITE_KEY\",\"0x4AAAAAADAXsWCa6y7bEgIv\",\"NEXT_PUBLIC_WEBAPP_URL\",\"https://app.documenso.com\",\"NEXT_PUBLIC_DOCUMENT_SIZE_UPLOAD_LIMIT\",\"150\",\"NEXT_PUBLIC_UPLOAD_TRANSPORT\",\"s3\",\"NEXT_PUBLIC_POSTHOG_KEY\",\"phc_QfqRYkAjBcAv44LI0N2aR0ywUZ9OBXMsmmtAAfjAnUK\",\"NEXT_PUBLIC_DOCUMENT_CONVERSION_ENABLED\",\"false\",\"NEXT_PUBLIC_SIGNING_TRANSPORT_IS_CSC\"]\n");</script><!--$?--><template id="B:1"></template><!--/$--></div><script nonce="9TWrLLOedogL0upQ1qS9Xg==">function $RC(a,b){a=document.getElementById(a);b=document.getElementById(b);b.parentNode.removeChild(b);if(a){a=a.previousSibling;var f=a.parentNode,c=a.nextSibling,e=0;do{if(c&&8===c.nodeType){var d=c.data;if("/$"===d)if(0===e)break;else e--;else"$"!==d&&"$?"!==d&&"$!"!==d||e++}d=c.nextSibling;f.removeChild(c);c=d}while(c);for(;b.firstChild;)f.insertBefore(b.firstChild,c);a.data="$";a._reactRetry&&a._reactRetry()}};$RC("B:0","S:0")</script><div hidden id="S:1"><script nonce="9TWrLLOedogL0upQ1qS9Xg==">window.__reactRouterContext.streamController.close();</script></div><script nonce="9TWrLLOedogL0upQ1qS9Xg==">$RC("B:1","S:1")</script>

@@ -1,0 +1,404 @@
+<!DOCTYPE html><html translate="no" lang="en" class=""><head><meta charSet="utf-8"/><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/><link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="manifest" href="/site.webmanifest"/><meta name="google" content="notranslate"/><title>Profile - Documenso</title><meta name="description" content="Join Documenso, the open signing infrastructure, and get a 10x better signing experience. Pricing starts at $30/mo. forever! Sign in now and enjoy a faster, smarter, and more beautiful document signing process. Integrates with your favorite tools, customizable, and expandable. Support our mission and become a part of our open-source community."/><meta name="keywords" content="Documenso, open source, DocuSign alternative, document signing, open signing infrastructure, open-source community, fast signing, beautiful signing, smart templates"/><meta name="author" content="Documenso, Inc."/><meta name="robots" content="index, follow"/><meta property="og:title" content="Documenso - The Open Source DocuSign Alternative"/><meta property="og:description" content="Join Documenso, the open signing infrastructure, and get a 10x better signing experience. Pricing starts at $30/mo. forever! Sign in now and enjoy a faster, smarter, and more beautiful document signing process. Integrates with your favorite tools, customizable, and expandable. Support our mission and become a part of our open-source community."/><meta property="og:image" content="https://app.documenso.com/opengraph-image.jpg"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:site" content="@documenso"/><meta name="twitter:description" content="Join Documenso, the open signing infrastructure, and get a 10x better signing experience. Pricing starts at $30/mo. forever! Sign in now and enjoy a faster, smarter, and more beautiful document signing process. Integrates with your favorite tools, customizable, and expandable. Support our mission and become a part of our open-source community."/><meta name="twitter:image" content="https://app.documenso.com/opengraph-image.jpg"/><link nonce="kqeKgKxhFC9aG70q4e4xkA==" rel="stylesheet" href="/assets/app-C2Sadtgj.css"/><meta name="google" content="notranslate"/><meta name="color-scheme" content="dark light"/><script nonce="kqeKgKxhFC9aG70q4e4xkA==">
+(() => {
+  const theme = window.matchMedia("(prefers-color-scheme: light)").matches
+    ? 'light'
+    : 'dark';
+  
+  const cl = document.documentElement.classList;
+  const dataAttr = document.documentElement.dataset.theme;
+
+  if (dataAttr != null) {
+    const themeAlreadyApplied = dataAttr === 'light' || dataAttr === 'dark';
+    if (!themeAlreadyApplied) {
+      document.documentElement.dataset.theme = theme;
+    }
+  } else {
+    const themeAlreadyApplied = cl.contains('light') || cl.contains('dark');
+    if (!themeAlreadyApplied) {
+      cl.add(theme);
+    }
+  }
+  
+  const meta = document.querySelector('meta[name=color-scheme]');
+  if (meta) {
+    if (theme === 'dark') {
+      meta.content = 'dark light';
+    } else if (theme === 'light') {
+      meta.content = 'light dark';
+    }
+  }
+})();
+</script><script nonce="kqeKgKxhFC9aG70q4e4xkA==">0</script></head><body><header class="sticky top-0 z-[60] flex h-16 w-full items-center border-b border-b-transparent bg-background/95 backdrop-blur duration-200 supports-backdrop-blur:bg-background/60"><div class="mx-auto flex w-full max-w-screen-xl items-center justify-between gap-x-4 px-4 md:justify-normal md:px-8"><a class="hidden rounded-md ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:inline" href="/" data-discover="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2248 320" class="h-6 w-auto"><path fill="currentColor" d="M529.4 276h-82.5V43.3H530c23.4 0 43.5 4.6 60.4 14a94.3 94.3 0 0 1 39 39.8 131.7 131.7 0 0 1 13.8 62.3c0 24.3-4.6 45-13.8 62.5a94.5 94.5 0 0 1-39.2 40.1c-17 9.3-37.3 14-61 14ZM496 233.8h31.2a79 79 0 0 0 36.8-7.7 49.7 49.7 0 0 0 22.5-24.2c5-11 7.6-25.1 7.6-42.5 0-17.2-2.6-31.2-7.6-42.2a49 49 0 0 0-22.4-24 79 79 0 0 0-36.7-7.8H496v148.4Zm255 45.6c-17.7 0-33-3.7-45.8-11.2a77 77 0 0 1-29.7-31.6c-7-13.6-10.4-29.3-10.4-47.2 0-18 3.5-33.8 10.4-47.3a76 76 0 0 1 29.7-31.6A88.7 88.7 0 0 1 751 99.2a89 89 0 0 1 45.7 11.3 75.9 75.9 0 0 1 29.7 31.6c7 13.5 10.5 29.3 10.5 47.3 0 17.9-3.5 33.6-10.5 47.2-7 13.5-16.8 24-29.7 31.6a88.8 88.8 0 0 1-45.7 11.2Zm.2-37.5a30 30 0 0 0 20.1-6.8c5.4-4.6 9.5-11 12.2-18.9 2.8-8 4.2-17 4.2-27.1 0-10.2-1.4-19.2-4.2-27.2-2.7-8-6.8-14.2-12.2-18.9-5.3-4.6-12-6.9-20-6.9-8.2 0-15 2.3-20.5 7a42.2 42.2 0 0 0-12.4 18.8c-2.7 8-4.1 17-4.1 27.2 0 10.1 1.4 19.2 4 27.1a43 43 0 0 0 12.5 18.9 31.2 31.2 0 0 0 20.4 6.8Zm189.4 37.5a89.4 89.4 0 0 1-46.2-11.4 76.8 76.8 0 0 1-29.5-31.8 102.9 102.9 0 0 1-10.2-46.8 102 102 0 0 1 10.3-47 76.8 76.8 0 0 1 29.7-31.7 87.4 87.4 0 0 1 45.6-11.5 91 91 0 0 1 40 8.3 66.9 66.9 0 0 1 27.2 23.3 68.5 68.5 0 0 1 11 35.2h-45.7a35.3 35.3 0 0 0-10.2-21 29 29 0 0 0-21.5-8c-7.5 0-14 2-19.6 6a39 39 0 0 0-13 17.7 77 77 0 0 0-4.6 28 79 79 0 0 0 4.5 28.4 39.4 39.4 0 0 0 13 17.9c5.7 4 12.2 6.1 19.7 6.1a32 32 0 0 0 15-3.4c4.4-2.3 8-5.6 11-9.9 3-4.4 4.8-9.6 5.7-15.8h45.7a71.3 71.3 0 0 1-10.9 35.3 66 66 0 0 1-26.7 23.6 89.2 89.2 0 0 1-40.3 8.5Zm214.2-77.7V101.5h48.4V276h-46.5v-31.7h-1.8a51.5 51.5 0 0 1-19.7 24.7c-9 6.2-20.1 9.3-33.3 9.3a54.7 54.7 0 0 1-51.6-30.6 78 78 0 0 1-7.4-35.1V101.5h48.4V204c0 10.3 2.8 18.4 8.3 24.4a28 28 0 0 0 21.9 9 32 32 0 0 0 28.6-16 36.9 36.9 0 0 0 4.7-19.7Zm80.5 74.3V101.5h46v30.8h2.1a48.4 48.4 0 0 1 18.2-24.3 52 52 0 0 1 30.5-8.8c12 0 22.1 3 30.5 9 8.5 5.9 14 13.9 16.9 24h1.8c3.5-10 10-18 19.3-24 9.4-6 20.5-9 33.3-9a53 53 0 0 1 39.6 15.5c10.3 10.4 15.4 25 15.4 44V276h-48.3V168.2c0-9.7-2.6-17-7.7-21.9a27 27 0 0 0-19.4-7.2 26 26 0 0 0-20.5 8.4c-5 5.5-7.4 12.8-7.4 22V276h-47V167.1c0-8.5-2.4-15.3-7.3-20.4-4.9-5-11.3-7.6-19.2-7.6a27 27 0 0 0-14.6 4 28 28 0 0 0-10 11.3 35.8 35.8 0 0 0-3.8 16.8V276h-48.5Zm364.7 3.4c-18 0-33.4-3.6-46.4-10.9a74.8 74.8 0 0 1-29.7-31.1 103 103 0 0 1-10.5-47.9c0-18 3.5-33.7 10.5-47.3a77.3 77.3 0 0 1 29.4-31.7 86 86 0 0 1 44.8-11.3 91 91 0 0 1 32.1 5.5A71.3 71.3 0 0 1 1674 149c4.1 11 6.2 24 6.2 38.8v13.3h-147.4v-30h101.8a37 37 0 0 0-4.5-18.5c-3-5.4-7.2-9.6-12.6-12.6a36 36 0 0 0-18.5-4.7 35.9 35.9 0 0 0-32.7 18.6 38.1 38.1 0 0 0-5 18.8v28.5a49 49 0 0 0 4.8 22.4 35 35 0 0 0 13.8 14.6c5.9 3.4 12.9 5 21 5 5.4 0 10.3-.7 14.8-2.2a29.6 29.6 0 0 0 18.8-18l44.7 3a61 61 0 0 1-14 28.2c-7 8-16 14.1-27 18.6a102 102 0 0 1-38 6.6Zm153.5-104.3V276H1705V101.5h46.2v30.8h2a48.7 48.7 0 0 1 19.5-24.1c9-6 20-9 33-9 12.1 0 22.7 2.6 31.7 8a54 54 0 0 1 21 22.7 76 76 0 0 1 7.5 35V276h-48.4V173.5a35 35 0 0 0-8.1-25c-5.6-6-13.2-9-22.9-9-6.5 0-12.3 1.3-17.3 4.1-4.9 2.8-8.7 7-11.5 12.3a42.5 42.5 0 0 0-4.3 19.2Zm289.2-23.9-44.4 2.8a23 23 0 0 0-4.8-10.3 26 26 0 0 0-10-7.4c-4-1.9-8.8-2.8-14.3-2.8-7.5 0-13.9 1.6-19 4.8-5.2 3-7.8 7.2-7.8 12.5 0 4.1 1.7 7.7 5 10.5 3.4 3 9 5.2 17.2 7l31.6 6.3c17 3.5 29.6 9.1 38 16.9a39.6 39.6 0 0 1 12.5 30.4c0 11.4-3.4 21.5-10.2 30.1a65.6 65.6 0 0 1-27.5 20.3c-11.6 4.7-25 7.1-40 7.1-23.2 0-41.6-4.8-55.3-14.4a56.3 56.3 0 0 1-24-39.6l47.6-2.5a25 25 0 0 0 10.5 16.2 38 38 0 0 0 21.2 5.4c8.5 0 15.3-1.6 20.5-4.9 5.2-3.3 7.9-7.6 8-12.8-.1-4.4-2-8-5.6-10.8a40 40 0 0 0-16.8-6.6l-30.3-6c-17-3.4-29.7-9.3-38-17.7a44 44 0 0 1-12.4-32.2 47 47 0 0 1 9-29 58.5 58.5 0 0 1 25.9-18.7c11.1-4.4 24.1-6.6 39-6.6 22.1 0 39.4 4.6 52.1 14a54 54 0 0 1 22.3 38Zm106.6 128.2a89.6 89.6 0 0 1-45.8-11.2 77 77 0 0 1-29.6-31.6c-7-13.6-10.5-29.3-10.5-47.2 0-18 3.5-33.8 10.5-47.3s16.8-24 29.6-31.6a88.7 88.7 0 0 1 45.8-11.3c17.7 0 32.9 3.8 45.7 11.3a75.8 75.8 0 0 1 29.8 31.6c7 13.5 10.4 29.3 10.4 47.3 0 17.9-3.4 33.6-10.4 47.2-7 13.5-17 24-29.8 31.6a88.8 88.8 0 0 1-45.7 11.2Zm.3-37.5a30 30 0 0 0 20-6.8c5.5-4.6 9.5-11 12.2-18.9 2.8-8 4.2-17 4.2-27.1 0-10.2-1.4-19.2-4.2-27.2a43 43 0 0 0-12.1-18.9 30 30 0 0 0-20.1-6.9c-8.2 0-15 2.3-20.5 7a42.2 42.2 0 0 0-12.4 18.8c-2.7 8-4 17-4 27.2a84 84 0 0 0 4 27.1c2.8 8 7 14.3 12.4 18.9a31.2 31.2 0 0 0 20.5 6.8ZM132.6 33.4c-4.1 3.8-8.7 8.1-13.9 13.3-3.2 2.5-7.3 4-11.5 4l-17.4.4 5-5C125.7 15.2 141 0 160 0s34.4 15.3 65.1 46l5 5.1-16.7-.3c-4.7-.1-9.3-2-12.7-5.1l-10.1-9.3-2.8-2.6-.5-.5c-3.5-3.2-6.6-5.8-9.6-8-8.5-6.6-13.5-8-17.7-8-4.2 0-9.2 1.4-17.7 8-3 2.2-6.2 5-9.7 8v.1Zm153.6 98.8-2.5-2.8-9.4-10c-3.2-3.5-5-8-5-12.8l-.4-16.8 5 5C304.8 125.7 320 141 320 160s-15.3 34.4-46 65.1l-5.1 5 .3-16.7c.1-4.7 2-9.3 5.1-12.7l9.4-10.1 2.5-2.8.5-.5c3.2-3.5 5.8-6.6 8-9.6 6.6-8.5 8-13.5 8-17.7 0-4.2-1.4-9.2-8-17.7-2.2-3-4.8-6.1-8-9.5l-.5-.6Zm-98.6 154.2 3.2-3 9.9-9c3.4-3.3 8-5 12.7-5.2l16.8-.3-5 5C194.3 304.8 179 320 160 320s-34.4-15.3-65.1-46l-5-5.1 16.8.3c4.7.1 9.2 2 12.6 5.1l6.8 6.2c6.2 6 11.4 10.6 16.2 14.3 8.5 6.5 13.5 8 17.7 8 4.2 0 9.2-1.5 17.7-8 3-2.3 6.2-5 9.7-8.2l.2-.2ZM33.5 187.5l3.2 3.5 9 9.7c3.2 3.4 5 8 5 12.7l.4 16.8-5-5C15.2 194.3 0 179 0 160s15.3-34.4 46-65.1l5.1-5-.3 16.7c-.1 4.7-2 9.3-5.1 12.7l-9.3 10c-1 1-1.8 2-2.6 3l-.5.4c-3.2 3.5-5.8 6.6-8 9.6-6.6 8.5-8 13.5-8 17.7 0 4.2 1.4 9.2 8 17.7 2.2 3 5 6.2 8 9.7h.2Z"></path><path fill="currentColor" d="m33.4 132.6 12.3-13.3c2.8-3 4.6-7 5-11 0-7 .1-12.9.4-18.1v-.7l1-12.3c1.5-10.6 4-15.1 7-18.1 3-3 7.5-5.5 18.1-7 3.7-.4 7.8-.8 12.5-1h.3c5.4-.3 11.6-.4 18.7-.4 4.3-.4 8.4-2.3 11.5-5.3l12.4-12h-7.1c-43.4 0-65.1 0-78.6 13.5C33.4 60.3 33.4 82 33.4 125.5v7.1Zm0 54.8v7.1c0 43.4 0 65.2 13.5 78.6 13.5 13.5 35.2 13.5 78.6 13.5h69c43.4 0 65.2 0 78.6-13.5 13.5-13.4 13.5-35.2 13.5-78.6v-7.1l-12.3 13.3c-2.8 3-4.6 7-5 11 0 7-.1 13-.4 18.4v.2a148 148 0 0 1-1 12.5c-1.5 10.6-4 15.1-7 18.1-3 3-7.5 5.5-18.1 7l-12.2 1h-.7c-5.3.3-11.3.4-18.1.4-4.2.4-8 2.2-11.1 5l-13.3 12.3h-54.7l-13.4-12.3c-3-2.8-7-4.6-11-5-7 0-13-.2-18.4-.4h-.2c-4.7-.2-8.8-.6-12.5-1-10.6-1.5-15.1-4-18.1-7-3-3-5.5-7.5-7-18.1-.4-3.7-.8-7.8-1-12.5v-.3c-.2-5.3-.4-11.3-.4-18.2-.4-4.2-2.2-8-5-11.1l-12.3-13.3Zm235.9-79.2c.4 4.2 2.2 8 5 11.1l12.3 13.3v-7.1c0-43.4 0-65.2-13.5-78.6-13.4-13.5-35.2-13.5-78.6-13.5h-7.1l13.3 12.3c3 2.8 7 4.6 11 5 6.9 0 12.8.1 18 .4h1.1l12 1c10.6 1.5 15.1 4 18.1 7 3 3 5.5 7.5 7 18.1.4 3.7.8 7.8 1 12.5v.2c.3 5.3.4 11.4.4 18.3ZM146.9 83.5l-11.7 9.9c-2 1.7-4.6 2.8-7.4 2.9l-19.4 1L118.5 87c19.6-19.6 29.4-29.4 41.6-29.4 12.2 0 22 9.8 41.7 29.4l10 10.1-19.7-.8c-2.8-.1-5.4-1.2-7.5-3l-8.8-7.6c-3.1-2.9-5.7-5.2-8.1-7-5-3.7-6.8-3.8-7.6-3.8-.8 0-2.6 0-7.5 3.8l-.3.2a91.5 91.5 0 0 0-5.4 4.6Z"></path><path fill="currentColor" d="M240.7 151.5a210 210 0 0 0-15-16.1 12.3 12.3 0 0 1-2-6l-.8-21.2 10 10c19.7 19.7 29.5 29.5 29.5 41.7 0 12.2-9.8 22-29.4 41.6l-10.1 10 1-20a12 12 0 0 1 3-7.7l7.4-8.3c2.3-2.5 4.3-4.7 5.9-6.7l.9-1v-.1l.2-.3c3.7-4.9 3.8-6.7 3.8-7.5 0-.8 0-2.7-3.8-7.6l-.2-.2v-.1l-.4-.5Zm-161.5.5 13.5-14.6c1.9-2 3-4.7 3.2-7.6l.7-11.4c.2-3.7.3-6.8.7-9.4v-.9l.1-.3c.8-6 2-7.5 2.6-8 .6-.6 2-1.8 8-2.7l6.7-.5 16.5-1.7c2.7-.2 5.2-1.4 7.1-3.2l14-12.8h-14.2c-27.8 0-41.7 0-50.3 8.7-7.3 7.3-8.4 18.5-8.6 38.8V152Z"></path><path fill="currentColor" d="M79.2 167.7v25.7c.2 20.3 1.3 31.4 8.6 38.8 7.4 7.3 18.5 8.4 38.8 8.6h67c20.3-.2 31.5-1.3 38.8-8.6 8.7-8.6 8.7-22.5 8.7-50.3v-14.2l-14.4 15.5a12.3 12.3 0 0 0-3 5.5c0 10 0 17.1-.7 22.5v.3l-.1.4c-.8 6.1-2.1 7.5-2.7 8-.5.6-2 1.9-8 2.7h-.4v.1h-.5c-3.1.4-6.7.6-11 .7l-10 .6c-2.7.2-5.4 1.3-7.5 3.2l-15 13.6h-15.6l-15-14c-2-1.9-4.5-3-7.2-3.3h-3.3c-8.1 0-14-.3-18.6-.9-6.1-.8-7.5-2-8-2.6-.6-.6-1.9-2-2.7-8v-.3l-.1-.2v-.5a168 168 0 0 1-.8-18.1v-2a12.3 12.3 0 0 0-3.3-7.8l-14-15.4ZM223.6 119l.9 11c.2 2.8 1.3 5.4 3.2 7.5L241 152v-14.3c0-27.7 0-41.6-8.7-50.2-8.6-8.7-22.5-8.7-50.2-8.7h-14.4L182.2 92c2 1.9 4.6 3 7.3 3.2l16.7 1.4c1.6 0 3 .2 4.4.3l1.3.1v.1h.3c6 .9 7.5 2.1 8 2.7.6.5 1.9 2 2.7 8 .4 3.1.6 6.8.7 11.3Z"></path><path fill="currentColor" d="M97.4 211.5h-.1v.1Zm11.1 11.2 18.2.8c-7.9 0-13.6-.3-18.2-.8Zm-11.9-31c0-.8-.2-1.6-.4-2.4l.2 1.6.1 2c0 7.8.2 13.5.8 18.1v.5l-.7-19.8Zm-38.7-31.8c0 10.4 7.1 19 21.3 33.5v-25.6l-.2-.4c-3.8-4.9-3.9-6.7-3.9-7.5 0-.8.1-2.7 3.9-7.6l.2-.3v-25.6C65 140.8 58 149.4 58 159.9Zm94.7 81.1-.2-.1-.2-.1h-25.6c14.5 14.2 23.1 21.3 33.5 21.3 10.4 0 19-7 33.5-21.3H168l-.3.2c-5 3.8-6.8 3.9-7.6 3.9-.8 0-2.6-.1-7.5-3.9Z"></path></svg></a><div class="ml-8 hidden flex-1 items-center gap-x-12 md:flex md:justify-between"><div><div class="flex items-baseline gap-x-6" style="opacity:0"><a class="rounded-md font-medium text-muted-foreground leading-5 ring-offset-background hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:text-muted-foreground/60" href="/t/personal_wydsnsuiedivthmn/documents" data-discover="true">Documents</a><a class="rounded-md font-medium text-muted-foreground leading-5 ring-offset-background hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:text-muted-foreground/60" href="/t/personal_wydsnsuiedivthmn/templates" data-discover="true">Templates</a></div></div><button class="text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background border border-input hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 flex w-full max-w-96 items-center justify-between rounded-lg text-muted-foreground"><div class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search mr-2 h-5 w-5" aria-hidden="true"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>Search</div><div><div class="flex items-center rounded-md bg-muted px-1.5 py-0.5 text-muted-foreground text-xs tracking-wider">Ctrl<!-- -->+K</div></div></button></div><a class="items-center justify-center text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background border border-input hover:bg-accent hover:text-accent-foreground py-2 px-4 relative hidden h-10 w-10 rounded-lg md:flex relative block h-10 w-10" href="/inbox" data-discover="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-inbox h-5 w-5 flex-shrink-0 text-muted-foreground transition-colors hover:text-foreground" aria-hidden="true"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg></a><div class="md:ml-4"><button class="justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background relative flex h-12 flex-row items-center px-0 py-2 ring-0 focus:outline-none focus-visible:border-0 focus-visible:ring-0 focus-visible:ring-transparent md:px-2" data-testid="menu-switcher" type="button" id="radix-:R2aj5:" aria-haspopup="menu" aria-expanded="false" data-state="closed"><div class="flex w-full max-w-xs items-center gap-2"><span class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 border-2 border-white border-solid dark:border-border"><span class="flex h-full w-full items-center justify-center rounded-full bg-muted text-gray-400 text-xs">H</span></span><div class="flex-col truncate text-left font-normal text-sm hidden lg:flex"><span class="truncate text-foreground">Harsh Vardhan</span><span class="truncate text-muted-foreground text-xs">Personal Account</span></div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevrons-up-down ml-auto h-4 w-4 text-muted-foreground" aria-hidden="true"><path d="m7 15 5 5 5-5"></path><path d="m7 9 5-5 5 5"></path></svg></div></button></div><div class="flex flex-row items-center space-x-4 md:hidden"><button><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search h-6 w-6 text-muted-foreground" aria-hidden="true"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg></button><button><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu h-6 w-6 text-muted-foreground" aria-hidden="true"><path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h16"></path></svg></button></div></div></header><main class="mt-8 pb-8 md:mt-12 md:pb-12"><div class="mx-auto w-full max-w-screen-xl px-4 md:px-8"><h1 class="font-semibold text-4xl">Settings</h1><div class="mt-4 grid grid-cols-12 gap-x-8 md:mt-8"><div class="flex-col gap-y-2 hidden md:col-span-3 md:flex"><a href="/settings/profile" data-discover="true"><button class="inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 w-full justify-start bg-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user mr-2 h-5 w-5" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>Profile</button></a><a href="/settings/document" data-discover="true"><button class="inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 w-full justify-start"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings2 lucide-settings-2 mr-2 h-5 w-5" aria-hidden="true"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>Preferences</button></a><a class="w-full pl-8" href="/settings/document" data-discover="true"><button class="inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 w-full justify-start">Document</button></a><a class="w-full pl-8" href="/settings/branding" data-discover="true"><button class="inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 w-full justify-start">Branding</button></a><a class="w-full pl-8" href="/settings/email" data-discover="true"><button class="inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 w-full justify-start">Email</button></a><a href="/settings/public-profile" data-discover="true"><button class="inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 w-full justify-start"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-earth mr-2 h-5 w-5" aria-hidden="true"><path d="M21.54 15H17a2 2 0 0 0-2 2v4.54"></path><path d="M7 3.34V5a3 3 0 0 0 3 3a2 2 0 0 1 2 2c0 1.1.9 2 2 2a2 2 0 0 0 2-2c0-1.1.9-2 2-2h3.17"></path><path d="M11 21.95V18a2 2 0 0 0-2-2a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05"></path><circle cx="12" cy="12" r="10"></circle></svg>Public Profile</button></a><a href="/settings/tokens" data-discover="true"><button class="inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 w-full justify-start"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-braces mr-2 h-5 w-5" aria-hidden="true"><path d="M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5c0 1.1.9 2 2 2h1"></path><path d="M16 21h1a2 2 0 0 0 2-2v-5c0-1.1.9-2 2-2a2 2 0 0 1-2-2V5a2 2 0 0 0-2-2h-1"></path></svg>API Tokens</button></a><a href="/settings/webhooks" data-discover="true"><button class="inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 w-full justify-start"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-webhook mr-2 h-5 w-5" aria-hidden="true"><path d="M18 16.98h-5.99c-1.1 0-1.95.94-2.48 1.9A4 4 0 0 1 2 17c.01-.7.2-1.4.57-2"></path><path d="m6 17 3.13-5.78c.53-.97.1-2.18-.5-3.1a4 4 0 1 1 6.89-4.06"></path><path d="m12 6 3.13 5.73C15.66 12.7 16.9 13 18 13a4 4 0 0 1 0 8"></path></svg>Webhooks</button></a><a href="/settings/organisations" data-discover="true"><button class="inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 w-full justify-start"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users mr-2 h-5 w-5" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><path d="M16 3.128a4 4 0 0 1 0 7.744"></path><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><circle cx="9" cy="7" r="4"></circle></svg>Organisations</button></a><a href="/settings/billing-personal" data-discover="true"><button class="inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 w-full justify-start"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card mr-2 h-5 w-5" aria-hidden="true"><rect width="20" height="14" x="2" y="5" rx="2"></rect><line x1="2" x2="22" y1="10" y2="10"></line></svg>Billing</button></a><a href="/settings/security" data-discover="true"><button class="inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 w-full justify-start"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lock mr-2 h-5 w-5" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Security</button></a></div><div class="flex flex-wrap items-center justify-start gap-x-2 gap-y-4 col-span-12 mb-8 md:hidden"><a href="/settings/profile" data-discover="true"><button class="inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 w-full justify-start bg-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user mr-2 h-5 w-5" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>Profile</button></a><a href="/settings/document" data-discover="true"><button class="inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 w-full justify-start"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings2 lucide-settings-2 mr-2 h-5 w-5" aria-hidden="true"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>Document Preferences</button></a><a href="/settings/branding" data-discover="true"><button class="inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 w-full justify-start"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-palette mr-2 h-5 w-5" aria-hidden="true"><path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"></path><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle></svg>Branding Preferences</button></a><a href="/settings/email" data-discover="true"><button class="inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 w-full justify-start"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail mr-2 h-5 w-5" aria-hidden="true"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path><rect x="2" y="4" width="20" height="16" rx="2"></rect></svg>Email Preferences</button></a><a href="/settings/public-profile" data-discover="true"><button class="inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 w-full justify-start"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-earth mr-2 h-5 w-5" aria-hidden="true"><path d="M21.54 15H17a2 2 0 0 0-2 2v4.54"></path><path d="M7 3.34V5a3 3 0 0 0 3 3a2 2 0 0 1 2 2c0 1.1.9 2 2 2a2 2 0 0 0 2-2c0-1.1.9-2 2-2h3.17"></path><path d="M11 21.95V18a2 2 0 0 0-2-2a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05"></path><circle cx="12" cy="12" r="10"></circle></svg>Public Profile</button></a><a href="/settings/tokens" data-discover="true"><button class="inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 w-full justify-start"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-braces mr-2 h-5 w-5" aria-hidden="true"><path d="M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5c0 1.1.9 2 2 2h1"></path><path d="M16 21h1a2 2 0 0 0 2-2v-5c0-1.1.9-2 2-2a2 2 0 0 1-2-2V5a2 2 0 0 0-2-2h-1"></path></svg>API Tokens</button></a><a href="/settings/webhooks" data-discover="true"><button class="inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 w-full justify-start"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-webhook mr-2 h-5 w-5" aria-hidden="true"><path d="M18 16.98h-5.99c-1.1 0-1.95.94-2.48 1.9A4 4 0 0 1 2 17c.01-.7.2-1.4.57-2"></path><path d="m6 17 3.13-5.78c.53-.97.1-2.18-.5-3.1a4 4 0 1 1 6.89-4.06"></path><path d="m12 6 3.13 5.73C15.66 12.7 16.9 13 18 13a4 4 0 0 1 0 8"></path></svg>Webhooks</button></a><a href="/settings/organisations" data-discover="true"><button class="inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 w-full justify-start"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users mr-2 h-5 w-5" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><path d="M16 3.128a4 4 0 0 1 0 7.744"></path><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><circle cx="9" cy="7" r="4"></circle></svg>Organisations</button></a><a href="/settings/billing-personal" data-discover="true"><button class="inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 w-full justify-start"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card mr-2 h-5 w-5" aria-hidden="true"><rect width="20" height="14" x="2" y="5" rx="2"></rect><line x1="2" x2="22" y1="10" y2="10"></line></svg>Billing</button></a><a href="/settings/security" data-discover="true"><button class="inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 w-full justify-start"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lock mr-2 h-5 w-5" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Security</button></a></div><div class="col-span-12 md:col-span-9"><div><div class="flex flex-row items-center justify-between"><div><h3 class="font-medium text-lg">Profile</h3><p class="text-muted-foreground text-sm md:mt-2">Here you can edit your personal details.</p></div></div><hr class="my-4"/><form class="flex w-full flex-col gap-y-4 mb-8 max-w-xl"><fieldset class="flex w-full flex-col gap-y-4"><div class="space-y-2"><label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for=":Rncj5:-form-item">Avatar</label><div class="flex items-center gap-8" id=":Rncj5:-form-item" aria-describedby=":Rncj5:-form-item-description" aria-invalid="false"><div class="relative"><span class="relative flex shrink-0 overflow-hidden rounded-full h-16 w-16 border-2 border-solid"><span class="flex h-full w-full items-center justify-center rounded-full bg-muted text-gray-400 text-sm">HV</span></span></div><button class="inline-flex items-center justify-center text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-secondary text-secondary-foreground hover:bg-secondary/80 h-9 px-3 rounded-md" type="button" role="presentation" tabindex="0">Upload Avatar<input accept="image/*,.png,.jpg,.jpeg" type="file" style="border:0;clip:rect(0, 0, 0, 0);clip-path:inset(50%);height:1px;margin:0 -1px -1px 0;overflow:hidden;padding:0;position:absolute;width:1px;white-space:nowrap" tabindex="-1"/></button></div></div></fieldset></form><form class="flex w-full flex-col gap-y-4 mb-8 max-w-xl"><fieldset class="flex w-full flex-col gap-y-4"><div class="space-y-2"><label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for=":Ravcj5:-form-item">Full Name</label><input type="text" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm" name="name" id=":Ravcj5:-form-item" aria-describedby=":Ravcj5:-form-item-description" aria-invalid="false" value="Harsh Vardhan"/></div><div><label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground" for="email">Email</label><input type="email" class="flex h-10 w-full rounded-md border border-input px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm mt-2 bg-muted" id="email" disabled="" value="harshvardhanabr@gmail.com"/></div><div class="space-y-2"><label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for=":Rqvcj5:-form-item">Signature</label><div class="relative block aspect-signature-pad w-full select-none rounded-lg border bg-background"><button data-testid="signature-pad-dialog-button" type="button" class="absolute inset-0 flex items-center justify-center bg-transparent"><svg width="120" height="120" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-muted-foreground/60"><path d="M1.5 11H14.5M1.5 14C1.5 14 8.72 2 4.86938 2H4.875C2.01 2 1.97437 14.0694 8 6.51188V6.5C8 6.5 9 11.3631 11.5 7.52375V7.5C11.5 7.5 11.5 9 14.5 9" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" opacity="0" pathLength="1" stroke-dashoffset="0px" stroke-dasharray="0px 1px"></path></svg></button></div></div></fieldset><button class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-primary text-primary-foreground hover:bg-primary/90 h-10 py-2 px-4 self-end" type="submit">Update profile</button></form><hr class="my-4 max-w-xl"/><div class="max-w-xl space-y-8"><div><div role="alert" class="space-y-2 relative w-full rounded-lg [&amp;&gt;svg]:absolute [&amp;&gt;svg]:text-foreground [&amp;&gt;svg]:left-4 [&amp;&gt;svg]:top-4 [&amp;&gt;svg+div]:translate-y-[-3px] [&amp;&gt;svg~*]:pl-8 bg-gray-50 dark:bg-neutral-900/20 text-muted-foreground [&amp;_.alert-title]:text-foreground flex flex-col items-center justify-between gap-4 p-6 md:flex-row"><div><h5 class="alert-title font-medium text-base">Delete Account</h5><div class="text-sm mr-2">Delete your account and all its contents, including completed documents. This action is irreversible and will cancel your subscription, so proceed with caution.</div></div><div class="flex-shrink-0"><button class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:ring-destructive h-10 py-2 px-4" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="radix-:Rlfcj5:" data-state="closed">Delete Account</button></div></div></div></div></div></div></div></div></main><div role="region" aria-label="Notifications (F8)" tabindex="-1" style="pointer-events:none"><ol tabindex="-1" class="fixed top-0 z-[1001] flex max-h-screen w-full flex-col-reverse p-4 sm:top-auto sm:right-0 sm:bottom-0 sm:flex-col md:max-w-[420px]"></ol></div><script nonce="kqeKgKxhFC9aG70q4e4xkA==">window.__ENV__ = {"NEXT_PUBLIC_FEATURE_BILLING_ENABLED":"true","NEXT_PUBLIC_TURNSTILE_SITE_KEY":"0x4AAAAAADAXsWCa6y7bEgIv","NEXT_PUBLIC_WEBAPP_URL":"https://app.documenso.com","NEXT_PUBLIC_DOCUMENT_SIZE_UPLOAD_LIMIT":"150","NEXT_PUBLIC_UPLOAD_TRANSPORT":"s3","NEXT_PUBLIC_POSTHOG_KEY":"phc_QfqRYkAjBcAv44LI0N2aR0ywUZ9OBXMsmmtAAfjAnUK","NEXT_PUBLIC_DOCUMENT_CONVERSION_ENABLED":"false","NEXT_PUBLIC_SIGNING_TRANSPORT_IS_CSC":"false"}; window.__webpack_nonce__ = "kqeKgKxhFC9aG70q4e4xkA=="</script><script nonce="kqeKgKxhFC9aG70q4e4xkA==">((storageKey2, restoreKey) => {
+    if (!window.history.state || !window.history.state.key) {
+      let key = Math.random().toString(32).slice(2);
+      window.history.replaceState({ key }, "");
+    }
+    try {
+      let positions = JSON.parse(sessionStorage.getItem(storageKey2) || "{}");
+      let storedY = positions[restoreKey || window.history.state.key];
+      if (typeof storedY === "number") {
+        window.scrollTo(0, storedY);
+      }
+    } catch (error) {
+      console.error(error);
+      sessionStorage.removeItem(storageKey2);
+    }
+  })("react-router-scroll-positions", null)</script><link rel="modulepreload" href="/assets/entry.client-Wvwa8yNd.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/preload-helper-BXl3LOEh.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/jsx-runtime-BBryS-eQ.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/feature-flags-CLMtd92T.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/i18n-C_ykssPB.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-CBoJQWs5.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-B9ZVemWX.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/chunk-KS7C4IRE-BKI2UTax.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-DvCfNlkf.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/app-noOhCkS6.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-BiLbLflF.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/types-GU3YNY2F.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/locales-CAv2cHk7.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/root-KF-1m7xk.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/session-B-LziZV9.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-DQtfBupG.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-D91rd2e1.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/button-Dl0rxIGg.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-DOsefEPQ.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-Cw5XDkCv.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-DUowdBgz.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-BRtIP6bb.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-Cpgnqick.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-BGankl-U.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/loader-z6OWrLPM.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/utils-C68LRSOY.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/x-BZ7IKXbP.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/use-toast-N52TLbw0.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/tooltip-Dd9q-mek.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/compare-Br3z3FUS-Dul1EvmH.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-Bxk5AWFd.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/app-BRZHr6mf.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/generic-error-layout-7OA180sB.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/meta-BGUavGWT.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/nonce-D4pRWUKf.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-FEaB6Kph.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-DJ-EwNXm.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/data-transformer-2TVh6jQO.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/useQuery-BfUp4suP.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/createLucideIcon-CCk21RbT.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-DaYzQLHd.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-DFe05mjG.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/background-pattern-DX6wSrx_.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/proxy-B22aQe3C.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/chevron-left-k2hTeYw0.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/_layout-X1LhxwS4.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/organisation-Cj8yMNcW.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/app-header-ZX3lXWFa.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/billing-C3PbK6GE.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/organisations-B_ZfUhRU.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/alert-3BJEeChY.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/dialog-CbMsIYqF.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-browser-DHcKLLP1.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/triangle-alert-hysHw1ze.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/subscription-ROoQIf1B.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/luxon-CkcISRbr.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/team-Bpbg57UC.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/params-CjF9XBGL.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/branding-logo-DnY_wiNM.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/use-debounced-value-B3Az6QWe.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/i18n-BYa2gP9D.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/command-8YwKWTsZ.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/Combination-B5_KvHqJ.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/search-Chn6cltF.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/react-hotkeys-hook.esm-0g9wje_A.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/check-Com0ZcYt.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-C8FsR_q4.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/sheet-B4rYSqhP.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-CrC45F_3.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/use-is-mounted-BkcI2XvD.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/avatars-C7Sx-a0w.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/recipient-formatter-WzUNI0pB.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/avatar-CL8F4A31.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-CWzHJL__.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/dropdown-menu-BHMp6GXe.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-BQwnCyl6.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-BUOc_Ox5.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/chevron-right-DyV57Mpd.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/circle-CQJSpv_n.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/chevrons-up-down-D6FSO7I_.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/plus-DQqRt5Yx.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/organisations-translations-Bc_uHnP6.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/teams-translations-C9YXtjNW.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/teams-C2Ox6vdZ.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/teams-BAzRcOmi.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/animate-generic-fade-in-out-CC_4eCDY.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/building-2-Cb6pS848.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/settings-2-CorER6LO.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/users-DhipVcVE.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/settings-p0xt5pRS.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/inbox-CSP-kUM1.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/date-formats-DtTvo7rQ.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/time-zones-DGI2eNDr.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/envelope-reminder-DZyXwAIW.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/organisations-x7arFX74.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/document-email-DcBZA0tR.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/_layout-CNE_aAjC.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/user-1jw4DErp.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/earth-DtRmtO1J.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/webhook-B5-iN8hY.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/credit-card-BxlYORe0.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/lock-DiGNm9Lz.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/mail-BVhKAFol.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/profile-DXKqI7n4.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/input-B8AycrAH.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/form-DA1hY6T-.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/avatar-image-DChAeTq4.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/name-B9Bt3kH5.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/signature-pad-dialog-WJ4oPGMC.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/zod-BN58sCG7.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/settings-header-CWm5X1Ga.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-DNctjvwm.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-WUr762bC.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-RFPACSNF.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-Chjiymov.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/document-CZOB9Age.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/signatures-9TyUhfQR.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/signature-DWKKq1nc.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/select-BZ7s_6GR.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/index-lZSmKht_.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/chevron-down-Cuisgub7.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><link rel="modulepreload" href="/assets/cloud-upload-DpdhCDqu.js" nonce="kqeKgKxhFC9aG70q4e4xkA=="/><script nonce="kqeKgKxhFC9aG70q4e4xkA==">window.__reactRouterContext = {"basename":"/","future":{"unstable_optimizeDeps":false,"v8_passThroughRequests":false,"v8_trailingSlashAwareDataRequests":false,"unstable_previewServerPrerendering":false,"v8_middleware":false,"v8_splitRouteModules":false,"v8_viteEnvironmentApi":false},"routeDiscovery":{"mode":"lazy","manifestPath":"/__manifest"},"ssr":true,"isSpaMode":false};window.__reactRouterContext.stream = new ReadableStream({start(controller){window.__reactRouterContext.streamController = controller;}}).pipeThrough(new TextEncoderStream());</script><script nonce="kqeKgKxhFC9aG70q4e4xkA==" type="module" async="">;
+import * as route0 from "/assets/root-KF-1m7xk.js";
+import * as route1 from "/assets/_layout-X1LhxwS4.js";
+import * as route2 from "/assets/_layout-CNE_aAjC.js";
+import * as route3 from "/assets/profile-DXKqI7n4.js";
+  window.__reactRouterManifest = {
+  "entry": {
+    "module": "/assets/entry.client-Wvwa8yNd.js",
+    "imports": [
+      "/assets/preload-helper-BXl3LOEh.js",
+      "/assets/jsx-runtime-BBryS-eQ.js",
+      "/assets/feature-flags-CLMtd92T.js",
+      "/assets/i18n-C_ykssPB.js",
+      "/assets/index-CBoJQWs5.js",
+      "/assets/index-B9ZVemWX.js",
+      "/assets/chunk-KS7C4IRE-BKI2UTax.js",
+      "/assets/index-DvCfNlkf.js",
+      "/assets/app-noOhCkS6.js",
+      "/assets/index-BiLbLflF.js",
+      "/assets/types-GU3YNY2F.js",
+      "/assets/locales-CAv2cHk7.js"
+    ],
+    "css": []
+  },
+  "routes": {
+    "root": {
+      "id": "root",
+      "path": "",
+      "hasAction": false,
+      "hasLoader": true,
+      "hasClientAction": false,
+      "hasClientLoader": false,
+      "hasClientMiddleware": false,
+      "hasDefaultExport": true,
+      "hasErrorBoundary": true,
+      "module": "/assets/root-KF-1m7xk.js",
+      "imports": [
+        "/assets/preload-helper-BXl3LOEh.js",
+        "/assets/jsx-runtime-BBryS-eQ.js",
+        "/assets/feature-flags-CLMtd92T.js",
+        "/assets/i18n-C_ykssPB.js",
+        "/assets/index-CBoJQWs5.js",
+        "/assets/index-B9ZVemWX.js",
+        "/assets/chunk-KS7C4IRE-BKI2UTax.js",
+        "/assets/index-DvCfNlkf.js",
+        "/assets/app-noOhCkS6.js",
+        "/assets/index-BiLbLflF.js",
+        "/assets/types-GU3YNY2F.js",
+        "/assets/locales-CAv2cHk7.js",
+        "/assets/session-B-LziZV9.js",
+        "/assets/index-DQtfBupG.js",
+        "/assets/index-D91rd2e1.js",
+        "/assets/button-Dl0rxIGg.js",
+        "/assets/index-DOsefEPQ.js",
+        "/assets/index-Cw5XDkCv.js",
+        "/assets/index-DUowdBgz.js",
+        "/assets/index-BRtIP6bb.js",
+        "/assets/index-Cpgnqick.js",
+        "/assets/index-BGankl-U.js",
+        "/assets/loader-z6OWrLPM.js",
+        "/assets/utils-C68LRSOY.js",
+        "/assets/x-BZ7IKXbP.js",
+        "/assets/use-toast-N52TLbw0.js",
+        "/assets/tooltip-Dd9q-mek.js",
+        "/assets/compare-Br3z3FUS-Dul1EvmH.js",
+        "/assets/index-Bxk5AWFd.js",
+        "/assets/app-BRZHr6mf.js",
+        "/assets/generic-error-layout-7OA180sB.js",
+        "/assets/meta-BGUavGWT.js",
+        "/assets/nonce-D4pRWUKf.js",
+        "/assets/index-FEaB6Kph.js",
+        "/assets/index-DJ-EwNXm.js",
+        "/assets/data-transformer-2TVh6jQO.js",
+        "/assets/useQuery-BfUp4suP.js",
+        "/assets/createLucideIcon-CCk21RbT.js",
+        "/assets/index-DaYzQLHd.js",
+        "/assets/index-DFe05mjG.js",
+        "/assets/background-pattern-DX6wSrx_.js",
+        "/assets/proxy-B22aQe3C.js",
+        "/assets/chevron-left-k2hTeYw0.js"
+      ],
+      "css": []
+    },
+    "routes/_authenticated+/_layout": {
+      "id": "routes/_authenticated+/_layout",
+      "parentId": "root",
+      "hasAction": false,
+      "hasLoader": true,
+      "hasClientAction": false,
+      "hasClientLoader": false,
+      "hasClientMiddleware": false,
+      "hasDefaultExport": true,
+      "hasErrorBoundary": false,
+      "module": "/assets/_layout-X1LhxwS4.js",
+      "imports": [
+        "/assets/chunk-KS7C4IRE-BKI2UTax.js",
+        "/assets/jsx-runtime-BBryS-eQ.js",
+        "/assets/organisation-Cj8yMNcW.js",
+        "/assets/session-B-LziZV9.js",
+        "/assets/utils-C68LRSOY.js",
+        "/assets/button-Dl0rxIGg.js",
+        "/assets/index-B9ZVemWX.js",
+        "/assets/app-header-ZX3lXWFa.js",
+        "/assets/generic-error-layout-7OA180sB.js",
+        "/assets/app-noOhCkS6.js",
+        "/assets/billing-C3PbK6GE.js",
+        "/assets/organisations-B_ZfUhRU.js",
+        "/assets/index-DQtfBupG.js",
+        "/assets/alert-3BJEeChY.js",
+        "/assets/dialog-CbMsIYqF.js",
+        "/assets/use-toast-N52TLbw0.js",
+        "/assets/index-browser-DHcKLLP1.js",
+        "/assets/index-BiLbLflF.js",
+        "/assets/triangle-alert-hysHw1ze.js",
+        "/assets/subscription-ROoQIf1B.js",
+        "/assets/index-FEaB6Kph.js",
+        "/assets/luxon-CkcISRbr.js",
+        "/assets/team-Bpbg57UC.js",
+        "/assets/data-transformer-2TVh6jQO.js",
+        "/assets/index-DJ-EwNXm.js",
+        "/assets/loader-z6OWrLPM.js",
+        "/assets/createLucideIcon-CCk21RbT.js",
+        "/assets/params-CjF9XBGL.js",
+        "/assets/branding-logo-DnY_wiNM.js",
+        "/assets/use-debounced-value-B3Az6QWe.js",
+        "/assets/i18n-BYa2gP9D.js",
+        "/assets/locales-CAv2cHk7.js",
+        "/assets/types-GU3YNY2F.js",
+        "/assets/i18n-C_ykssPB.js",
+        "/assets/preload-helper-BXl3LOEh.js",
+        "/assets/index-CBoJQWs5.js",
+        "/assets/command-8YwKWTsZ.js",
+        "/assets/index-DvCfNlkf.js",
+        "/assets/Combination-B5_KvHqJ.js",
+        "/assets/index-D91rd2e1.js",
+        "/assets/index-Cpgnqick.js",
+        "/assets/index-BRtIP6bb.js",
+        "/assets/search-Chn6cltF.js",
+        "/assets/react-hotkeys-hook.esm-0g9wje_A.js",
+        "/assets/index-Bxk5AWFd.js",
+        "/assets/useQuery-BfUp4suP.js",
+        "/assets/check-Com0ZcYt.js",
+        "/assets/index-C8FsR_q4.js",
+        "/assets/proxy-B22aQe3C.js",
+        "/assets/sheet-B4rYSqhP.js",
+        "/assets/index-CrC45F_3.js",
+        "/assets/index-Cw5XDkCv.js",
+        "/assets/index-DUowdBgz.js",
+        "/assets/x-BZ7IKXbP.js",
+        "/assets/use-is-mounted-BkcI2XvD.js",
+        "/assets/avatars-C7Sx-a0w.js",
+        "/assets/recipient-formatter-WzUNI0pB.js",
+        "/assets/avatar-CL8F4A31.js",
+        "/assets/index-CWzHJL__.js",
+        "/assets/dropdown-menu-BHMp6GXe.js",
+        "/assets/index-DOsefEPQ.js",
+        "/assets/index-BQwnCyl6.js",
+        "/assets/index-DaYzQLHd.js",
+        "/assets/index-DFe05mjG.js",
+        "/assets/index-BUOc_Ox5.js",
+        "/assets/chevron-right-DyV57Mpd.js",
+        "/assets/circle-CQJSpv_n.js",
+        "/assets/chevrons-up-down-D6FSO7I_.js",
+        "/assets/plus-DQqRt5Yx.js",
+        "/assets/organisations-translations-Bc_uHnP6.js",
+        "/assets/teams-translations-C9YXtjNW.js",
+        "/assets/teams-C2Ox6vdZ.js",
+        "/assets/teams-BAzRcOmi.js",
+        "/assets/animate-generic-fade-in-out-CC_4eCDY.js",
+        "/assets/building-2-Cb6pS848.js",
+        "/assets/settings-2-CorER6LO.js",
+        "/assets/users-DhipVcVE.js",
+        "/assets/settings-p0xt5pRS.js",
+        "/assets/inbox-CSP-kUM1.js",
+        "/assets/background-pattern-DX6wSrx_.js",
+        "/assets/chevron-left-k2hTeYw0.js",
+        "/assets/date-formats-DtTvo7rQ.js",
+        "/assets/time-zones-DGI2eNDr.js",
+        "/assets/envelope-reminder-DZyXwAIW.js",
+        "/assets/organisations-x7arFX74.js",
+        "/assets/document-email-DcBZA0tR.js"
+      ],
+      "css": []
+    },
+    "routes/_authenticated+/settings+/_layout": {
+      "id": "routes/_authenticated+/settings+/_layout",
+      "parentId": "routes/_authenticated+/_layout",
+      "path": "settings",
+      "hasAction": false,
+      "hasLoader": false,
+      "hasClientAction": false,
+      "hasClientLoader": false,
+      "hasClientMiddleware": false,
+      "hasDefaultExport": true,
+      "hasErrorBoundary": false,
+      "module": "/assets/_layout-CNE_aAjC.js",
+      "imports": [
+        "/assets/chunk-KS7C4IRE-BKI2UTax.js",
+        "/assets/jsx-runtime-BBryS-eQ.js",
+        "/assets/index-B9ZVemWX.js",
+        "/assets/session-B-LziZV9.js",
+        "/assets/app-noOhCkS6.js",
+        "/assets/organisations-B_ZfUhRU.js",
+        "/assets/utils-C68LRSOY.js",
+        "/assets/button-Dl0rxIGg.js",
+        "/assets/user-1jw4DErp.js",
+        "/assets/settings-2-CorER6LO.js",
+        "/assets/earth-DtRmtO1J.js",
+        "/assets/webhook-B5-iN8hY.js",
+        "/assets/users-DhipVcVE.js",
+        "/assets/credit-card-BxlYORe0.js",
+        "/assets/lock-DiGNm9Lz.js",
+        "/assets/createLucideIcon-CCk21RbT.js",
+        "/assets/mail-BVhKAFol.js",
+        "/assets/meta-BGUavGWT.js",
+        "/assets/index-FEaB6Kph.js",
+        "/assets/index-DJ-EwNXm.js",
+        "/assets/data-transformer-2TVh6jQO.js",
+        "/assets/index-BiLbLflF.js",
+        "/assets/types-GU3YNY2F.js",
+        "/assets/index-browser-DHcKLLP1.js",
+        "/assets/date-formats-DtTvo7rQ.js",
+        "/assets/luxon-CkcISRbr.js",
+        "/assets/time-zones-DGI2eNDr.js",
+        "/assets/envelope-reminder-DZyXwAIW.js",
+        "/assets/organisations-x7arFX74.js",
+        "/assets/document-email-DcBZA0tR.js",
+        "/assets/loader-z6OWrLPM.js",
+        "/assets/index-CBoJQWs5.js"
+      ],
+      "css": []
+    },
+    "routes/_authenticated+/settings+/profile": {
+      "id": "routes/_authenticated+/settings+/profile",
+      "parentId": "routes/_authenticated+/settings+/_layout",
+      "path": "profile",
+      "hasAction": false,
+      "hasLoader": false,
+      "hasClientAction": false,
+      "hasClientLoader": false,
+      "hasClientMiddleware": false,
+      "hasDefaultExport": true,
+      "hasErrorBoundary": false,
+      "module": "/assets/profile-DXKqI7n4.js",
+      "imports": [
+        "/assets/chunk-KS7C4IRE-BKI2UTax.js",
+        "/assets/jsx-runtime-BBryS-eQ.js",
+        "/assets/session-B-LziZV9.js",
+        "/assets/organisations-B_ZfUhRU.js",
+        "/assets/index-DQtfBupG.js",
+        "/assets/animate-generic-fade-in-out-CC_4eCDY.js",
+        "/assets/index-B9ZVemWX.js",
+        "/assets/index-FEaB6Kph.js",
+        "/assets/alert-3BJEeChY.js",
+        "/assets/button-Dl0rxIGg.js",
+        "/assets/dialog-CbMsIYqF.js",
+        "/assets/input-B8AycrAH.js",
+        "/assets/form-DA1hY6T-.js",
+        "/assets/use-toast-N52TLbw0.js",
+        "/assets/avatar-image-DChAeTq4.js",
+        "/assets/name-B9Bt3kH5.js",
+        "/assets/utils-C68LRSOY.js",
+        "/assets/signature-pad-dialog-WJ4oPGMC.js",
+        "/assets/zod-BN58sCG7.js",
+        "/assets/types-GU3YNY2F.js",
+        "/assets/settings-header-CWm5X1Ga.js",
+        "/assets/meta-BGUavGWT.js",
+        "/assets/index-C8FsR_q4.js",
+        "/assets/data-transformer-2TVh6jQO.js",
+        "/assets/app-noOhCkS6.js",
+        "/assets/index-BiLbLflF.js",
+        "/assets/index-DJ-EwNXm.js",
+        "/assets/index-browser-DHcKLLP1.js",
+        "/assets/date-formats-DtTvo7rQ.js",
+        "/assets/luxon-CkcISRbr.js",
+        "/assets/time-zones-DGI2eNDr.js",
+        "/assets/envelope-reminder-DZyXwAIW.js",
+        "/assets/organisations-x7arFX74.js",
+        "/assets/document-email-DcBZA0tR.js",
+        "/assets/useQuery-BfUp4suP.js",
+        "/assets/proxy-B22aQe3C.js",
+        "/assets/loader-z6OWrLPM.js",
+        "/assets/createLucideIcon-CCk21RbT.js",
+        "/assets/index-CrC45F_3.js",
+        "/assets/index-D91rd2e1.js",
+        "/assets/index-DvCfNlkf.js",
+        "/assets/index-Cpgnqick.js",
+        "/assets/index-Cw5XDkCv.js",
+        "/assets/index-BRtIP6bb.js",
+        "/assets/Combination-B5_KvHqJ.js",
+        "/assets/index-DUowdBgz.js",
+        "/assets/x-BZ7IKXbP.js",
+        "/assets/index-DNctjvwm.js",
+        "/assets/avatars-C7Sx-a0w.js",
+        "/assets/recipient-formatter-WzUNI0pB.js",
+        "/assets/avatar-CL8F4A31.js",
+        "/assets/index-CWzHJL__.js",
+        "/assets/index-WUr762bC.js",
+        "/assets/index-RFPACSNF.js",
+        "/assets/index-Chjiymov.js",
+        "/assets/i18n-C_ykssPB.js",
+        "/assets/preload-helper-BXl3LOEh.js",
+        "/assets/index-CBoJQWs5.js",
+        "/assets/locales-CAv2cHk7.js",
+        "/assets/document-CZOB9Age.js",
+        "/assets/teams-C2Ox6vdZ.js",
+        "/assets/teams-BAzRcOmi.js",
+        "/assets/signatures-9TyUhfQR.js",
+        "/assets/signature-DWKKq1nc.js",
+        "/assets/select-BZ7s_6GR.js",
+        "/assets/index-DOsefEPQ.js",
+        "/assets/index-BQwnCyl6.js",
+        "/assets/index-DaYzQLHd.js",
+        "/assets/index-DFe05mjG.js",
+        "/assets/index-lZSmKht_.js",
+        "/assets/index-BGankl-U.js",
+        "/assets/chevron-down-Cuisgub7.js",
+        "/assets/check-Com0ZcYt.js",
+        "/assets/cloud-upload-DpdhCDqu.js"
+      ],
+      "css": []
+    },
+    "routes/_index": {
+      "id": "routes/_index",
+      "parentId": "root",
+      "index": true,
+      "hasAction": false,
+      "hasLoader": true,
+      "hasClientAction": false,
+      "hasClientLoader": false,
+      "hasClientMiddleware": false,
+      "hasDefaultExport": false,
+      "hasErrorBoundary": false,
+      "module": "/assets/_index-K6Dvbx-E.js",
+      "imports": [],
+      "css": []
+    },
+    "routes/_authenticated+/settings+/_index": {
+      "id": "routes/_authenticated+/settings+/_index",
+      "parentId": "routes/_authenticated+/settings+/_layout",
+      "index": true,
+      "hasAction": false,
+      "hasLoader": true,
+      "hasClientAction": false,
+      "hasClientLoader": false,
+      "hasClientMiddleware": false,
+      "hasDefaultExport": false,
+      "hasErrorBoundary": false,
+      "module": "/assets/_index-l0sNRNKZ.js",
+      "imports": [],
+      "css": []
+    }
+  },
+  "url": "/assets/manifest-e5258dd1.js",
+  "version": "e5258dd1"
+};
+  window.__reactRouterRouteModules = {"root":route0,"routes/_authenticated+/_layout":route1,"routes/_authenticated+/settings+/_layout":route2,"routes/_authenticated+/settings+/profile":route3};
+
+import("/assets/entry.client-Wvwa8yNd.js");</script></body></html><!--$--><script nonce="kqeKgKxhFC9aG70q4e4xkA==">window.__reactRouterContext.streamController.enqueue("[{\"_1\":2,\"_3\":-5,\"_4\":-5},\"loaderData\",{\"_5\":6,\"_7\":8},\"actionData\",\"errors\",\"root\",{\"_23\":24,\"_25\":-5,\"_26\":14,\"_27\":28,\"_29\":30,\"_31\":32},\"routes/_authenticated+/_layout\",{\"_9\":10},\"banner\",{\"_11\":12,\"_13\":14,\"_15\":16},\"id\",\"site.banner\",\"enabled\",false,\"data\",{\"_17\":18,\"_19\":20,\"_21\":22},\"content\",\"We've moved free and new individual plan email to dedicated sending domains. \u003ca href=\\\"https://documenso.com/blog/splitting-our-email-sending-infrastructure\\\" style=\\\"font-weight:700; text-decoration: underline;\\\"\u003eRead more about why and what's changing.\u003c/a\u003e\",\"bgColor\",\"#7ed36b\",\"textColor\",\"#000000\",\"lang\",\"en\",\"theme\",\"disableAnimations\",\"nonce\",\"kqeKgKxhFC9aG70q4e4xkA==\",\"session\",{\"_48\":49,\"_29\":50,\"_51\":52},\"publicEnv\",{\"_33\":34,\"_35\":36,\"_37\":38,\"_39\":40,\"_41\":42,\"_43\":44,\"_45\":46,\"_47\":46},\"NEXT_PUBLIC_FEATURE_BILLING_ENABLED\",\"true\",\"NEXT_PUBLIC_TURNSTILE_SITE_KEY\",\"0x4AAAAAADAXsWCa6y7bEgIv\",\"NEXT_PUBLIC_WEBAPP_URL\",\"https://app.documenso.com\",\"NEXT_PUBLIC_DOCUMENT_SIZE_UPLOAD_LIMIT\",\"150\",\"NEXT_PUBLIC_UPLOAD_TRANSPORT\",\"s3\",\"NEXT_PUBLIC_POSTHOG_KEY\",\"phc_QfqRYkAjBcAv44LI0N2aR0ywUZ9OBXMsmmtAAfjAnUK\",\"NEXT_PUBLIC_DOCUMENT_CONVERSION_ENABLED\",\"false\",\"NEXT_PUBLIC_SIGNING_TRANSPORT_IS_CSC\",\"user\",{\"_11\":70,\"_61\":207,\"_208\":209,\"_210\":211,\"_64\":-5,\"_212\":14,\"_213\":214,\"_215\":-5,\"_216\":14},{\"_11\":196,\"_197\":196,\"_198\":70,\"_199\":200,\"_201\":202,\"_203\":204,\"_55\":205,\"_57\":206},\"organisations\",[53],{\"_11\":54,\"_55\":56,\"_57\":58,\"_59\":60,\"_61\":62,\"_63\":54,\"_64\":-5,\"_65\":66,\"_67\":68,\"_69\":70,\"_71\":72,\"_73\":74,\"_75\":76,\"_77\":78,\"_79\":-5,\"_80\":81,\"_82\":83,\"_84\":85},\"org_tlttbswmiltzcnbc\",\"createdAt\",[\"D\",1784781848620],\"updatedAt\",[\"D\",1784781848620],\"type\",\"PERSONAL\",\"name\",\"Personal Organisation\",\"url\",\"avatarImageId\",\"customerId\",\"cus_Uw6hx9HPVRuxZv\",\"organisationClaimId\",\"org_claim_uyivmztubflciebn\",\"ownerUserId\",193402,\"organisationGlobalSettingsId\",\"org_setting_cdoohdvukibhlmub\",\"organisationAuthenticationPortalId\",\"org_sso_voeywhwcckukfrya\",\"organisationClaim\",{\"_11\":68,\"_55\":164,\"_57\":165,\"_166\":167,\"_168\":169,\"_170\":169,\"_171\":152,\"_172\":173,\"_174\":175,\"_176\":177,\"_178\":152,\"_179\":180,\"_181\":182,\"_183\":184,\"_185\":-5,\"_186\":187},\"organisationGlobalSettings\",{\"_11\":72,\"_113\":137,\"_114\":24,\"_118\":138,\"_119\":138,\"_120\":14,\"_115\":-5,\"_116\":139,\"_117\":14,\"_121\":138,\"_122\":138,\"_123\":138,\"_124\":-5,\"_125\":-5,\"_126\":-5,\"_127\":140,\"_128\":14,\"_129\":141,\"_130\":141,\"_131\":141,\"_132\":-5,\"_133\":141,\"_134\":142,\"_135\":143,\"_102\":14},\"subscription\",\"groups\",[136],\"teams\",[86],\"currentOrganisationRole\",\"ADMIN\",{\"_11\":87,\"_61\":88,\"_63\":89,\"_55\":90,\"_64\":-5,\"_91\":54,\"_92\":93,\"_94\":95,\"_96\":-5,\"_97\":98,\"_99\":85,\"_100\":101},192325,\"Personal Team\",\"personal_wydsnsuiedivthmn\",[\"D\",1784781848719],\"organisationId\",\"teamGlobalSettingsId\",\"team_setting_kyrmdfdmmfyozyyl\",\"teamGlobalSettings\",{\"_11\":93,\"_113\":-5,\"_114\":-5,\"_115\":-5,\"_116\":-5,\"_117\":-5,\"_118\":-5,\"_119\":-5,\"_120\":-5,\"_121\":-5,\"_122\":-5,\"_123\":-5,\"_124\":-5,\"_125\":-5,\"_126\":-5,\"_127\":-5,\"_128\":-5,\"_129\":-5,\"_130\":-5,\"_131\":-5,\"_132\":-5,\"_133\":-5,\"_134\":-5,\"_135\":-5,\"_102\":-5},\"teamEmail\",\"teamGroups\",[103],\"currentTeamRole\",\"preferences\",{\"_102\":14},\"aiFeaturesEnabled\",{\"_11\":104,\"_105\":106,\"_107\":85,\"_108\":87,\"_109\":110},\"team_group_lxrftrelvxhhlxdm\",\"organisationGroupId\",\"org_group_eazbyksunnslrbrw\",\"teamRole\",\"teamId\",\"organisationGroup\",{\"_11\":106,\"_61\":-5,\"_59\":111,\"_112\":85,\"_91\":54},\"INTERNAL_ORGANISATION\",\"organisationRole\",\"documentVisibility\",\"documentLanguage\",\"documentTimezone\",\"documentDateFormat\",\"delegateDocumentOwnership\",\"includeSenderDetails\",\"includeSigningCertificate\",\"includeAuditLog\",\"typedSignatureEnabled\",\"uploadSignatureEnabled\",\"drawSignatureEnabled\",\"defaultRecipients\",\"emailId\",\"emailReplyTo\",\"emailDocumentSettings\",\"brandingEnabled\",\"brandingLogo\",\"brandingUrl\",\"brandingCompanyDetails\",\"brandingColors\",\"brandingCss\",\"envelopeExpirationPeriod\",\"reminderSettings\",{\"_11\":106,\"_61\":-5,\"_59\":111,\"_112\":85,\"_91\":54},\"EVERYONE\",true,\"yyyy-MM-dd hh:mm a\",{\"_155\":138,\"_156\":138,\"_157\":138,\"_158\":138,\"_159\":138,\"_160\":138,\"_161\":138,\"_162\":138,\"_163\":138},\"\",{\"_148\":153,\"_150\":154},{\"_144\":145,\"_146\":147},\"sendAfter\",{\"_148\":149,\"_150\":152},\"repeatEvery\",{\"_148\":149,\"_150\":151},\"unit\",\"day\",\"amount\",2,5,\"month\",3,\"documentDeleted\",\"documentPending\",\"recipientSigned\",\"recipientRemoved\",\"documentCompleted\",\"ownerDocumentCreated\",\"ownerRecipientExpired\",\"ownerDocumentCompleted\",\"recipientSigningRequest\",[\"D\",1784781848609],[\"D\",1784781848609],\"originalSubscriptionClaimId\",\"free\",\"teamCount\",1,\"memberCount\",\"envelopeItemCount\",\"recipientCount\",10,\"flags\",{},\"documentRateLimits\",[194],\"documentQuota\",\"emailRateLimits\",[192],\"emailQuota\",50,\"apiRateLimits\",[188],\"apiQuota\",\"emailTransportId\",\"email_transport_adlddetnnvnrohyx\",{\"_189\":182,\"_190\":191},\"max\",\"window\",\"1m\",{\"_189\":173,\"_190\":193},\"2m\",{\"_189\":151,\"_190\":195},\"5m\",\"d8f87b870ad10d7960e93b6d210fc5ed485413bfb557643961306e0fa1b766b5\",\"sessionToken\",\"userId\",\"ipAddress\",\"2409:40d4:3062:18b:9929:2c27:dbf4:2ff\",\"userAgent\",\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36\",\"expiresAt\",[\"D\",1787374596544],[\"D\",1784782596544],[\"D\",1784782596544],\"Harsh Vardhan\",\"email\",\"harshvardhanabr@gmail.com\",\"emailVerified\",[\"D\",1784781848221],\"twoFactorEnabled\",\"roles\",[217],\"signature\",\"disabled\",\"USER\"]\n");</script><!--$--><script nonce="kqeKgKxhFC9aG70q4e4xkA==">window.__reactRouterContext.streamController.close();</script><!--/$--><!--/$-->
