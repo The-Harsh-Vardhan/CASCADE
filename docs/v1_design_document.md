@@ -23,8 +23,10 @@ flowchart LR
     P6["Phase 6\nReport Render\n(LLM-driven)"]
 
     P1 -->|"page_snapshots.json"| P2
-    P2 -->|"requirements.json"| P4
+    P2 -->|"requirements.json"| P3
     P3 -->|"call_graph.json, pr_N.json"| P4
+    P1 -->|"page_snapshots.json"| P4
+    P2 -->|"requirements.json"| P4
     P4 -->|"entity_links.json, gap_nodes.json"| P5
     P5 -->|"blast_radius_report.json"| P6
 ```
@@ -54,7 +56,7 @@ A chain-of-prompts architecture would invoke the LLM at every phase boundary. Th
 
 ## Section 2: Graph Schema with Justification
 
-### Node and edge types, cross-layer structure, GapNode design, and a concrete Cypher query.
+### Node and edge types, cross-layer structure, GapNode design, and a concrete Cypher query
 
 The knowledge graph encodes three conceptually distinct layers — Product Requirements, UI Structure, and Code Implementation — and the relationships between them. The layered architecture is the mechanism by which a code-level change (a PR diff) is translated into a product-level impact (affected requirements visible to QA).
 
@@ -251,6 +253,7 @@ For PR #3046 specifically, a manually correct assessment would note that the att
 **Bugs fixed vs. deferred.** From the v4 audit:
 
 *Fixed (P0):*
+
 - **P0-21:** IMPLEMENTS edge direction was reversed (from_id/to_id swapped) — fixed in `resolve.py`
 - **P0-22:** `functions.index()` caused O(n²) lookups and incorrect index on duplicate function names — replaced with precomputed index
 - **P2-24:** Cosine threshold was 0.45 (too many false positives); recalibrated to 0.25 with LLM as quality gate
@@ -258,6 +261,7 @@ For PR #3046 specifically, a manually correct assessment would note that the att
 - **BUG-14:** Generic stopwords not filtered from keyword pre-filter — `_STOPWORDS` set added
 
 *Deferred (P1/P2):*
+
 - Docling OCR pipeline for `docs.documenso.com` — deferred due to CUDA requirement
 - CI integration for automated re-crawl on each PR — deferred, requires GitHub Actions setup
 - tRPC call graph bridging — deferred, requires TypeScript compiler API integration
@@ -269,13 +273,14 @@ The P0 bugs were correctness failures that produced wrong answers. The deferred 
 
 ## Section 6: What Would Be Built Next
 
-### The three highest-value next builds, in order.
+### The three highest-value next builds, in order
 
 **1. LLM Extraction Eval Harness (Phase 2 and Phase 4 quality gate)**
 
 The single highest-value next build is an evaluation harness for the LLM-driven phases. Currently, Phase 2's requirement extraction and Phase 4's entity resolution run without precision/recall measurement. A run that extracts 10 requirements where there are 30 in the PRD succeeds its smoke test identically to a run that extracts all 30 — both produce `entity_links.json` with at least one IMPLEMENTS edge.
 
 An evaluation harness would maintain:
+
 - `requirements_gt.json` — manually labeled requirements from the Documenso PRD, used as ground truth for Phase 2 precision/recall
 - `entity_links_gt.json` — 50 manually labeled (CodeFunction, Requirement, confirmed/rejected) pairs, used to measure Phase 4 IMPLEMENTS edge precision
 
@@ -288,6 +293,7 @@ This is listed first because it directly addresses the biggest quality gap: LLM 
 The most consequential scope limitation is the tRPC abstraction gap. React components call server procedures through tRPC hooks (`api.document.send.useMutation()`), but `ast-grep` treats these as ordinary function calls to an unresolved symbol. The server-side procedure handler (`sendDocument()`) has no incoming CALLS edge from any client component.
 
 Bridging this gap requires integrating the TypeScript compiler API (`ts-morph`) as a Phase 3 secondary analysis step. The approach:
+
 1. Parse all tRPC router definitions to build a `{procedure_name → handler_function_id}` map
 2. Scan all client components for `api.{router}.{procedure}` call patterns
 3. Synthesize CALLS edges from client call sites to server handler function IDs
