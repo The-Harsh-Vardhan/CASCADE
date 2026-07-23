@@ -67,22 +67,28 @@ class Requirement(BaseModel):
 class CodeFunction(BaseModel):
     function_id: str
     name: str
-    file: str  # normalized path relative to repo root
+    file: str  # normalized path relative to repo root (forward slashes)
     start_line: int
-    end_line: int
+    end_line: int = 0
     signature: str = ""
-    calls: list[str] = Field(default_factory=list)  # function_ids of functions called
+    calls: list[str] = Field(default_factory=list)   # function_ids this fn calls
+    called_by: list[str] = Field(default_factory=list)  # function_ids that call this fn
+    ast_node_type: str = "ts-function"  # "ts-function" | "trpc-procedure"
     is_trpc_procedure: bool = False
     trpc_procedure_name: Optional[str] = None
     trpc_procedure_type: Optional[str] = None  # "query" | "mutation" | "subscription"
 
 
 class PRFileDelta(BaseModel):
-    path: str  # normalized path relative to repo root
+    path: str  # normalized path relative to repo root (forward slashes)
     status: str  # "added" | "modified" | "removed" | "renamed"
     additions: int = 0
     deletions: int = 0
     patch: Optional[str] = None
+
+
+# Alias so Phase 3 code can use either name
+ChangedFile = PRFileDelta
 
 
 class PRDelta(BaseModel):
@@ -91,7 +97,9 @@ class PRDelta(BaseModel):
     body: str = ""
     author: str = ""
     merge_sha: str
+    parent_sha: str = ""
     html_url: str = ""
+    pr_url: str = ""
     changed_files: list[PRFileDelta] = Field(default_factory=list)
     changed_function_ids: list[str] = Field(default_factory=list)
 

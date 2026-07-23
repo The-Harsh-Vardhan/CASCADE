@@ -3,5 +3,5 @@ language: TypeScript
 rule:
   any:
     - kind: function_declaration
-    - kind: arrow_function
     - kind: method_definition
+    - kind: arrow_function

@@ -1,7 +1,18 @@
-id: trpc-procedures
+# Matches Documenso-style tRPC procedure exports.
+#
+# Pattern:
+#   export const createDocumentRoute = authenticatedProcedure
+#     .meta(...)
+#     .input(...)
+#     .mutation(...)
+#
+# Strategy: match variable_declarator nodes inside exported declarations
+# where the declarator name ends with "Route" (Documenso naming convention).
+# This is more reliable than trying to match the multi-line chain.
+id: trpc-procedure
 language: TypeScript
 rule:
-  any:
-    - pattern: $PROCEDURE.query($$$ARGS)
-    - pattern: $PROCEDURE.mutation($$$ARGS)
-    - pattern: $PROCEDURE.subscription($$$ARGS)
+  kind: variable_declarator
+  has:
+    field: name
+    regex: "Route$"

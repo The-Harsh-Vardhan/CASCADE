@@ -1,6 +1,14 @@
 """
-Phase entrypoint for blast_radius.code.
-This file will be implemented by the AI agent.
-Run via: python blast_radius/code/__main__.py
+Phase 3 entrypoint — run via: python -m blast_radius.code
 """
-raise NotImplementedError("Phase not yet implemented — run /scope-first in Antigravity to begin.")
+
+from blast_radius.code import run_code_analysis
+
+if __name__ == "__main__":
+    result = run_code_analysis()
+    fns = result["functions"]
+    delta = result["delta"]
+    trpc = [f for f in fns if f.ast_node_type == "trpc-procedure"]
+    print(f"\n✅ Phase 3 complete:")
+    print(f"   {len(fns)} functions  |  {len(trpc)} tRPC procedures")
+    print(f"   {len(delta.changed_files)} PR files  |  merge SHA: {delta.merge_sha[:12]}...")
