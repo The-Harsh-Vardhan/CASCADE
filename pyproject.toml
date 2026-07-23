@@ -8,18 +8,41 @@ version = "0.1.0"
 description = "AI-powered blast radius analyzer for Documenso PRs"
 requires-python = ">=3.11"
 dependencies = [
-    "anthropic>=0.25.0,<1.0",
+    # LLM — Gemini (replaces anthropic SDK)
+    "google-generativeai>=0.7.0,<1.0",
+
+    # Browser automation
     "playwright>=1.44.0,<2.0",
+
+    # Document parsing
     "docling>=2.0.0,<3.0",
+
+    # HTTP client (GitHub API + doc fetching)
     "httpx>=0.26.0,<1.0",
+
+    # Graph database
     "neo4j>=5.14.0,<6.0",
+
+    # Graph algorithms (PPR + DFS)
     "networkx>=3.2,<4.0",
+
+    # Semantic embeddings for entity resolution
     "sentence-transformers>=2.7.0,<4.0",
+
+    # Report rendering
     "jinja2>=3.1.0,<4.0",
+
+    # Data models + settings
     "pydantic>=2.5.0,<3.0",
     "pydantic-settings>=2.1.0,<3.0",
+
+    # HTML parsing (doc ingest fallback)
     "beautifulsoup4>=4.12.0,<5.0",
+
+    # Env loading
     "python-dotenv>=1.0.0,<2.0",
+
+    # CLI output
     "rich>=13.0.0,<14.0",
 ]
 
