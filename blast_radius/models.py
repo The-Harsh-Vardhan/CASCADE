@@ -113,6 +113,17 @@ class GapNode(BaseModel):
     reason: str = "No CodeFunction or UIElement linked to requirement"
 
 
+class EntityLink(BaseModel):
+    """Represents a resolved relationship edge before writing to Neo4j."""
+    from_id: str           # CodeFunction.function_id
+    to_id: str             # Requirement.requirement_id  or  Page node id
+    rel_type: str          # "IMPLEMENTS" | "RENDERS"
+    confidence: float = 1.0
+    evidence: str = ""
+    source: str = ""       # "cosine_sim+llm" | "url_pattern"
+    run_id: str = "v1"
+
+
 # ── Phase 5 & 6: Reasoning & Report ─────────────────────────────────────────
 
 class AffectedNode(BaseModel):

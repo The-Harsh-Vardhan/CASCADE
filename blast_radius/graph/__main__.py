@@ -1,6 +1,12 @@
 """
-Phase entrypoint for blast_radius.graph.
-This file will be implemented by the AI agent.
-Run via: python blast_radius/graph/__main__.py
+Phase 4 entrypoint — run via: python -m blast_radius.graph
 """
-raise NotImplementedError("Phase not yet implemented — run /scope-first in Antigravity to begin.")
+
+from blast_radius.graph import build_graph
+
+if __name__ == "__main__":
+    stats = build_graph()
+    print()
+    print("Phase 4 complete:")
+    for k, v in stats.items():
+        print(f"  {k:20s}: {v}")

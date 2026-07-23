@@ -1,0 +1,1532 @@
+[
+  {
+    "from_id": "packages/trpc/server/template-router/get-templates-by-ids.ts:74:templates",
+    "to_id": "REQ-B3A1DB10D3EC83F4",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.677,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.677",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/envelope-router/envelope-fields/get-envelope-field-signatures.ts:56:signatures",
+    "to_id": "REQ-D75BE25CB322293F",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.647,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.647",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/envelope-router/envelope-fields/get-envelope-field-signatures.ts:56:signatures",
+    "to_id": "REQ-1DADD5F11791A9DC",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.596,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.596",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/envelope-router/envelope-fields/get-envelope-field-signatures.ts:56:signatures",
+    "to_id": "REQ-842243203048E352",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.595,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.595",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/jobs/definitions/internal/seal-document.handler.ts:373:decorateAndSignPdf",
+    "to_id": "REQ-9106D7945B91B72A",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.57,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.570",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/envelope-router/envelope-fields/get-envelope-field-signatures.ts:56:signatures",
+    "to_id": "REQ-22F3D7F4C0678805",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.568,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.568",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:75:recipientExists",
+    "to_id": "REQ-4D20F6362D467B85",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.557,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.557",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:211:recipientExists",
+    "to_id": "REQ-4D20F6362D467B85",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.557,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.557",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:239:recipientExists",
+    "to_id": "REQ-4D20F6362D467B85",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.557,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.557",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:262:recipientExists",
+    "to_id": "REQ-4D20F6362D467B85",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.557,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.557",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:290:recipientExists",
+    "to_id": "REQ-4D20F6362D467B85",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.557,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.557",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/utils/i18n.ts:69:languages",
+    "to_id": "REQ-D9A78E1F093364D8",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.492,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.492",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/envelope-router/envelope-fields/get-envelope-field-signatures.ts:56:signatures",
+    "to_id": "REQ-D8940375FBCE77ED",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.492,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.492",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/auth/create-passkey-authentication-options.ts:21:createPasskeyAuthenticationOptions",
+    "to_id": "REQ-08FF5E4D359609DB",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.488,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.488",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/pdf/normalize-pdf.ts:7:pdfDoc",
+    "to_id": "REQ-9106D7945B91B72A",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.578,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.578",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/utils/teams.ts:56:canAccessTeamDocument",
+    "to_id": "REQ-9F6C25DC6FB7F95E",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.479,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.479",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/template/create-document-from-direct-template.ts:241:signedFieldValue",
+    "to_id": "REQ-22F3D7F4C0678805",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.479,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.479",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/template/create-document-from-direct-template.ts:255:signedFieldValue",
+    "to_id": "REQ-22F3D7F4C0678805",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.479,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.479",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/pdf/generate-certificate-pdf.ts:40:generateCertificatePdf",
+    "to_id": "REQ-9106D7945B91B72A",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.571,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.571",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/pdf/generate-partial-signed-pdf.ts:19:generatePartialSignedPdf",
+    "to_id": "REQ-9106D7945B91B72A",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.564,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.564",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/client-only/download-pdf.ts:34:downloadPDF",
+    "to_id": "REQ-9106D7945B91B72A",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.563,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.563",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/envelope-router/use-envelope.ts:93:documentDataId",
+    "to_id": "REQ-B3A1DB10D3EC83F4",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.467,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.467",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/envelope-router/create-envelope.ts:153:documentDataId",
+    "to_id": "REQ-B3A1DB10D3EC83F4",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.467,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.467",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/envelope-router/envelope-fields/get-envelope-field-signatures.ts:56:signatures",
+    "to_id": "REQ-2AB7886FCC79B8C2",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.466,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.466",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/pdf/normalize-pdf.ts:7:pdfDoc",
+    "to_id": "REQ-9F6C25DC6FB7F95E",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.559,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.559",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/search-documents-with-keyword.ts:135:signingToken",
+    "to_id": "REQ-48EAFF4BD035E9F9",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.462,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.462",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/team-router/create-team-members.ts:136:teamRoleGroupId",
+    "to_id": "REQ-5E5CACBB416130EF",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.461,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.461",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/search-documents-with-keyword.ts:135:signingToken",
+    "to_id": "REQ-2AB7886FCC79B8C2",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.46,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.460",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/template/create-document-from-direct-template.ts:84:createDocumentFromDirectTemplate",
+    "to_id": "REQ-B3A1DB10D3EC83F4",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.459,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.459",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/envelope-router/signing-status-envelope.ts:11:signingStatusEnvelopeRoute",
+    "to_id": "REQ-D8940375FBCE77ED",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.455,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.455",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/template/create-document-from-template.ts:292:createDocumentFromTemplate",
+    "to_id": "REQ-B3A1DB10D3EC83F4",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.453,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.453",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/envelope-router/signing-status-envelope.ts:11:signingStatusEnvelopeRoute",
+    "to_id": "REQ-2AB7886FCC79B8C2",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.446,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.446",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/trpc.ts:72:authenticatedMiddleware",
+    "to_id": "REQ-08FF5E4D359609DB",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.446,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.446",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/envelope-router/envelope-fields/get-envelope-field-signatures.ts:56:signatures",
+    "to_id": "REQ-48EAFF4BD035E9F9",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.445,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.445",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/search-documents-with-keyword.ts:135:signingToken",
+    "to_id": "REQ-D75BE25CB322293F",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.445,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.445",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/auth-router/create-passkey-authentication-options.ts:8:createPasskeyAuthenticationOptionsRoute",
+    "to_id": "REQ-08FF5E4D359609DB",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.442,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.442",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/auth/create-passkey.ts:18:createPasskey",
+    "to_id": "REQ-08FF5E4D359609DB",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.441,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.441",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/jobs/definitions/internal/seal-document.handler.ts:373:decorateAndSignPdf",
+    "to_id": "REQ-9F6C25DC6FB7F95E",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.44,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.440",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/envelope-router/use-envelope.ts:93:documentDataId",
+    "to_id": "REQ-B9C06609F45FD37C",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.439,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.439",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/envelope-router/create-envelope.ts:153:documentDataId",
+    "to_id": "REQ-B9C06609F45FD37C",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.439,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.439",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/auth/create-passkey-signin-options.ts:10:createPasskeySigninOptions",
+    "to_id": "REQ-08FF5E4D359609DB",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.436,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.436",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/universal/upload/put-file.server.ts:26:pdf",
+    "to_id": "REQ-9F6C25DC6FB7F95E",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.522,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.522",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/constants/app.ts:17:IS_BILLING_ENABLED",
+    "to_id": "REQ-B6E6A2AD2C64070A",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.435,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.435",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/envelope-router/signing-status-envelope.ts:11:signingStatusEnvelopeRoute",
+    "to_id": "REQ-842243203048E352",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.434,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.434",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/search-documents-with-keyword.ts:135:signingToken",
+    "to_id": "REQ-842243203048E352",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.431,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.431",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/utils/render-custom-email-template.ts:0:renderCustomEmailTemplate",
+    "to_id": "REQ-D7AAA5EA4B45B214",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.43,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.430",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/field/create-envelope-fields.ts:138:validatedFields",
+    "to_id": "REQ-22F3D7F4C0678805",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.425,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.425",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/envelope-router/signing-status-envelope.ts:11:signingStatusEnvelopeRoute",
+    "to_id": "REQ-48EAFF4BD035E9F9",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.423,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.423",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/search-documents-with-keyword.ts:135:signingToken",
+    "to_id": "REQ-D8940375FBCE77ED",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.417,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.417",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/utils/team-global-settings-to-branding.ts:6:teamGlobalSettingsToBranding",
+    "to_id": "REQ-5E5CACBB416130EF",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.412,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.412",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/search-documents-with-keyword.ts:135:signingToken",
+    "to_id": "REQ-1DADD5F11791A9DC",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.411,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.411",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/trpc.ts:187:maybeAuthenticatedMiddleware",
+    "to_id": "REQ-38C49380C3BC34E0",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.41,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.410",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/pdf/normalize-pdf.ts:7:pdfDoc",
+    "to_id": "REQ-898727E9AA664C3D",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.489,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.489",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/send-document.ts:54:sendDocument",
+    "to_id": "REQ-D75BE25CB322293F",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.403,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.403",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/ai/pdf-to-images.ts:46:pdfToImages",
+    "to_id": "REQ-9F6C25DC6FB7F95E",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.474,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.474",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/advanced-fields-validation/validate-fields.ts:7:validateFields",
+    "to_id": "REQ-22F3D7F4C0678805",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.393,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.393",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/constants/i18n.ts:71:isValidLanguageCode",
+    "to_id": "REQ-D9A78E1F093364D8",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.393,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.393",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/jobs/definitions/emails/send-document-completed-emails.handler.ts:177:recipientsToNotify",
+    "to_id": "REQ-D7AAA5EA4B45B214",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.39,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.390",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/trpc.ts:72:authenticatedMiddleware",
+    "to_id": "REQ-38C49380C3BC34E0",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.389,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.389",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/universal/upload/put-file.server.ts:26:pdf",
+    "to_id": "REQ-898727E9AA664C3D",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.461,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.461",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/envelope-router/signing-status-envelope.ts:11:signingStatusEnvelopeRoute",
+    "to_id": "REQ-D75BE25CB322293F",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.453,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.453",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/organisation/accept-organisation-invitation.ts:126:addUserToOrganisation",
+    "to_id": "REQ-5E5CACBB416130EF",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.441,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.441",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/user/create-user.ts:15:createUser",
+    "to_id": "REQ-38C49380C3BC34E0",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.435,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.435",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/trpc.ts:72:authenticatedMiddleware",
+    "to_id": "REQ-48EAFF4BD035E9F9",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.359,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.359",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/ai/pdf-to-images.ts:46:pdfToImages",
+    "to_id": "REQ-898727E9AA664C3D",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.429,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.429",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/webhooks/assert-webhook-url.ts:35:webhookSSRFBypassHosts",
+    "to_id": "REQ-CE59C6B66F8ACA67",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.357,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.357",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/envelope-router/use-envelope.ts:93:documentDataId",
+    "to_id": "REQ-898727E9AA664C3D",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.355,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.355",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/api-token-router/create-api-token.ts:5:createApiTokenRoute",
+    "to_id": "REQ-072355DC6182B07C",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.354,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.354",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/enterprise-router/manage-subscription.ts:11:manageSubscriptionRoute",
+    "to_id": "REQ-072355DC6182B07C",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.353,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.353",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/jobs/definitions/internal/admin-delete-organisation.handler.ts:51:emailContext",
+    "to_id": "REQ-D7AAA5EA4B45B214",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.353,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.353",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/constants/template.ts:5:isTemplateRecipientEmailPlaceholder",
+    "to_id": "REQ-D7AAA5EA4B45B214",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.352,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.352",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/admin/admin-find-documents.ts:22:adminFindDocuments",
+    "to_id": "REQ-5E5CACBB416130EF",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.419,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.419",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/trpc.ts:72:authenticatedMiddleware",
+    "to_id": "REQ-1DADD5F11791A9DC",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.415,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.415",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/trpc.ts:303:adminMiddleware",
+    "to_id": "REQ-5E5CACBB416130EF",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.414,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.414",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/constants/app.ts:8:NEXT_PUBLIC_SIGNING_CONTACT_INFO",
+    "to_id": "REQ-D75BE25CB322293F",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.412,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.412",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/constants/app.ts:8:NEXT_PUBLIC_SIGNING_CONTACT_INFO",
+    "to_id": "REQ-1DADD5F11791A9DC",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.407,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.407",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/envelope-router/signing-status-envelope.ts:11:signingStatusEnvelopeRoute",
+    "to_id": "REQ-1DADD5F11791A9DC",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.405,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.405",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/trpc.ts:72:authenticatedMiddleware",
+    "to_id": "REQ-842243203048E352",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.4,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.400",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/admin-router/create-user.ts:6:createUserRoute",
+    "to_id": "REQ-38C49380C3BC34E0",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.4,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.400",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/organisation/create-organisation-member-invites.ts:77:usersToInvite",
+    "to_id": "REQ-38C49380C3BC34E0",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.392,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.392",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/constants/app.ts:8:NEXT_PUBLIC_SIGNING_CONTACT_INFO",
+    "to_id": "REQ-D8940375FBCE77ED",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.392,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.392",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/admin/admin-super-delete-document.ts:59:recipientsToNotify",
+    "to_id": "REQ-D7AAA5EA4B45B214",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.39,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.390",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/constants/app.ts:8:NEXT_PUBLIC_SIGNING_CONTACT_INFO",
+    "to_id": "REQ-842243203048E352",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.38,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.380",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/trpc.ts:72:authenticatedMiddleware",
+    "to_id": "REQ-2AB7886FCC79B8C2",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.377,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.377",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/jobs/definitions/internal/admin-delete-organisation.handler.ts:12:organisation",
+    "to_id": "REQ-19F24CC173B80DF4",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.371,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.371",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/trpc.ts:72:authenticatedMiddleware",
+    "to_id": "REQ-D8940375FBCE77ED",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.365,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.365",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/team-router/create-team-groups.ts:60:organisationGroup",
+    "to_id": "REQ-19F24CC173B80DF4",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.364,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.364",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/team-router/create-team-groups.ts:94:organisationGroup",
+    "to_id": "REQ-19F24CC173B80DF4",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.364,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.364",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/client-only/download-pdf.ts:34:downloadPDF",
+    "to_id": "REQ-898727E9AA664C3D",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.36,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.360",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/constants/app.ts:8:NEXT_PUBLIC_SIGNING_CONTACT_INFO",
+    "to_id": "REQ-48EAFF4BD035E9F9",
+    "rel_type": "IMPLEMENTS",
+    "confidence": 0.354,
+    "evidence": "cosine-only fallback (LLM quota exhausted); score=0.354",
+    "source": "cosine_only",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/utils/team-global-settings-to-branding.ts:6:teamGlobalSettingsToBranding",
+    "to_id": "page:7ee0b635abcd0691",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'settings' in file path 'packages/lib/utils/team-global-settings-to-branding.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/utils/team-global-settings-to-branding.ts:25:organisationGlobalSettingsToBranding",
+    "to_id": "page:7ee0b635abcd0691",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'settings' in file path 'packages/lib/utils/team-global-settings-to-branding.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/utils/public-profiles.ts:2:formatUserProfilePath",
+    "to_id": "page:7ee0b635abcd0691",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'profile' in file path 'packages/lib/utils/public-profiles.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/utils/public-profiles.ts:6:formatTeamProfilePath",
+    "to_id": "page:7ee0b635abcd0691",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'profile' in file path 'packages/lib/utils/public-profiles.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/profile/set-avatar-image.ts:31:setAvatarImage",
+    "to_id": "page:7ee0b635abcd0691",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'profile' in file path 'packages/lib/server-only/profile/set-avatar-image.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/profile/get-public-profile-by-url.ts:29:getPublicProfileByUrl",
+    "to_id": "page:7ee0b635abcd0691",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'profile' in file path 'packages/lib/server-only/profile/get-public-profile-by-url.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/profile/get-avatar-image.ts:8:getAvatarImage",
+    "to_id": "page:7ee0b635abcd0691",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'profile' in file path 'packages/lib/server-only/profile/get-avatar-image.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/user/update-profile.ts:12:updateProfile",
+    "to_id": "page:7ee0b635abcd0691",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'profile' in file path 'packages/lib/server-only/user/update-profile.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/site-settings/upsert-site-setting.ts:8:upsertSiteSetting",
+    "to_id": "page:7ee0b635abcd0691",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'settings' in file path 'packages/lib/server-only/site-settings/upsert-site-setting.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/site-settings/schemas/email-blocklist.ts:10:normaliseDomain",
+    "to_id": "page:7ee0b635abcd0691",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'settings' in file path 'packages/lib/server-only/site-settings/schemas/email-blocklist.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/team/update-team-public-profile.ts:14:updateTeamPublicProfile",
+    "to_id": "page:7ee0b635abcd0691",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'profile' in file path 'packages/lib/server-only/team/update-team-public-profile.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/site-settings/get-site-settings.ts:4:getSiteSettings",
+    "to_id": "page:7ee0b635abcd0691",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'settings' in file path 'packages/lib/server-only/site-settings/get-site-settings.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/site-settings/get-email-blocklist-domains.ts:12:getEmailBlocklistDomains",
+    "to_id": "page:7ee0b635abcd0691",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'settings' in file path 'packages/lib/server-only/site-settings/get-email-blocklist-domains.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/site-settings/get-site-setting.ts:5:getSiteSetting",
+    "to_id": "page:7ee0b635abcd0691",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'settings' in file path 'packages/lib/server-only/site-settings/get-site-setting.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/team/get-team-public-profile.ts:16:getTeamPublicProfile",
+    "to_id": "page:7ee0b635abcd0691",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'profile' in file path 'packages/lib/server-only/team/get-team-public-profile.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/team/get-team-settings.ts:13:getTeamSettings",
+    "to_id": "page:7ee0b635abcd0691",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'settings' in file path 'packages/lib/server-only/team/get-team-settings.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/team-router/update-team-settings.ts:13:updateTeamSettingsRoute",
+    "to_id": "page:7ee0b635abcd0691",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'settings' in file path 'packages/trpc/server/team-router/update-team-settings.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/organisation-router/update-organisation-settings.ts:14:updateOrganisationSettingsRoute",
+    "to_id": "page:7ee0b635abcd0691",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'settings' in file path 'packages/trpc/server/organisation-router/update-organisation-settings.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/webhooks/zapier/list-documents.ts:7:listDocumentsHandler",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/webhooks/zapier/list-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/admin/get-documents-stats.ts:4:getDocumentStats",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/admin/get-documents-stats.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/admin/admin-find-unsealed-documents.ts:24:adminFindUnsealedDocuments",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/admin/admin-find-unsealed-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/admin/admin-find-documents.ts:22:adminFindDocuments",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/admin/admin-find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:75:recipientExists",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:95:senderEmailIs",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:104:findDocuments",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:142:buildBaseQuery",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:177:qb",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:206:applyPersonalFilters",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:208:personalDeletedFilter",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:211:recipientExists",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:239:recipientExists",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:262:recipientExists",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:290:recipientExists",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:312:applyTeamFilters",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:328:visibilityFilter",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:340:teamDeletedFilter",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:377:recipientExists",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:405:recipientExists",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:436:recipientExists",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:494:ids",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:526:idOrder",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:529:maskedData",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/search-documents-with-keyword.ts:15:searchDocumentsWithKeyword",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/search-documents-with-keyword.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/search-documents-with-keyword.ts:135:signingToken",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/search-documents-with-keyword.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/document-router/find-documents-internal.ts:10:findDocumentsInternalRoute",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/trpc/server/document-router/find-documents-internal.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/document-router/find-documents.ts:6:findDocumentsRoute",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/trpc/server/document-router/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/document-router/get-documents-by-ids.ts:12:getDocumentsByIdsRoute",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/trpc/server/document-router/get-documents-by-ids.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/admin-router/find-unsealed-documents.ts:8:findUnsealedDocumentsRoute",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/trpc/server/admin-router/find-unsealed-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/admin-router/find-documents.ts:6:findDocumentsRoute",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/trpc/server/admin-router/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/webhooks/zapier/list-documents.ts:7:listDocumentsHandler",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/webhooks/zapier/list-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/admin/get-documents-stats.ts:4:getDocumentStats",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/admin/get-documents-stats.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/admin/admin-find-unsealed-documents.ts:24:adminFindUnsealedDocuments",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/admin/admin-find-unsealed-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/admin/admin-find-documents.ts:22:adminFindDocuments",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/admin/admin-find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:75:recipientExists",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:95:senderEmailIs",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:104:findDocuments",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:142:buildBaseQuery",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:177:qb",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:206:applyPersonalFilters",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:208:personalDeletedFilter",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:211:recipientExists",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:239:recipientExists",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:262:recipientExists",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:290:recipientExists",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:312:applyTeamFilters",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:328:visibilityFilter",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:340:teamDeletedFilter",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:377:recipientExists",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:405:recipientExists",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:436:recipientExists",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:494:ids",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:526:idOrder",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/find-documents.ts:529:maskedData",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/search-documents-with-keyword.ts:15:searchDocumentsWithKeyword",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/search-documents-with-keyword.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/lib/server-only/document/search-documents-with-keyword.ts:135:signingToken",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/lib/server-only/document/search-documents-with-keyword.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/document-router/find-documents-internal.ts:10:findDocumentsInternalRoute",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/trpc/server/document-router/find-documents-internal.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/document-router/find-documents.ts:6:findDocumentsRoute",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/trpc/server/document-router/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/document-router/get-documents-by-ids.ts:12:getDocumentsByIdsRoute",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/trpc/server/document-router/get-documents-by-ids.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/admin-router/find-unsealed-documents.ts:8:findUnsealedDocumentsRoute",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/trpc/server/admin-router/find-unsealed-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  },
+  {
+    "from_id": "packages/trpc/server/admin-router/find-documents.ts:6:findDocumentsRoute",
+    "to_id": "page:b5e406df82b4d3fa",
+    "rel_type": "RENDERS",
+    "confidence": 0.7,
+    "evidence": "URL segment 'documents' in file path 'packages/trpc/server/admin-router/find-documents.ts'",
+    "source": "url_pattern",
+    "run_id": "04cd1c4b"
+  }
+]

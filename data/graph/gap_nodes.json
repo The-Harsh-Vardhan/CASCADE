@@ -1,0 +1,17 @@
+[
+  {
+    "requirement_id": "REQ-A1256723E6E4F4DD",
+    "text": "Support for Docker and Docker Compose containerized deployments.",
+    "reason": "No IMPLEMENTS link above confidence threshold"
+  },
+  {
+    "requirement_id": "REQ-40844F6210671440",
+    "text": "PostgreSQL database storage with Prisma ORM data modeling and migrations.",
+    "reason": "No IMPLEMENTS link above confidence threshold"
+  },
+  {
+    "requirement_id": "REQ-0609D7DA44531267",
+    "text": "The software can be self-hosted and deployed using Docker, Kubernetes, or Railway.",
+    "reason": "No IMPLEMENTS link above confidence threshold"
+  }
+]
