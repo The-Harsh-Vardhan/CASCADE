@@ -41,7 +41,7 @@ A phase failing its smoke test stops the pipeline — no silent corruption.
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/blast-radius-analyzer
+git clone https://github.com/The-Harsh-Vardhan/blast-radius-analyzer
 cd blast-radius-analyzer
 uv pip install -e ".[dev]"
 playwright install chromium
@@ -55,6 +55,7 @@ cp .env.example .env
 ```
 
 Required values in `.env`:
+
 - `ANTHROPIC_API_KEY` — get from [console.anthropic.com](https://console.anthropic.com)
 - `GITHUB_TOKEN` — needs `repo` scope, get from GitHub → Settings → Developer settings
 - `DOCUMENSO_EMAIL` + `DOCUMENSO_PASSWORD` — create free account at [app.documenso.com/signup](https://app.documenso.com/signup)
@@ -169,6 +170,7 @@ See the design document for full scope justification.
 ## Design Document
 
 `docs/design_document.md` — 8–12 pages covering:
+
 - Agent decomposition (deterministic vs. LLM-driven boundaries)
 - Graph schema with Cypher query justification
 - Confidence handling and GapNode modeling
