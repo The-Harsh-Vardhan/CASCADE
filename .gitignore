@@ -1,0 +1,74 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.venv/
+venv/
+env/
+
+# uv
+.uv/
+uv.lock
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Neo4j
+neo4j/data/
+neo4j/logs/
+neo4j/import/
+neo4j/plugins/
+
+# Crawl / pipeline data (large, generated)
+data/crawl/
+data/code/
+data/requirements/
+data/reports/
+data/repos/
+
+# Keep data directory structure but not contents
+!data/.gitkeep
+!data/crawl/.gitkeep
+!data/code/.gitkeep
+!data/requirements/.gitkeep
+!data/reports/.gitkeep
+
+# Playwright
+playwright/.auth/
+playwright-report/
+test-results/
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Secrets / credentials
+*.pem
+*.key
+credentials.json
+token.json
+
+# Archive docs (too large for git, keep locally)
+docs/archives/
+docs/deep research/
+
+# Compiled assets
+*.pyc
+*.pyo

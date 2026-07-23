@@ -1,18 +1,65 @@
-# AGENTS.md
+# AGENTS.md — Blast Radius Analyzer
 
 ## Project
 
-Testsigma AI Engineer Assignment — Blast Radius Analyzer
+Testsigma AI Engineer assignment. Build a 6-phase pipeline that crawls
+Documenso, ingests its PRD, builds a Neo4j knowledge graph (Requirements /
+UI / Code), and produces a blast radius report for a real PR.
 
-## Constraints
+Target app:  <https://app.documenso.com>
+Target repo: <https://github.com/documenso/documenso>
+Pipeline:    Python 3.11+ | TypeScript target app
 
-- Quality over coverage: go deep on 2 layers, not shallow on 4
-- Every scope cut must be named and defended
-- System must be runnable end-to-end on chosen layers
-- Blast radius report must be readable by a non-engineer QA lead
+## Four Deliverables (all required, equal weight)
 
-## Docs to always keep in context
+1. GitHub repo with runnable README end-to-end
+2. Design document — 8–12 pages (see design-doc skill)
+3. Blast radius report for a real PR — readable by a non-engineer QA lead
+4. 5–10 min Loom walkthrough
 
-- docs/assignment/d0_AI Engineer Updated - Assignment.md
-- docs/implementation_plans/v4_implementation_guide_unified.md
-- docs/audits/v4_audit_report_implementation_plan.md
+## Tech Stack
+
+| Component       | Tool                                        |
+|-----------------|---------------------------------------------|
+| Crawler         | Playwright direct (NOT crawl4ai — yanked)   |
+| Doc parsing     | Docling >=2.0.0,<3.0                        |
+| Static analysis | ast-grep (system binary: brew install ast-grep) |
+| PR ingestion    | GitHub API via httpx (NOT PyDriller)        |
+| Graph DB        | Neo4j 5.14-community via Docker             |
+| Graph traversal | networkx >=3.2,<4.0                         |
+| LLM             | anthropic >=0.25.0 / claude-sonnet-4-6      |
+| Embeddings      | sentence-transformers >=2.7.0,<4.0          |
+| Reports         | Jinja2 >=3.1.0,<4.0                         |
+| Settings        | pydantic-settings >=2.1.0,<3.0              |
+
+Package layout: FLAT — blast_radius/ at repo root, no src/ wrapper.
+
+## Non-Negotiables
+
+- Quality over coverage: 2 phases deep beats 6 phases shallow
+- Name and defend every scope cut — don't hide them
+- No half-built pipelines — working narrow slice only
+- Auth credentials are mandatory — unauthenticated crawl breaks Phase 4
+- Fix all P0 bugs from the audit before shipping (see audit-guard skill)
+
+## Checkpointing
+
+- Run /scope-first at the start of every session — no code before approval
+- Run /phase-checkpoint after each phase passes its smoke test
+- Commit to git after each passing phase
+- Flag ambiguities explicitly before acting on them — don't silently assume
+
+## Reference Docs (read in this order)
+
+1. docs/assignment/d0_AI Engineer Updated - Assignment.md
+2. docs/implementation_plans/v4_implementation_guide_unified.md
+3. docs/audits/v4_audit_report_implementation_plan.md
+4. docs/distilled research/d1_documentation.md
+5. docs/distilled research/d2_CODING_CONTEXT_v1.md
+6. docs/distilled research/d4_blast_radius_analyzer_reference.md
+
+## Skills to Load
+
+- blast-radius-domain  — domain concepts, graph schema, PPR logic, report format
+- audit-guard          — all P0/P1 bugs with exact fixes (load before any coding)
+- design-doc           — section scaffolding for the 8–12 page design document
