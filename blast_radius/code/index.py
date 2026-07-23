@@ -226,10 +226,15 @@ def build_call_graph(repo: Path) -> list[CodeFunction]:
             # ast-grep uses 0-indexed lines; store as-is and document it
             start_line = match.get("range", {}).get("start", {}).get("line", 0)
             end_line = match.get("range", {}).get("end", {}).get("line", 0)
-            # "text" is the matched node text; "lines" is the full line for display
-            text = match.get("text", "") or match.get("lines", "")
+            # "text" is the matched AST node body (arrow functions start with 'async (').
+            # "lines" is the full source line including 'export const cancelDocument = ...'.
+            # Strategy: try text first; if anonymous, retry with lines (catches arrow functions).
+            text = match.get("text", "")
+            lines_field = match.get("lines", "")
 
             name = _extract_name_from_text(text, rule_id)
+            if name in ("anonymous", "") and lines_field:
+                name = _extract_name_from_text(lines_field, rule_id)
             if name in ("anonymous", ""):
                 continue
 
