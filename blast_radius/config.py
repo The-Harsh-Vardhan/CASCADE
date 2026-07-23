@@ -14,9 +14,31 @@ class Settings(BaseSettings):
         extra="ignore"
     )
 
-    # LLM — Google Gemini
-    gemini_api_key: str = Field(..., description="Google Gemini API key — required")
+    # LLM — Google Gemini (supports up to 5 keys in rotation via GEMINI_API_KEY_1..5)
+    # Falls back to GEMINI_API_KEY for single-key backward compatibility.
+    gemini_api_key:   str = Field("", description="Fallback single Gemini API key")
+    gemini_api_key_1: str = Field("", alias="GEMINI_API_KEY_1")
+    gemini_api_key_2: str = Field("", alias="GEMINI_API_KEY_2")
+    gemini_api_key_3: str = Field("", alias="GEMINI_API_KEY_3")
+    gemini_api_key_4: str = Field("", alias="GEMINI_API_KEY_4")
+    gemini_api_key_5: str = Field("", alias="GEMINI_API_KEY_5")
     gemini_model: str = Field("gemini-flash-latest", description="Gemini model name")
+
+    @property
+    def gemini_api_keys(self) -> list[str]:
+        """Return all configured Gemini API keys in order (non-empty only)."""
+        numbered = [
+            self.gemini_api_key_1, self.gemini_api_key_2, self.gemini_api_key_3,
+            self.gemini_api_key_4, self.gemini_api_key_5,
+        ]
+        keys = [k for k in numbered if k]
+        if not keys and self.gemini_api_key:
+            keys = [self.gemini_api_key]  # backward compat
+        if not keys:
+            raise EnvironmentError(
+                "No Gemini API key configured. Set GEMINI_API_KEY_1 (through _5) or GEMINI_API_KEY in .env"
+            )
+        return keys
 
     # Neo4j
     neo4j_uri: str = Field("bolt://localhost:7687")
@@ -57,7 +79,7 @@ class Settings(BaseSettings):
         table.add_column("Status", style="yellow")
 
         display = [
-            ("gemini_api_key", (self.gemini_api_key[:8] + "...") if self.gemini_api_key else "NOT SET", "✓" if self.gemini_api_key else "✗"),
+            ("gemini_api_keys", f"{len(self.gemini_api_keys)} key(s) configured", "✓"),
             ("gemini_model", self.gemini_model, "✓"),
             ("neo4j_uri", self.neo4j_uri, "✓"),
             ("neo4j_user", self.neo4j_user, "✓"),
