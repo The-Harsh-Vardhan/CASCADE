@@ -1,5 +1,20 @@
 [
   {
+    "requirement_id": "REQ-48EAFF4BD035E9F9",
+    "text": "The platform provides self-hosting capabilities for users to host and manage document signing infrastructure independent",
+    "reason": "No IMPLEMENTS link above confidence threshold"
+  },
+  {
+    "requirement_id": "REQ-19F24CC173B80DF4",
+    "text": "Enterprise plan offering tailored for large organizations requiring enhanced administrative control and flexibility.",
+    "reason": "No IMPLEMENTS link above confidence threshold"
+  },
+  {
+    "requirement_id": "REQ-898727E9AA664C3D",
+    "text": "Embedded PDF document viewer functionality utilizing pdf.js.",
+    "reason": "No IMPLEMENTS link above confidence threshold"
+  },
+  {
     "requirement_id": "REQ-A1256723E6E4F4DD",
     "text": "Support for Docker and Docker Compose containerized deployments.",
     "reason": "No IMPLEMENTS link above confidence threshold"
@@ -7,6 +22,41 @@
   {
     "requirement_id": "REQ-40844F6210671440",
     "text": "PostgreSQL database storage with Prisma ORM data modeling and migrations.",
+    "reason": "No IMPLEMENTS link above confidence threshold"
+  },
+  {
+    "requirement_id": "REQ-08FF5E4D359609DB",
+    "text": "Developers can generate and manage API keys for authentication.",
+    "reason": "No IMPLEMENTS link above confidence threshold"
+  },
+  {
+    "requirement_id": "REQ-CE59C6B66F8ACA67",
+    "text": "The platform provides REST API endpoints and webhooks for integration with third-party applications.",
+    "reason": "No IMPLEMENTS link above confidence threshold"
+  },
+  {
+    "requirement_id": "REQ-2AB7886FCC79B8C2",
+    "text": "The platform supports embedding document signing workflows directly inside external applications.",
+    "reason": "No IMPLEMENTS link above confidence threshold"
+  },
+  {
+    "requirement_id": "REQ-B9C06609F45FD37C",
+    "text": "The platform tracks document status transitions across a predefined lifecycle from draft to completed.",
+    "reason": "No IMPLEMENTS link above confidence threshold"
+  },
+  {
+    "requirement_id": "REQ-4D20F6362D467B85",
+    "text": "The platform supports distinct recipient roles including signers and approvers.",
+    "reason": "No IMPLEMENTS link above confidence threshold"
+  },
+  {
+    "requirement_id": "REQ-D8940375FBCE77ED",
+    "text": "The platform applies digital signing certificates to enable digital verification of signed documents.",
+    "reason": "No IMPLEMENTS link above confidence threshold"
+  },
+  {
+    "requirement_id": "REQ-1DADD5F11791A9DC",
+    "text": "The platform complies with electronic signature standards (ESIGN, UETA, eIDAS signature levels) and privacy laws (GDPR).",
     "reason": "No IMPLEMENTS link above confidence threshold"
   },
   {
