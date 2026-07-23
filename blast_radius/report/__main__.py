@@ -1,6 +1,10 @@
 """
-Phase entrypoint for blast_radius.report.
-This file will be implemented by the AI agent.
-Run via: python blast_radius/report/__main__.py
+Phase 6 entrypoint — run via: python -m blast_radius.report
 """
-raise NotImplementedError("Phase not yet implemented — run /scope-first in Antigravity to begin.")
+from blast_radius.report import render_report
+
+if __name__ == "__main__":
+    html_path, md_path = render_report()
+    print(f"\nPhase 6 complete:")
+    print(f"  HTML:     {html_path}")
+    print(f"  Markdown: {md_path}")
