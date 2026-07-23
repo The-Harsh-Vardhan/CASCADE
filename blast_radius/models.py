@@ -136,6 +136,7 @@ class AffectedNode(BaseModel):
     evidence_path: list[str] = Field(default_factory=list)  # Human-readable labels path
 
 
+
 class BlastRadiusReport(BaseModel):
     run_id: str
     pr_number: int
@@ -144,9 +145,12 @@ class BlastRadiusReport(BaseModel):
     mode: str = "PR_ANALYSIS"
     summary: str = ""
     changed_files: list[PRFileDelta] = Field(default_factory=list)
+    seed_function_ids: list[str] = Field(default_factory=list)
     affected_ui_elements: list[AffectedNode] = Field(default_factory=list)
     affected_requirements: list[AffectedNode] = Field(default_factory=list)
-    absent_requirements: list[Requirement] = Field(default_factory=list)
-    dark_changes: list[str] = Field(default_factory=list)  # Function names/labels with no UI/req trace
+    absent_requirements: list[AffectedNode] = Field(default_factory=list)
+    dark_changes: list[str] = Field(default_factory=list)
     manual_review_items: list[str] = Field(default_factory=list)
     evidence_subgraph: list[dict[str, Any]] = Field(default_factory=list)
+    confidence_scores: dict[str, float] = Field(default_factory=dict)
+
