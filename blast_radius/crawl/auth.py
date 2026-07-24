@@ -138,62 +138,71 @@ async def login(page: Page) -> bool:
         return False
 
 
-async def find_document_id(page: Page) -> tuple[str, str] | None:
-    """
-    Navigate to /documents and extract a real document ID from href links.
-
-    Documenso v2 redirects /documents to /t/{team_slug}/documents.
-    Returns (url_base_prefix, doc_id) so the caller can build correct sub-page
-    URLs like {url_base_prefix}/documents/{doc_id}/recipients.
-    Returns None if no document IDs are found.
-    """
+async def find_document_id(page: Page) -> str | None:
+    """Navigate to /documents and extract a real document ID from the page."""
     base = settings.documenso_base_url.rstrip("/")
     docs_url = f"{base}/documents"
 
     try:
-        await page.goto(docs_url, wait_until="domcontentloaded", timeout=20_000)
+        await page.goto(docs_url, wait_until="networkidle", timeout=15_000)
+    except Exception:
         try:
-            await page.wait_for_load_state("networkidle", timeout=8_000)
+            await page.goto(docs_url, wait_until="domcontentloaded", timeout=15_000)
         except Exception:
             pass
-        await page.wait_for_timeout(2_000)
+    await page.wait_for_timeout(2_000)
 
-        # Record the actual URL after redirect (may be /t/{slug}/documents)
-        actual_url = page.url
-        # Derive team prefix: everything up to /documents
-        if "/documents" in actual_url:
-            team_prefix = actual_url.split("/documents")[0]
-        else:
-            team_prefix = base
+    _skip = {"new", "inbox", "", "pending", "completed", "draft", "all", "move", "settings", "templates", "edit"}
 
-        # Collect all hrefs containing /documents/<id>
-        hrefs: list[str] = await page.evaluate(
-            """
-            () => Array.from(document.querySelectorAll('a[href]'))
-                  .map(a => a.getAttribute('href'))
-                  .filter(h => h && /\\/documents\\/[^/?#]+/.test(h))
-            """
+    try:
+        # Strategy 1: Look for links matching /documents/{id}
+        links: list[str] = await page.eval_on_selector_all(
+            "a[href*='/documents/']",
+            "els => els.map(e => e.getAttribute('href'))",
         )
-
-        _skip = {"new", "inbox", "", "pending", "completed", "draft", "all", "move"}
-
-        for href in hrefs:
-            m = re.search(r"/documents/([^/?#]+)", href)
-            if not m:
+        for link in links:
+            if not link:
                 continue
-            doc_id = m.group(1)
-            if doc_id.lower() in _skip:
-                continue
-            logger.info("Found document ID: %s (team prefix: %s)", doc_id, team_prefix)
-            return (team_prefix, doc_id)
+            match = re.search(r"/documents/([a-zA-Z0-9_-]+)", link)
+            if match:
+                doc_id = match.group(1)
+                if doc_id.lower() not in _skip:
+                    logger.info("find_document_id Strategy 1 found ID: %s", doc_id)
+                    return doc_id
 
-        logger.warning(
-            "No usable document IDs found on %s "
-            "(account may have no documents).",
-            actual_url,
-        )
-        return None
+        # Strategy 2: Look in the page URL after clicking first document row
+        rows = await page.query_selector_all("tr[data-document-id], [data-id], tbody tr")
+        if rows:
+            try:
+                await rows[0].click()
+                await page.wait_for_timeout(1_500)
+                url = page.url
+                match = re.search(r"/documents/([a-zA-Z0-9_-]+)", url)
+                if match:
+                    doc_id = match.group(1)
+                    if doc_id.lower() not in _skip:
+                        logger.info("find_document_id Strategy 2 found ID: %s", doc_id)
+                        return doc_id
+            except Exception as exc:
+                logger.debug("Strategy 2 click failed: %s", exc)
+
+        # Strategy 3: Check Next.js data for document IDs
+        try:
+            next_data = await page.eval_on_selector(
+                "#__NEXT_DATA__",
+                "el => el.textContent",
+            )
+            if next_data:
+                matches = re.findall(r'"id":\s*"?([a-zA-Z0-9_-]+)"?', next_data)
+                for doc_id in matches:
+                    if doc_id.lower() not in _skip and doc_id.lower() not in {"true", "false", "null"}:
+                        logger.info("find_document_id Strategy 3 found ID: %s", doc_id)
+                        return doc_id
+        except Exception as exc:
+            logger.debug("Strategy 3 failed: %s", exc)
 
     except Exception as exc:
         logger.warning("find_document_id raised exception: %s", exc)
-        return None
+
+    logger.warning("find_document_id: No document ID found on page.")
+    return None
