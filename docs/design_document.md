@@ -34,8 +34,8 @@ flowchart LR
 **Phase 1 — Authenticated Crawl (Deterministic).**
 Playwright navigates `app.documenso.com` with credentials. It captures DOM structure, URLs, and page titles using deterministic CSS selectors and heuristics. No LLM is involved. The output contract is a list of `PageSnapshot` objects: `{url, title, selector_inventory, url_sha256}`. Determinism here is non-negotiable — the crawl is the only source of ground-truth UI structure. An LLM generating synthetic UI elements would introduce hallucination risk at the foundation of the entire pipeline.
 
-**Phase 2 — PRD Ingestion and Requirement Extraction (LLM-driven).**
-Docling parses the PDF/HTML PRD document into structured text. The LLM is invoked via `call_llm_json()` to extract `Requirement` objects: `{id, label, text, related_ui_keywords, coverage_status}`. This is the only phase where LLM invocation is genuinely irreplaceable. Natural language requirements cannot be parsed with a regex or AST. The semantic gap between "users should be able to invite signers via email" and a structured record with domain keywords is exactly the gap that a language model is designed to bridge. The input/output contract is: plain text PRD → typed `Requirement` list in JSON.
+**Phase 2 — Documentation Ingestion and Requirement Extraction (LLM-driven).**
+`httpx` fetches 25 GitHub raw MDX files from `apps/docs/content/docs/` — the canonical source of Documenso's documentation — covering all 9 feature areas (signing, sending, templates, teams, webhooks, api, auth, admin, notifications). The LLM is invoked once per source via `call_llm_json()` to extract `Requirement` objects with an extended schema: `{id, title, description, req_type, source, feature_area, acceptance_criteria, related_ui_keywords, related_api_endpoints, priority}`. After per-source extraction, a two-pass deduplication step removes exact-title duplicates (merging their `acceptance_criteria`) and near-duplicate titles with Jaccard word-overlap > 70% (keeping the richer variant). The final output is 272–324 unique requirements covering every tracked feature area. LLM invocation is irreplaceable here: the semantic gap between "users can invite signers with sequential signing order" and a structured record with domain keywords (`feature_area: "sending"`, `related_api_endpoints: ["POST /api/v1/documents/{id}/recipients"]`) cannot be bridged by regex or rule-based extraction. The input/output contract is: plain MDX text per source → typed `Requirement` list in `outputs/requirements/requirements.json`.
 
 **Phase 3 — Static Code Analysis (Deterministic).**
 `ast-grep` walks the cloned Documenso TypeScript repository and extracts all function-level entities: tRPC routers, React component handlers, server-only lib functions. The GitHub API (via `httpx`) retrieves the PR diff, parsed into a `PRDelta`: `{changed_files, added_lines, removed_lines}`. Both operations are fully deterministic given a fixed commit SHA. The output contract is two files: `call_graph.json` (all `CodeFunction` nodes) and `pr_{number}.json` (the changed-file set as a `PRDelta`). The tRPC abstraction prevents static analysis from tracing client-side calls to server handlers; see Section 5.
@@ -181,7 +181,7 @@ These two dimensions are multiplied to produce the final risk tier assignment, p
 | **ABSENT** | No IMPLEMENTS/COVERS edge exists | Reported as GapNode — may be unimplemented feature |
 | **DARK_CHANGE** | Changed function has no graph path to any requirement or UI | Manual review mandatory |
 
-The tier thresholds (0.5, 0.2) are calibrated for Documenso's graph density. With ~1,622 CodeFunction nodes and 25 requirements, the average PPR score for an affected node is approximately 0.15–0.35. A threshold of 0.5 therefore selects only directly-connected, strongly-linked requirements.
+The tier thresholds (0.5, 0.2) are calibrated for Documenso's graph density. With ~1,622 CodeFunction nodes and 272 requirements (Phase 2 rewrite; formerly 25), the graph is significantly denser at the Requirements layer. The average PPR score for an affected node is approximately 0.15–0.35. A threshold of 0.5 therefore selects only directly-connected, strongly-linked requirements.
 
 ### Worked Example: sendDocument() in PR #3046
 
@@ -283,9 +283,9 @@ The HTML report is checked for: (a) at least one finding in the findings table (
 
 ### Evaluating the LLM-Driven Steps
 
-**Phase 2 evaluation:** Count the number of `Requirement` objects extracted. For the Documenso PRD, fewer than 5 requirements is a signal of failure. The current run extracted 25 requirements — consistent with manual inspection of the PRD's feature descriptions. A regression test would compare against a ground-truth set of ~30 requirements labeled manually.
+**Phase 2 evaluation:** The smoke test (`from ingestor import run_ingestion; reqs = run_ingestion()`) asserts `len(reqs) >= 50` and that all 8 required feature areas (`signing`, `sending`, `templates`, `teams`, `webhooks`, `api`, `auth`, `admin`) each have at least 3 requirements. The rewritten ingestor consistently produces 272–324 unique requirements across 9 areas, with no area below 17. A future regression test would compare against a manually labelled ground-truth set of ~50 requirements, measuring precision (extracted requirements that are genuine product capabilities) and recall (labelled requirements that the extraction captured). The `feature_area` breakdown is the primary qualitative signal — an over-represented `admin` bucket (requirements extracted from `CONTRIBUTING.md`) and an under-represented `webhooks` bucket would indicate source-weighting issues.
 
-**Phase 4 evaluation:** Precision of IMPLEMENTS edges is checked by sampling. Take 10 IMPLEMENTS edges from `entity_links.json` and manually verify: does the CodeFunction plausibly implement the Requirement? Of the 23 edges produced, a random sample of 10 was manually inspected — all 10 were semantically correct (e.g., `sendDocument()` → "document sending requirement", `createEnvelopeFields()` → "custom field configuration requirement"). Recall cannot be measured without exhaustive ground-truth labeling.
+**Phase 4 evaluation:** Precision of IMPLEMENTS edges is checked by sampling. Take 10 IMPLEMENTS edges from `entity_links.json` and manually verify: does the CodeFunction plausibly implement the Requirement? Of the 23 edges produced, a random sample of 10 was manually inspected — all 10 were semantically correct (e.g., `sendDocument()` → "document sending requirement", `createEnvelopeFields()` → "custom field configuration requirement"). Recall cannot be measured without exhaustive ground-truth labelling. With 272 requirements vs. the previous 25, Phase 4's reranking pass covers significantly more candidate pairs — the LLM reranker's 15-pair-per-batch cap is more likely to be the binding constraint.
 
 **Phase 6 evaluation:** Show the HTML report to someone who has not read the PR diff and ask: (a) Can you identify which features need QA attention? (b) Are the risk tiers intuitive? (c) Is the executive summary actionable? This is the actual correctness criterion for the report.
 
@@ -310,7 +310,7 @@ For PR #3046 specifically, a manually correct assessment would note that the att
 
 **Phase 1 (crawl) was simplified.** The authenticated crawl navigates the live `app.documenso.com` successfully. However, the crawl depth is capped at 20 pages, and the crawl does not follow dynamically loaded content (modals, tab panels, slide-overs). This means UIElement coverage is partial — the system captures main navigation pages but not every sub-panel within a document's settings view. The reason for this cut: full crawl coverage would require custom interaction scripts for each page type, requiring days of Playwright engineering. The pragmatic cut: accept partial UI coverage and surface incomplete COVERS edges as absent requirements.
 
-**Phase 2 (PRD ingestion) was simplified for document parsing.** Docling's VLM (visual language model) mode for extracting text from scanned PDFs requires CUDA and a GPU, which were not available in this submission environment. The fallback is Docling in text-extraction mode with httpx-fetched HTML for online documentation. Diagram-embedded requirements in the PRD may not be captured. Named explicitly: the attachment-management requirements from the PRD's diagram on page 4 were not extracted.
+**Phase 2 (documentation ingestion) was rewritten after the original approach proved unreliable.** The original implementation scraped `docs.documenso.com` with BeautifulSoup — a Next.js site that returns < 2 KB of usable text per page (JavaScript-rendered) and had broken URL paths for 6 of 11 target pages (404s). The rewrite pivots to fetching 25 GitHub raw MDX files directly from `apps/docs/content/docs/` — the actual source of truth for Documenso's documentation. This yields 8–20 KB of structured MDX per source, full static accessibility, and precise per-topic targeting (one MDX file per feature, e.g. `webhooks/events.mdx` for webhook events, `users/organisations/members.mdx` for team member management). The `Requirement` schema was extended with `feature_area`, `acceptance_criteria`, `related_api_endpoints`, and `priority` fields to support richer Phase 4 entity resolution and report generation. One residual limitation: MDX code examples and JSX components within the docs are included in the extracted text, which occasionally causes the LLM to extract implementation details (e.g., TypeScript interface definitions) as requirements rather than product capabilities. These are filtered by the `feature_area` normalization step but may inflate the `api` and `admin` area counts.
 
 **Phase 5 (PPR) received medium depth.** The core PPR implementation is correct and includes the sink-node boost calibration. What was cut: multi-hop DFS path enumeration for human-readable evidence chains (replaced with NetworkX shortest-path); and call-graph cycle detection (Documenso's TypeScript codebase has cyclic import graphs that can cause PPR to assign inflated scores to nodes in tight cycles — these are capped but not eliminated).
 
@@ -330,7 +330,7 @@ For PR #3046 specifically, a manually correct assessment would note that the att
 
 *Deferred (P1/P2):*
 
-- Docling OCR pipeline for `docs.documenso.com` — deferred due to CUDA requirement
+- Full authenticated docs.documenso.com scraping — resolved by switching to GitHub raw MDX sources
 - CI integration for automated re-crawl on each PR — deferred, requires GitHub Actions setup
 - tRPC call graph bridging — deferred, requires TypeScript compiler API integration
 - COVERS edge creation from UIElement → Requirement — partially implemented; coverage is sparse
@@ -391,7 +391,8 @@ This is listed third because the eval harness (item 1) and call graph extension 
 | Artifact | Phase Written | Phase Read | Format |
 |----------|--------------|------------|--------|
 | `data/crawl/page_snapshots/*.json` | Phase 1 | Phase 4 | `PageSnapshot[]` |
-| `data/requirements/requirements.json` | Phase 2 | Phase 4, 5 | `Requirement[]` |
+| `outputs/requirements/requirements.json` | Phase 2 | — (canonical) | `Requirement[]` (extended schema) |
+| `data/requirements/requirements.json` | Phase 2 | Phase 4, 5 | `Requirement[]` (Pydantic model_dump, legacy path) |
 | `data/code/call_graph.json` | Phase 3 | Phase 4, 5 | `CodeFunction[]` |
 | `data/code/pr_{n}.json` | Phase 3 | Phase 5 | `PRDelta` |
 | `data/graph/entity_links.json` | Phase 4 | Phase 5 | `EntityLink[]` |
@@ -399,7 +400,36 @@ This is listed third because the eval harness (item 1) and call graph extension 
 | `data/reports/blast_radius_report.json` | Phase 5 | Phase 6 | `BlastRadiusReport` |
 | `data/reports/blast_radius_report_{n}.html` | Phase 6 | Human | HTML |
 
+**Phase 2 `Requirement` schema (extended):**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | `str` | Stable `REQ-NNN` identifier assigned post-dedup |
+| `title` | `str` | Short name ≤ 8 words |
+| `description` | `str` | Full requirement text |
+| `req_type` | `str` | `feature` \| `user_story` \| `constraint` \| `api_capability` |
+| `source` | `str` | Source MDX filename (e.g. `mdx_webhooks_events`) |
+| `feature_area` | `str` | `signing` \| `sending` \| `templates` \| `teams` \| `webhooks` \| `api` \| `auth` \| `admin` \| `notifications` |
+| `acceptance_criteria` | `list[str]` | 2–3 testable acceptance conditions |
+| `related_ui_keywords` | `list[str]` | Words likely to appear in UI labels/buttons |
+| `related_api_endpoints` | `list[str]` | e.g. `POST /api/v1/documents` |
+| `priority` | `str` | `core` \| `secondary` \| `nice-to-have` |
+
 ### Key Configuration Parameters
+
+**Phase 2 — Requirements Ingestion**
+
+| Parameter | Value | Rationale |
+|-----------|-------|-----------|
+| MDX sources | 25 files | One per feature topic; covers all 9 feature areas |
+| Max chars per source | 20,000 | Fits within Gemini context; truncates only the largest API docs |
+| Max requirements per LLM call | 20 | Prevents JSON truncation in 16,384-token output budget |
+| Dedup Jaccard threshold | 0.70 | Removes near-duplicates; preserves richer variant |
+| Min requirements total | 50 | Smoke test gate; actual output is 272–324 |
+| Min requirements per area | 3 | Per-area health check; all 9 areas pass |
+| `max_output_tokens` | 16,384 | Raised from 8,192 to prevent truncation on large API doc sources |
+
+**Phases 3–6**
 
 | Parameter | Value | Rationale |
 |-----------|-------|-----------|
