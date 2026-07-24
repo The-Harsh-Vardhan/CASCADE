@@ -144,6 +144,7 @@ def seed_user_flows(driver, requirements=None, page_analyses=None) -> int:
                     MATCH (p:Page)
                     WHERE p.url = $pattern
                        OR p.url ENDS WITH $pattern
+                       OR p.url CONTAINS $pattern
                        OR ($pattern CONTAINS '{id}' AND p.url CONTAINS split($pattern, '{id}')[0] AND p.url CONTAINS split($pattern, '{id}')[1])
                        OR ($pattern = '/documents/{id}' AND p.url CONTAINS '/documents/' AND NOT p.url CONTAINS '/recipients' AND NOT p.url CONTAINS '/fields' AND NOT p.url CONTAINS '/send' AND NOT p.url CONTAINS '/new')
                        OR ($pattern CONTAINS '{token}' AND (p.url CONTAINS '/sign' OR p.url CONTAINS 'signing-documents'))

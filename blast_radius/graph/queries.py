@@ -61,7 +61,9 @@ def create_flow_covers_requirement(
     MATCH (r:Requirement)
     WHERE r.id = $req_id 
        OR r.id STARTS WITH $req_id
-       OR ($req_id CONTAINS '-' AND r.feature_area = split($req_id, '-')[1])
+       OR ($req_id CONTAINS '-' AND toLower(r.feature_area) = toLower(split($req_id, '-')[1]))
+       OR ($req_id CONTAINS '-' AND toLower(r.feature_area) CONTAINS toLower(split($req_id, '-')[1]))
+       OR toLower(r.title) CONTAINS toLower(f.entity)
     MERGE (f)-[c:COVERS]->(r)
     SET c.confidence = $confidence,
         c.evidence = $evidence,
@@ -75,8 +77,7 @@ def get_flows_affected_by_pages(session, page_urls: list[str]) -> list[dict]:
     """Given a list of affected page URLs, return all UserFlows that BELONG_TO those pages."""
     query = """
     MATCH (f:UserFlow)-[b:BELONGS_TO]->(p:Page)
-    WHERE p.url IN $page_urls 
-       OR any(u IN $page_urls WHERE p.url CONTAINS u OR u CONTAINS p.url)
+    WHERE any(u IN $page_urls WHERE p.url CONTAINS u OR u CONTAINS p.url OR p.url ENDS WITH u)
     RETURN DISTINCT f.id as id, f.name as name, f.description as description, 
                     f.entity as entity, f.steps as steps, f.pages_involved as pages_involved
     """
