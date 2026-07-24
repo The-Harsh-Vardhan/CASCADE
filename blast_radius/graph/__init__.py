@@ -67,12 +67,15 @@ def _try_write_neo4j(
             covers_links = [l for l in entity_links if l.rel_type == "COVERS"]
             n_impl = write_entity_links(session, impl_links, run_id=run_id)
             n_renders = write_entity_links(session, renders_links, run_id=run_id)
-            n_covers = write_entity_links(session, covers_links, run_id=run_id)
             missing_count = mark_absent_requirements(session, run_id=run_id)
 
+        # Seed UserFlow nodes and edges
+        from flows.seeder import seed_user_flows
+        n_flows = seed_user_flows(driver, requirements, snapshots)
+
         driver.close()
-        print(f"[graph] Neo4j write complete: {n_impl} IMPLEMENTS, {n_renders} RENDERS, {n_covers} COVERS, {missing_count} MISSING")
-        return {"n_impl_neo4j": n_impl, "n_renders_neo4j": n_renders, "n_covers_neo4j": n_covers, "n_missing_neo4j": missing_count}
+        print(f"[graph] Neo4j write complete: {n_impl} IMPLEMENTS, {n_renders} RENDERS, {n_covers} COVERS, {n_flows} UserFlows, {missing_count} MISSING")
+        return {"n_impl_neo4j": n_impl, "n_renders_neo4j": n_renders, "n_covers_neo4j": n_covers, "n_flows_neo4j": n_flows, "n_missing_neo4j": missing_count}
     except Exception as e:
         print(f"[graph] Neo4j write failed mid-flight: {e}")
         try:
