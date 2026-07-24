@@ -4,6 +4,10 @@ blast_radius/crawl — Phase 1 Playwright + Static Docs Crawler.
 Fixture mode: if settings.crawl_use_fixture is True, skip live crawling
 and load pre-committed PageSnapshot JSON files from data/crawl/fixtures/.
 This lets evaluators run Phases 4-6 without a Documenso account.
+
+Public API:
+  run_crawl()           -> (CrawlManifest, list[PageSnapshot])   # legacy, used by Phase 4
+  run_full_crawl()      -> list[PageAnalysis]                    # new two-phase crawler
 """
 import asyncio
 import datetime
@@ -17,6 +21,7 @@ from blast_radius.models import CrawlManifest, PageSnapshot
 from blast_radius.crawl.artifacts import save_crawl_manifest, save_page_snapshot
 from blast_radius.crawl.dynamic import crawl_dynamic_pages
 from blast_radius.crawl.static import crawl_static_docs
+from blast_radius.crawl.runner import run_full_crawl, run_full_crawl_async  # noqa: F401
 
 logger = logging.getLogger(__name__)
 
