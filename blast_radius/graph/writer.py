@@ -61,15 +61,15 @@ def clear_stale_data(session) -> None:
     print("[graph] Cleared stale GapNodes, hex Requirements, and UserFlow nodes; reset coverage_status")
 
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 
 
 def write_requirements(session, requirements: list = None) -> None:
     """Upsert all Requirement nodes."""
     if not requirements:
         for p in [
-            ROOT_DIR / "outputs" / "requirements" / "requirements.json",
-            ROOT_DIR / "data" / "requirements" / "requirements.json",
+            REPO_ROOT / "outputs" / "requirements" / "requirements.json",
+            REPO_ROOT / "data" / "requirements" / "requirements.json",
             Path("outputs/requirements/requirements.json"),
             Path("data/requirements/requirements.json"),
         ]:
@@ -126,8 +126,8 @@ def write_ui_elements(session, snapshots: list = None) -> None:
 
     # 1. Load from outputs/crawl/*.json or data/crawl/*.json
     for crawl_out_dir in [
-        ROOT_DIR / "outputs" / "crawl",
-        ROOT_DIR / "data" / "crawl",
+        REPO_ROOT / "outputs" / "crawl",
+        REPO_ROOT / "data" / "crawl",
         Path("outputs/crawl"),
         Path("data/crawl"),
     ]:
@@ -145,7 +145,7 @@ def write_ui_elements(session, snapshots: list = None) -> None:
     # 2. Fallback to summary.json if directory scan found nothing
     if not pages_by_url:
         for summary_path in [
-            ROOT_DIR / "outputs" / "crawl" / "summary.json",
+            REPO_ROOT / "outputs" / "crawl" / "summary.json",
             Path("outputs/crawl/summary.json"),
         ]:
             if summary_path.exists():
