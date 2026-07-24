@@ -56,10 +56,21 @@ class Provenance(BaseModel):
 class Requirement(BaseModel):
     requirement_id: str
     text: str
-    req_type: str = "feature"  # "feature", "implicit", "non-functional", etc.
+    req_type: str = "feature"  # "feature"|"user_story"|"constraint"|"api_capability"
     provenance: Provenance
     related_ui_keywords: list[str] = Field(default_factory=list)
-    coverage_status: str = "UNKNOWN"  # "COVERED", "MISSING", "UNKNOWN"
+    coverage_status: str = "UNKNOWN"  # "COVERED"|"MISSING"|"UNKNOWN"
+
+    # ── Extended Phase 2 fields (added for richer ingestion) ──────────────────
+    title: str = ""                                      # short name, ≤ 8 words
+    description: str = ""                                # full requirement text
+    feature_area: str = ""                               # signing|sending|templates|
+                                                         # teams|webhooks|api|auth|
+                                                         # admin|notifications
+    acceptance_criteria: list[str] = Field(default_factory=list)
+    related_api_endpoints: list[str] = Field(default_factory=list)
+    priority: str = "secondary"                          # core|secondary|nice-to-have
+    source: str = ""                                     # originating doc name
 
 
 # ── Phase 3: Code ─────────────────────────────────────────────────────────────

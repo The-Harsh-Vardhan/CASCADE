@@ -67,7 +67,7 @@ def _make_model(api_key: str, temperature: float) -> genai.GenerativeModel:
         generation_config=GenerationConfig(
             temperature=temperature,
             top_p=0.95,
-            max_output_tokens=8192,
+            max_output_tokens=16384,
         ),
     )
 
