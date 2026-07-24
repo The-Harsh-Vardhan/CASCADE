@@ -44,8 +44,8 @@ try:
             print(f"  {c['flow']} -> {c['req']}")
 
         # 4. Test get_flows_affected_by_pages query
-        affected = get_flows_affected_by_pages(session, ["/documents/new", "/settings/webhooks"])
-        print(f"\nAffected flows for ['/documents/new', '/settings/webhooks'] ({len(affected)}):")
+        affected = get_flows_affected_by_pages(session, ["documents", "signup", "/documents/new"])
+        print(f"\nAffected flows for ['documents', 'signup', '/documents/new'] ({len(affected)}):")
         for a in affected:
             print(f"  {a['id']} | {a['name']}")
 
