@@ -20,7 +20,8 @@ CONSTRAINTS = [
 UPSERT_REQUIREMENT = """
 MERGE (n:Requirement {id: $id})
 SET n.text = $text, n.req_type = $req_type, n.coverage_status = $coverage_status,
-    n.source_file = $source_file, n.excerpt = $excerpt, n.updated_at = $updated_at
+    n.source_file = $source_file, n.excerpt = $excerpt, n.title = $title,
+    n.feature_area = $feature_area, n.updated_at = $updated_at
 """
 
 UPSERT_UI_ELEMENT = """
@@ -36,8 +37,8 @@ SET n.name = $name, n.file = $file, n.start_line = $start_line,
 """
 
 UPSERT_PAGE = """
-MERGE (n:Page {id: $id})
-SET n.url = $url, n.screenshot_path = $screenshot_path, n.updated_at = $updated_at
+MERGE (n:Page {url: $url})
+SET n.id = $id, n.screenshot_path = $screenshot_path, n.updated_at = $updated_at
 """
 
 # ── Edges ─────────────────────────────────────────────────────────────────────

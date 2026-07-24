@@ -122,7 +122,15 @@ def seed_user_flows(driver, requirements=None, page_analyses=None) -> int:
         return 0
 
     try:
+        from blast_radius.graph.writer import write_requirements, write_ui_elements, clear_stale_data
+        base_url = "https://app.documenso.com"
+
         with driver.session() as session:
+            # 0. Clear stale hex Requirements & GapNodes, then ensure clean Requirement and Page nodes exist
+            clear_stale_data(session)
+            write_requirements(session, requirements or [])
+            write_ui_elements(session, page_analyses or [])
+
             # 1. Upsert all UserFlow nodes
             for flow in DOCUMENSO_USER_FLOWS:
                 upsert_user_flow(session, flow)
@@ -138,20 +146,11 @@ def seed_user_flows(driver, requirements=None, page_analyses=None) -> int:
                     )
 
                 # 3. Link Page nodes (BELONGS_TO edge)
-                for idx, pattern in enumerate(flow.get("pages_involved", [])):
-                    query = """
-                    MATCH (f:UserFlow {id: $flow_id})
-                    MATCH (p:Page)
-                    WHERE p.url = $pattern
-                       OR p.url ENDS WITH $pattern
-                       OR p.url CONTAINS $pattern
-                       OR ($pattern CONTAINS '{id}' AND p.url CONTAINS split($pattern, '{id}')[0] AND p.url CONTAINS split($pattern, '{id}')[1])
-                       OR ($pattern = '/documents/{id}' AND p.url CONTAINS '/documents/' AND NOT p.url CONTAINS '/recipients' AND NOT p.url CONTAINS '/fields' AND NOT p.url CONTAINS '/send' AND NOT p.url CONTAINS '/new')
-                       OR ($pattern CONTAINS '{token}' AND (p.url CONTAINS '/sign' OR p.url CONTAINS 'signing-documents'))
-                    MERGE (f)-[r:BELONGS_TO]->(p)
-                    SET r.step_order = $step_order
-                    """
-                    session.run(query, flow_id=flow["id"], pattern=pattern, step_order=idx).consume()
+                for i, page_path in enumerate(flow.get("pages_involved", [])):
+                    full_url = base_url + page_path if page_path.startswith("/") else page_path
+                    # Try both full_url and page_path in the query
+                    create_flow_belongs_to_page(session, flow["id"], full_url, i)
+                    create_flow_belongs_to_page(session, flow["id"], page_path, i)
 
                 # 4. Link UIElement / UIComponent nodes (PART_OF_FLOW edge)
                 ui_query = """

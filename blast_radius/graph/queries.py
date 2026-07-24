@@ -37,15 +37,25 @@ def upsert_user_flow(session, flow: dict) -> None:
     ).consume()
 
 
-def create_flow_belongs_to_page(session, flow_id: str, page_id: str, step_order: int) -> None:
+def create_flow_belongs_to_page(session, flow_id: str, page_url: str, step_order: int) -> None:
     """Create BELONGS_TO edge between UserFlow and Page."""
     query = """
     MATCH (f:UserFlow {id: $flow_id})
-    MATCH (p:Page) WHERE p.id = $page_id OR p.url = $page_id
+    MATCH (p:Page)
+    WHERE (NOT p.url CONTAINS '/signup' OR $page_url CONTAINS '/signup')
+      AND (
+           p.url = $page_url  
+        OR p.url CONTAINS $page_url
+        OR $page_url CONTAINS p.url
+        OR p.url ENDS WITH $page_url
+        OR ($page_url CONTAINS '{id}' AND p.url CONTAINS split($page_url, '{id}')[0] AND p.url CONTAINS split($page_url, '{id}')[1])
+        OR ($page_url = '/documents/{id}' AND p.url CONTAINS '/documents/' AND NOT p.url CONTAINS '/recipients' AND NOT p.url CONTAINS '/fields' AND NOT p.url CONTAINS '/send' AND NOT p.url CONTAINS '/new')
+        OR ($page_url CONTAINS '{token}' AND (p.url CONTAINS '/sign' OR p.url CONTAINS 'signing-documents') AND NOT p.url CONTAINS '/signup')
+      )
     MERGE (f)-[r:BELONGS_TO]->(p)
     SET r.step_order = $step_order
     """
-    session.run(query, flow_id=flow_id, page_id=page_id, step_order=step_order).consume()
+    session.run(query, flow_id=flow_id, page_url=page_url, step_order=step_order).consume()
 
 
 def create_flow_covers_requirement(
