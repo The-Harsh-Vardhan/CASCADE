@@ -14,6 +14,7 @@ CONSTRAINTS = [
     "CREATE CONSTRAINT fn_id  IF NOT EXISTS FOR (n:CodeFunction) REQUIRE n.id IS UNIQUE",
     "CREATE CONSTRAINT gap_id IF NOT EXISTS FOR (n:GapNode)      REQUIRE n.id IS UNIQUE",
     "CREATE CONSTRAINT page_id IF NOT EXISTS FOR (n:Page)        REQUIRE n.id IS UNIQUE",
+    "CREATE CONSTRAINT api_ep_id IF NOT EXISTS FOR (n:APIEndpoint) REQUIRE n.id IS UNIQUE",
 ]
 
 # ── Node upserts ──────────────────────────────────────────────────────────────
