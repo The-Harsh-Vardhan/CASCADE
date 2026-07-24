@@ -2,6 +2,8 @@
 blast_radius/graph/schema.py — Neo4j Cypher templates for graph construction.
 
 v4 fix (P0-21): IMPLEMENTS direction is CodeFunction → Requirement.
+v5 fix (FIX-1): Added COVERS edge (Page/UIElement → Requirement) from UI resolver.
+v5 fix (FIX-3): MARK_MISSING excludes infra-pattern IMPLEMENTS (source='infra_pattern').
 PPR seeded at changed CodeFunctions propagates FORWARD to Requirements via CALLS → IMPLEMENTS.
 """
 
@@ -56,6 +58,14 @@ SET e.confidence = $confidence, e.evidence = $evidence,
     e.source = $source, e.run_id = $run_id, e.created_at = $created_at
 """
 
+# FIX-1: COVERS: Page/UIElement → Requirement (UI vocabulary keyword match)
+CREATE_COVERS = """
+MATCH (p:Page {id: $from_id}), (r:Requirement {id: $to_id})
+MERGE (p)-[e:COVERS]->(r)
+SET e.confidence = $confidence, e.evidence = $evidence,
+    e.source = $source, e.run_id = $run_id, e.created_at = $created_at
+"""
+
 CREATE_CALLS = """
 MATCH (a:CodeFunction {id: $from_id}), (b:CodeFunction {id: $to_id})
 MERGE (a)-[e:CALLS]->(b)
@@ -73,9 +83,12 @@ SET e.run_id = $run_id, e.created_at = $created_at
 """
 
 # v4 fix (P0-21): check IMPLEMENTS in correct direction
+# v5 fix (FIX-3): exclude infra-pattern IMPLEMENTS from gap classification
 MARK_MISSING_REQUIREMENTS = """
 MATCH (r:Requirement)
 WHERE NOT (:CodeFunction)-[:IMPLEMENTS]->(r)
+  AND NOT ()-[:IMPLEMENTS {source: 'infra_pattern'}]->(r)
+  AND NOT ()-[:COVERS]->(r)
 SET r.coverage_status = 'MISSING'
 RETURN count(r) as missing_count
 """

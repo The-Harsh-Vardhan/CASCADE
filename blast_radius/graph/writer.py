@@ -18,6 +18,7 @@ from blast_radius.graph.schema import (
     UPSERT_PAGE,
     CREATE_IMPLEMENTS,
     CREATE_RENDERS,
+    CREATE_COVERS,
     CREATE_CALLS,
     CREATE_ABSENT_FROM,
     MARK_MISSING_REQUIREMENTS,
@@ -135,6 +136,7 @@ def write_entity_links(session, links: list, run_id: str = "v1") -> int:
     template_map = {
         "IMPLEMENTS": CREATE_IMPLEMENTS,
         "RENDERS": CREATE_RENDERS,
+        "COVERS": CREATE_COVERS,
     }
     written = 0
     failed = 0

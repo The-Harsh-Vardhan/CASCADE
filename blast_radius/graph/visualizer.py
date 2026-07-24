@@ -2,7 +2,8 @@
 blast_radius/graph/visualizer.py — Standalone 3D Crystal Lattice Graph Exporter & Generator.
 
 Queries Neo4j database for all nodes and edges across Code, UI, and Requirement layers,
-formats them with 3D spatial layer coordinates, and injects data into data/graph_explorer.html.
+formats them with 3D spatial layer coordinates, exports data/graph_data.json,
+and generates a decoupled, responsive 3D Graph Explorer interface.
 
 Usage:
     python -m blast_radius.graph.visualizer
@@ -16,6 +17,9 @@ from neo4j import GraphDatabase
 from blast_radius.config import settings
 
 OUTPUT_HTML = Path(settings.data_dir) / "graph_explorer.html"
+OUTPUT_JSON = Path(settings.data_dir) / "graph_data.json"
+OUTPUT_JS = Path(settings.data_dir) / "graph_data.js"
+
 
 
 def fetch_neo4j_graph() -> dict[str, Any]:
@@ -25,6 +29,7 @@ def fetch_neo4j_graph() -> dict[str, Any]:
       - CodeFunction: Z = -200
       - Page / UIElement: Z = 0
       - Requirement / GapNode: Z = +200
+    Fallback to existing data/graph_data.json if Neo4j is unavailable.
     """
     uri = settings.neo4j_uri
     user = settings.neo4j_user
@@ -33,8 +38,20 @@ def fetch_neo4j_graph() -> dict[str, Any]:
     nodes_dict: dict[str, dict[str, Any]] = {}
     links_list: list[dict[str, Any]] = []
 
+    # Fast socket pre-check to prevent long driver connection retry delay if Neo4j is offline
     try:
-        driver = GraphDatabase.driver(uri, auth=(user, password))
+        import socket
+        with socket.create_connection(("127.0.0.1", 7687), timeout=0.5):
+            pass
+    except Exception as sock_err:
+        print(f"[visualizer] Neo4j instance unreachable ({sock_err}).")
+        if OUTPUT_JSON.exists():
+            print(f"[visualizer] Loading cached data from {OUTPUT_JSON}")
+            return json.loads(OUTPUT_JSON.read_text(encoding="utf-8"))
+        return {"nodes": list(nodes_dict.values()), "links": links_list}
+
+    try:
+        driver = GraphDatabase.driver(uri, auth=(user, password), connection_timeout=2.0)
         with driver.session() as session:
             # Query all nodes
             node_result = session.run("""
@@ -102,7 +119,10 @@ def fetch_neo4j_graph() -> dict[str, Any]:
         driver.close()
         print(f"[visualizer] Extracted {len(nodes_dict)} nodes and {len(links_list)} relationships from Neo4j.")
     except Exception as e:
-        print(f"[visualizer] WARNING: Failed to fetch from Neo4j ({e}). Generating fallback template schema.")
+        print(f"[visualizer] WARNING: Failed to fetch from Neo4j ({e}).")
+        if OUTPUT_JSON.exists():
+            print(f"[visualizer] Loading existing data from {OUTPUT_JSON}")
+            return json.loads(OUTPUT_JSON.read_text(encoding="utf-8"))
 
     return {
         "nodes": list(nodes_dict.values()),
@@ -112,25 +132,17 @@ def fetch_neo4j_graph() -> dict[str, Any]:
 
 def generate_visualizer_html() -> Path:
     """
-    Generate or update data/graph_explorer.html with embedded Neo4j graph data and 3D features.
+    Export data/graph_data.json and data/graph_data.js.
     """
     graph_data = fetch_neo4j_graph()
     json_str = json.dumps(graph_data, indent=2)
-
-    if OUTPUT_HTML.exists():
-        html_content = OUTPUT_HTML.read_text(encoding="utf-8")
-        target_token = "let fullGraphData = { nodes: [], links: [] };"
-        replacement_token = f"let fullGraphData = {json_str};"
-
-        if target_token in html_content:
-            html_content = html_content.replace(target_token, replacement_token)
-            OUTPUT_HTML.write_text(html_content, encoding="utf-8")
-            print(f"[visualizer] Successfully embedded {len(graph_data['nodes'])} nodes into {OUTPUT_HTML}")
-        else:
-            print(f"[visualizer] 3D Graph explorer ready at: {OUTPUT_HTML}")
+    OUTPUT_JSON.write_text(json_str, encoding="utf-8")
+    OUTPUT_JS.write_text(f"window.GRAPH_DATA = {json_str};", encoding="utf-8")
+    print(f"[visualizer] Successfully exported {len(graph_data['nodes'])} nodes to {OUTPUT_JSON} and {OUTPUT_JS}")
 
     return OUTPUT_HTML
 
 
 if __name__ == "__main__":
     generate_visualizer_html()
+

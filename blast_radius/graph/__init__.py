@@ -20,7 +20,12 @@ from pathlib import Path
 
 from blast_radius.config import settings
 from blast_radius.crawl.artifacts import load_all_page_snapshots
-from blast_radius.graph.resolve import resolve_requirements_to_functions, resolve_ui_to_functions
+from blast_radius.graph.resolve import (
+    resolve_requirements_to_functions,
+    resolve_ui_to_functions,
+    resolve_ui_to_requirements,
+    resolve_infra_requirements,
+)
 from blast_radius.models import Requirement, CodeFunction, EntityLink
 
 DATA_DIR = Path(settings.data_dir)
@@ -59,13 +64,15 @@ def _try_write_neo4j(
 
             impl_links = [l for l in entity_links if l.rel_type == "IMPLEMENTS"]
             renders_links = [l for l in entity_links if l.rel_type == "RENDERS"]
+            covers_links = [l for l in entity_links if l.rel_type == "COVERS"]
             n_impl = write_entity_links(session, impl_links, run_id=run_id)
             n_renders = write_entity_links(session, renders_links, run_id=run_id)
+            n_covers = write_entity_links(session, covers_links, run_id=run_id)
             missing_count = mark_absent_requirements(session, run_id=run_id)
 
         driver.close()
-        print(f"[graph] Neo4j write complete: {n_impl} IMPLEMENTS, {n_renders} RENDERS, {missing_count} MISSING")
-        return {"n_impl_neo4j": n_impl, "n_renders_neo4j": n_renders, "n_missing_neo4j": missing_count}
+        print(f"[graph] Neo4j write complete: {n_impl} IMPLEMENTS, {n_renders} RENDERS, {n_covers} COVERS, {missing_count} MISSING")
+        return {"n_impl_neo4j": n_impl, "n_renders_neo4j": n_renders, "n_covers_neo4j": n_covers, "n_missing_neo4j": missing_count}
     except Exception as e:
         print(f"[graph] Neo4j write failed mid-flight: {e}")
         try:
@@ -140,7 +147,18 @@ def build_graph() -> dict:
     renders_links = resolve_ui_to_functions(snapshots, functions, run_id=run_id)
     print(f"[graph]   {len(renders_links)} RENDERS links resolved")
 
-    all_links = impl_links + renders_links
+    # ── Stage 3: COVERS links (UI → Requirement keyword match) ───────────
+    print("[graph] Resolving COVERS edges (UI → Requirement)...")
+    covers_links = resolve_ui_to_requirements(snapshots, requirements, run_id=run_id)
+    print(f"[graph]   {len(covers_links)} COVERS links resolved")
+
+    # ── Stage 4: Infra IMPLEMENTS (tooling requirements) ─────────────────
+    repo_root = str(DATA_DIR / "repos" / "documenso")
+    print("[graph] Resolving infrastructure IMPLEMENTS edges...")
+    infra_links = resolve_infra_requirements(requirements, repo_root=repo_root, run_id=run_id)
+    print(f"[graph]   {len(infra_links)} infra IMPLEMENTS links resolved")
+
+    all_links = impl_links + renders_links + covers_links + infra_links
 
     # ── Save entity_links.json (source of truth for Phase 5) ─────────────
     links_path = GRAPH_DIR / "entity_links.json"
@@ -174,6 +192,8 @@ def build_graph() -> dict:
         "n_snapshots": len(snapshots),
         "n_implements": len(impl_links),
         "n_renders": len(renders_links),
+        "n_covers": len(covers_links),
+        "n_infra_implements": len(infra_links),
         "n_gap_nodes": len(gap_nodes),
         "neo4j_written": bool(neo4j_stats),
     }
