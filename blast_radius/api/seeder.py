@@ -59,22 +59,62 @@ def seed_api_endpoints(driver, repo_dir: str | Path | None = None) -> int:
             count = session.run("MATCH (e:APIEndpoint) RETURN count(e) as c").single()["c"]
             logger.info("[api] Upserted %d APIEndpoint nodes.", count)
 
-            # 2. Create (CodeFunction)-[:HANDLES]->(APIEndpoint) edges
-            handles_query = """
-            MATCH (e:APIEndpoint)
-            MATCH (f:CodeFunction)
-            WHERE (e.handler_function IS NOT NULL AND size(e.handler_function) > 0 AND (toLower(f.name) = toLower(e.handler_function) OR toLower(f.name) ENDS WITH toLower(e.handler_function)))
-               OR (f.file CONTAINS 'packages/api' AND f.file CONTAINS 'implementation')
-               OR (e.path CONTAINS 'documents' AND f.name CONTAINS 'Document' AND f.file CONTAINS 'packages/lib')
-               OR (e.path CONTAINS 'templates' AND f.name CONTAINS 'Template' AND f.file CONTAINS 'packages/lib')
-            MERGE (f)-[rel:HANDLES]->(e)
-            SET rel.confidence = 0.90,
-                rel.evidence = 'Direct route handler',
-                rel.source = 'static_analysis'
-            """
-            session.run(handles_query).consume()
+            # 2. Delete all existing HANDLES edges first
+            session.run("MATCH ()-[r:HANDLES]->() DELETE r").consume()
 
-            # 3. Create (APIEndpoint)-[:IMPLEMENTS_REQ]->(Requirement) edges
+            # 3. Create HANDLES edges per endpoint (Strict file-path matching + exact ts-rest handler fallback)
+            KNOWN_CONTRACT_HANDLERS = [
+                "sendDocument", "createDocument", "getDocument", "deleteDocument",
+                "createTemplate", "getTemplate", "deleteTemplate", "useTemplate",
+                "getProfile", "inviteTeamMember", "createWebhook", "getAuditLogs",
+                "resendDocument", "createRecipient", "updateRecipient", "deleteRecipient",
+                "createField", "updateField", "deleteField", "getTemplates",
+                "getDocuments", "getRecipients", "generateDocumentFromTemplate"
+            ]
+
+            for ep in endpoints:
+                ep_id = ep["id"]
+                raw_path = ep["path"]
+                # Derive expected route file path: e.g. /api/v1/documents/{id}/send -> api/v1/documents/[id]/send/route
+                subpath = (
+                    raw_path.replace("{id}", "[id]")
+                    .replace("{fieldId}", "[fieldId]")
+                    .replace("{recipientId}", "[recipientId]")
+                    .replace("{templateId}", "[templateId]")
+                )
+                if subpath.startswith("/"):
+                    subpath = subpath[1:]
+
+                route_file_pattern = f"{subpath}/route"
+
+                # Step 2: Try file-path based matching first
+                res_path = session.run("""
+                    MATCH (e:APIEndpoint {id: $ep_id})
+                    MATCH (f:CodeFunction)
+                    WHERE (f.file CONTAINS $route_pattern OR (f.file_path IS NOT NULL AND f.file_path CONTAINS $route_pattern))
+                      AND (f.name IN ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'handler', 'default']
+                           OR toUpper(f.name) = e.method)
+                    MERGE (f)-[rel:HANDLES]->(e)
+                    SET rel.confidence = 0.95,
+                        rel.source = 'file_path_match'
+                    RETURN count(rel) AS c
+                """, ep_id=ep_id, route_pattern=route_file_pattern).single()["c"]
+
+                # Step 3: Fallback — ts-rest contract handlers only (exact name match)
+                if res_path == 0 and ep.get("handler_function"):
+                    h_fn = ep["handler_function"]
+                    session.run("""
+                        MATCH (e:APIEndpoint {id: $ep_id})
+                        MATCH (f:CodeFunction)
+                        WHERE f.name = $h_fn AND f.name IN $known_handlers
+                        MERGE (f)-[rel:HANDLES]->(e)
+                        SET rel.confidence = 0.90,
+                            rel.source = 'contract_exact_match'
+                    """, ep_id=ep_id, h_fn=h_fn, known_handlers=KNOWN_CONTRACT_HANDLERS).consume()
+
+                # Step 4: If still no match, leave endpoint without HANDLES edges (honest matching)
+
+            # 4. Create (APIEndpoint)-[:IMPLEMENTS_REQ]->(Requirement) edges
             impl_query = """
             MATCH (e:APIEndpoint)
             MATCH (r:Requirement)
@@ -89,7 +129,7 @@ def seed_api_endpoints(driver, repo_dir: str | Path | None = None) -> int:
             """
             session.run(impl_query).consume()
 
-            # 4. Create (UIElement)-[:CALLS_API]->(APIEndpoint) edges
+            # 5. Create (UIElement)-[:CALLS_API]->(APIEndpoint) edges
             calls_api_query = """
             MATCH (u:UIElement)
             MATCH (e:APIEndpoint)
