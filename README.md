@@ -2,7 +2,7 @@
 
 > Testsigma AI Engineer Assignment — AI-powered change impact analysis for Documenso pull requests.
 
-Given a merged PR in [documenso/documenso](https://github.com/documenso/documenso), this system outputs a **blast radius report**: which UI elements are at risk, which user flows are affected, and which product requirements lose coverage.
+Given a merged PR in [documenso/documenso](https://github.com/documenso/documenso), this system outputs a **blast radius report**: which UI elements are at risk, which product requirements lose coverage, and which changed functions have no traceable path to any product feature.
 
 ---
 
@@ -56,10 +56,10 @@ cp .env.example .env
 
 Required values in `.env`:
 
-- `ANTHROPIC_API_KEY` — get from [console.anthropic.com](https://console.anthropic.com)
+- `GEMINI_API_KEY_1` — get from [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)
 - `GITHUB_TOKEN` — needs `repo` scope, get from GitHub → Settings → Developer settings
 - `DOCUMENSO_EMAIL` + `DOCUMENSO_PASSWORD` — create free account at [app.documenso.com/signup](https://app.documenso.com/signup)
-- `PR_NUMBER` — see step 4 below
+- `PR_NUMBER` — set to the PR you want to analyze (default: 3046)
 
 ### 3. Start Neo4j
 
@@ -111,6 +111,18 @@ python scripts/run_pipeline.py --phase 6   # Render report
 python scripts/run_pipeline.py --all
 ```
 
+### Expected Phase Output (What PASS Looks Like)
+
+| Phase | PASS indicator |
+|-------|---------------|
+| Phase 0 | `✓ All environment checks passed` |
+| Phase 1 | `Phase 1 crawl completed. Captured N total page snapshots.` (N ≥ 5) |
+| Phase 2 | `[ingest] Extracted N requirements` (N ≥ 5) |
+| Phase 3 | `[code] Wrote N CodeFunction nodes` + `[code] PR delta: M changed files` |
+| Phase 4 | `[resolve] N IMPLEMENTS links: M LLM-confirmed` (N ≥ 1) |
+| Phase 5 | `[blast] Wrote blast_radius_report.json: K seeds, J dark changes` |
+| Phase 6 | `[report] Wrote blast_radius_report.md` + `blast_radius_report.html` |
+
 ### Output
 
 ```
@@ -118,6 +130,21 @@ data/reports/blast_radius_report.json   # Machine-readable
 data/reports/blast_radius_report.md     # Markdown (for GitHub)
 data/reports/blast_radius_report.html   # Rendered (open in browser)
 ```
+
+---
+
+## Running Without a Documenso Account
+
+If you don't have a Documenso account or want to skip the live crawl, use fixture mode:
+
+```bash
+# In .env:
+CRAWL_USE_FIXTURE=true
+```
+
+Fixture mode reads pre-committed page snapshots from `data/crawl/fixtures/` instead of live-crawling. This covers the settings page, document list, and signing flow — enough to demonstrate Phases 4–6 without credentials.
+
+> **Note:** Fixture mode produces a subset of real crawl results. RENDERS edge coverage will be lower than a full auth crawl, but the blast radius analysis (Phases 5–6) runs identically.
 
 ---
 
@@ -134,6 +161,7 @@ blast_radius/
 
 data/
 ├── crawl/          # PageSnapshot JSON (gitignored)
+│   └── fixtures/   # Pre-committed snapshots for fixture mode
 ├── requirements/   # Requirement JSON (gitignored)
 ├── code/           # CodeFunction + PRDelta JSON (gitignored)
 ├── reports/        # Final reports (gitignored)
@@ -160,10 +188,10 @@ tests/              # Unit + integration tests
 ## Scope Decisions
 
 This implementation goes deep on **Phases 3–5** (code analysis, graph build,
-blast radius reasoning) and scopes down Phase 1 (crawler uses fixture data
-for unauth pages) and Phase 6 (Markdown report only, HTML is bonus).
+blast radius reasoning) and scopes down Phase 1 (crawler depth capped at 20 pages;
+fixture mode available for evaluators) and Phase 6 (Markdown report primary, HTML bonus).
 
-See the design document for full scope justification.
+See the [design document](docs/design_document.md) for full scope justification.
 
 ---
 
@@ -197,7 +225,8 @@ pytest tests/integration/   # Requires Neo4j + .env configured
 | `neo4j.exceptions.ServiceUnavailable` | Run `docker compose up -d` and wait 15s |
 | `ValidationError: pr_number` | Set `PR_NUMBER` in `.env` before Phase 3 |
 | `ValueError: ZERO path matches` | See path alignment fix in audit-guard skill |
-| Phase 4 RENDERS count = 0 | Auth crawl failed — check `DOCUMENSO_EMAIL` / `DOCUMENSO_PASSWORD` in `.env` |
+| Phase 4 RENDERS count = 0 | Auth crawl failed — check `DOCUMENSO_EMAIL` / `DOCUMENSO_PASSWORD` in `.env`, or set `CRAWL_USE_FIXTURE=true` |
+| Phase 1 login timeout | Use `CRAWL_USE_FIXTURE=true` — see "Running Without a Documenso Account" above |
 
 ---
 

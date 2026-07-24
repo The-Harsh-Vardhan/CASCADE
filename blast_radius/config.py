@@ -14,7 +14,7 @@ class Settings(BaseSettings):
         extra="ignore"
     )
 
-    # LLM — Google Gemini (supports up to 10 keys in rotation via GEMINI_API_KEY_1..10)
+    # LLM — Google Gemini (supports multiple project keys via GEMINI_API_KEY_1..10)
     # Falls back to GEMINI_API_KEY for single-key backward compatibility.
     gemini_api_key:    str = Field("", description="Fallback single Gemini API key")
     gemini_api_key_1:  str = Field("", alias="GEMINI_API_KEY_1")
@@ -73,7 +73,9 @@ class Settings(BaseSettings):
     # Pipeline Settings
     data_dir: Path = Field(Path("data"))
     repo_clone_dir: Path = Field(Path("data/repos/documenso"))
+    # Crawl settings
     crawl_max_pages: int = Field(20)
+    crawl_use_fixture: bool = Field(False, description="If True, read from data/crawl/fixtures/ instead of live crawl")
     log_level: str = Field("INFO")
 
     def validate_and_print(self) -> None:

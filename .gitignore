@@ -34,10 +34,13 @@ data/code/
 data/requirements/
 data/reports/
 data/repos/
+data/graph/
+data/browser_context/
 
 # Keep data directory structure but not contents
 !data/.gitkeep
 !data/crawl/.gitkeep
+!data/crawl/fixtures/
 !data/code/.gitkeep
 !data/requirements/.gitkeep
 !data/reports/.gitkeep
