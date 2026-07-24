@@ -138,6 +138,12 @@ def generate_visualizer_html() -> Path:
     json_str = json.dumps(graph_data, indent=2)
     OUTPUT_JSON.write_text(json_str, encoding="utf-8")
     OUTPUT_JS.write_text(f"window.GRAPH_DATA = {json_str};", encoding="utf-8")
+    
+    # Mirror graph_explorer.html to graph.html for user path convenience
+    graph_alt = Path(settings.data_dir) / "graph.html"
+    if OUTPUT_HTML.exists():
+        graph_alt.write_text(OUTPUT_HTML.read_text(encoding="utf-8"), encoding="utf-8")
+
     print(f"[visualizer] Successfully exported {len(graph_data['nodes'])} nodes to {OUTPUT_JSON} and {OUTPUT_JS}")
 
     return OUTPUT_HTML
