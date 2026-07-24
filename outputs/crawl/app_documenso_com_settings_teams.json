@@ -1,0 +1,11 @@
+{
+  "url": "https://app.documenso.com/settings/teams",
+  "title": "Documenso",
+  "purpose": "Page at https://app.documenso.com/settings/teams",
+  "ui_components": [],
+  "outbound_links": [],
+  "user_flows": [],
+  "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_settings_teams.png",
+  "requires_auth": true,
+  "documenso_entity": "team"
+}

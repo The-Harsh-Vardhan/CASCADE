@@ -1,0 +1,11 @@
+{
+  "url": "https://app.documenso.com/templates/new",
+  "title": "Documenso",
+  "purpose": "Page at https://app.documenso.com/templates/new",
+  "ui_components": [],
+  "outbound_links": [],
+  "user_flows": [],
+  "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_templates_new.png",
+  "requires_auth": true,
+  "documenso_entity": "template"
+}

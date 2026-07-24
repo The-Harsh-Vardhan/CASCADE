@@ -1,0 +1,31 @@
+{
+  "url": "https://docs.documenso.com/users/webhooks",
+  "title": "Documenso Docs",
+  "purpose": "Informs the user that the requested documentation page was not found and provides alternative navigation links.",
+  "ui_components": [
+    {
+      "type": "link",
+      "label": "Browse documentation",
+      "selector_hint": "a:contains('Browse documentation')",
+      "purpose": "Navigates to the main documentation page.",
+      "is_interactive": true
+    },
+    {
+      "type": "link",
+      "label": "Go to homepage",
+      "selector_hint": "a:contains('Go to homepage')",
+      "purpose": "Navigates to the website homepage.",
+      "is_interactive": true
+    }
+  ],
+  "outbound_links": [
+    "/",
+    "/docs"
+  ],
+  "user_flows": [
+    "Documentation Navigation"
+  ],
+  "screenshot_path": "outputs\\crawl\\screenshots\\docs_documenso_com_users_webhooks.png",
+  "requires_auth": false,
+  "documenso_entity": "general"
+}

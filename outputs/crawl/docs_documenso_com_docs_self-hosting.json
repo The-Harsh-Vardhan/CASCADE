@@ -1,0 +1,11 @@
+{
+  "url": "https://docs.documenso.com/docs/self-hosting",
+  "title": "Self-Hosting | Documenso Docs",
+  "purpose": "Page at https://docs.documenso.com/docs/self-hosting",
+  "ui_components": [],
+  "outbound_links": [],
+  "user_flows": [],
+  "screenshot_path": "outputs\\crawl\\screenshots\\docs_documenso_com_docs_self-hosting.png",
+  "requires_auth": false,
+  "documenso_entity": "general"
+}

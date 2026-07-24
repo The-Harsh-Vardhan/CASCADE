@@ -1,0 +1,11 @@
+{
+  "url": "https://app.documenso.com/t/personal_wydsnsuiedivthmn/documents",
+  "title": "Documents - Documenso",
+  "purpose": "Page at https://app.documenso.com/t/personal_wydsnsuiedivthmn/documents",
+  "ui_components": [],
+  "outbound_links": [],
+  "user_flows": [],
+  "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_t_personal_wydsnsuiedivthmn_documents.png",
+  "requires_auth": true,
+  "documenso_entity": "document"
+}

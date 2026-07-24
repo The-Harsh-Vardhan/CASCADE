@@ -1,0 +1,31 @@
+{
+  "url": "https://docs.documenso.com/users/teams",
+  "title": "Documenso Docs",
+  "purpose": "Informs the user that the requested documentation page was not found and provides navigation links to return to valid documentation pages.",
+  "ui_components": [
+    {
+      "type": "link",
+      "label": "Browse documentation",
+      "selector_hint": "a[href*='docs']",
+      "purpose": "Navigates the user to the documentation index or browsing page.",
+      "is_interactive": true
+    },
+    {
+      "type": "link",
+      "label": "Go to homepage",
+      "selector_hint": "a[href='/']",
+      "purpose": "Navigates the user to the main homepage.",
+      "is_interactive": true
+    }
+  ],
+  "outbound_links": [
+    "/",
+    "/docs"
+  ],
+  "user_flows": [
+    "Viewing Documentation"
+  ],
+  "screenshot_path": "outputs\\crawl\\screenshots\\docs_documenso_com_users_teams.png",
+  "requires_auth": false,
+  "documenso_entity": "general"
+}

@@ -1,0 +1,81 @@
+{
+  "url": "https://documenso.com/open",
+  "title": "Documenso - The Open Source DocuSign Alternative",
+  "purpose": "Displays Documenso's Open Startup metrics, public finances, team salary transparency, GitHub statistics, and growth data.",
+  "ui_components": [
+    {
+      "type": "link",
+      "label": "Solutions",
+      "selector_hint": "header nav a[href*='solutions']",
+      "purpose": "Navigates to the Solutions section",
+      "is_interactive": true
+    },
+    {
+      "type": "link",
+      "label": "Enterprise",
+      "selector_hint": "header nav a[href*='enterprise']",
+      "purpose": "Navigates to Enterprise plans and features",
+      "is_interactive": true
+    },
+    {
+      "type": "link",
+      "label": "Pricing",
+      "selector_hint": "header nav a[href*='pricing']",
+      "purpose": "Navigates to product pricing options",
+      "is_interactive": true
+    },
+    {
+      "type": "link",
+      "label": "Sign In",
+      "selector_hint": "a[href*='sign-in']",
+      "purpose": "Navigates to user login page",
+      "is_interactive": true
+    },
+    {
+      "type": "link",
+      "label": "Sign Up",
+      "selector_hint": "a[href*='sign-up']",
+      "purpose": "Navigates to account creation page",
+      "is_interactive": true
+    },
+    {
+      "type": "link",
+      "label": "Announcing Open Metrics",
+      "selector_hint": "a[href*='announcing-open-metrics']",
+      "purpose": "Navigates to the blog post detailing open metrics rationale",
+      "is_interactive": true
+    },
+    {
+      "type": "table",
+      "label": "Global Salary Bands",
+      "selector_hint": "table",
+      "purpose": "Displays role, level, and transparent salary figures for team members",
+      "is_interactive": false
+    },
+    {
+      "type": "button",
+      "label": "Get Started",
+      "selector_hint": "a[href*='sign-up']",
+      "purpose": "Initiates free account creation flow",
+      "is_interactive": true
+    },
+    {
+      "type": "select",
+      "label": "Select Language",
+      "selector_hint": "select",
+      "purpose": "Allows switching the display language of the page",
+      "is_interactive": true
+    }
+  ],
+  "outbound_links": [
+    "https://github.com/documenso/documenso"
+  ],
+  "user_flows": [
+    "Exploring Open Metrics and Public Finances",
+    "User Registration from Open Startup Page",
+    "Language Selection"
+  ],
+  "screenshot_path": "outputs\\crawl\\screenshots\\documenso_com_open.png",
+  "requires_auth": false,
+  "documenso_entity": "general"
+}

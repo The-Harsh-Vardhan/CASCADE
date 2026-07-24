@@ -1,0 +1,11 @@
+{
+  "url": "https://app.documenso.com/settings/profile",
+  "title": "Profile - Documenso",
+  "purpose": "Page at https://app.documenso.com/settings/profile",
+  "ui_components": [],
+  "outbound_links": [],
+  "user_flows": [],
+  "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_settings_profile.png",
+  "requires_auth": true,
+  "documenso_entity": "user"
+}

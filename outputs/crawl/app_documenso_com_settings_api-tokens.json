@@ -1,0 +1,11 @@
+{
+  "url": "https://app.documenso.com/settings/api-tokens",
+  "title": "Documenso",
+  "purpose": "Page at https://app.documenso.com/settings/api-tokens",
+  "ui_components": [],
+  "outbound_links": [],
+  "user_flows": [],
+  "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_settings_api-tokens.png",
+  "requires_auth": true,
+  "documenso_entity": "api_token"
+}

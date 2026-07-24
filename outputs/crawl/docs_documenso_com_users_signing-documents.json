@@ -1,0 +1,31 @@
+{
+  "url": "https://docs.documenso.com/users/signing-documents",
+  "title": "Documenso Docs",
+  "purpose": "Informs the user that the requested documentation page was not found and provides navigation options.",
+  "ui_components": [
+    {
+      "type": "link",
+      "label": "Browse documentation",
+      "selector_hint": "a[href*='docs']",
+      "purpose": "Navigates the user to the documentation index.",
+      "is_interactive": true
+    },
+    {
+      "type": "link",
+      "label": "Go to homepage",
+      "selector_hint": "a[href='/']",
+      "purpose": "Navigates the user back to the home page.",
+      "is_interactive": true
+    }
+  ],
+  "outbound_links": [
+    "/",
+    "/docs"
+  ],
+  "user_flows": [
+    "Documentation Navigation"
+  ],
+  "screenshot_path": "outputs\\crawl\\screenshots\\docs_documenso_com_users_signing-documents.png",
+  "requires_auth": false,
+  "documenso_entity": "recipient"
+}

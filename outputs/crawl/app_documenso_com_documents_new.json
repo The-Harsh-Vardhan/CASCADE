@@ -1,0 +1,30 @@
+{
+  "url": "https://app.documenso.com/documents/new",
+  "title": "Documenso",
+  "purpose": "Displays a 404 error page indicating that the requested page does not exist or was moved.",
+  "ui_components": [
+    {
+      "type": "button",
+      "label": "Go Back",
+      "selector_hint": "button:has-text('Go Back')",
+      "purpose": "Navigates the user to the previously visited page.",
+      "is_interactive": true
+    },
+    {
+      "type": "link",
+      "label": "Home",
+      "selector_hint": "a[href='/']",
+      "purpose": "Navigates the user back to the application homepage.",
+      "is_interactive": true
+    }
+  ],
+  "outbound_links": [
+    "/"
+  ],
+  "user_flows": [
+    "Error Handling"
+  ],
+  "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_documents_new.png",
+  "requires_auth": true,
+  "documenso_entity": "document"
+}
