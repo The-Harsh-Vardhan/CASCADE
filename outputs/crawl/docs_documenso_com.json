@@ -1,126 +1,19 @@
 {
-  "url": "https://docs.documenso.com/",
+  "url": "https://docs.documenso.com",
   "title": "Documenso Docs | Documenso Docs",
-  "purpose": "Serves as the main documentation hub for Documenso, providing quick access to user guides, API docs, self-hosting instructions, and core concept references.",
+  "purpose": "Page at https://docs.documenso.com",
   "ui_components": [
-    {
-      "type": "button",
-      "label": "Search",
-      "selector_hint": "button:has-text('Search')",
-      "purpose": "Opens the documentation search dialog to quickly find specific topics.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Get Started",
-      "selector_hint": "a:has-text('Get Started')",
-      "purpose": "Navigates to the primary getting started guide.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "View on GitHub",
-      "selector_hint": "a:has-text('View on GitHub')",
-      "purpose": "Redirects to the official Documenso GitHub repository.",
-      "is_interactive": true
-    },
-    {
-      "type": "card",
-      "label": "User Guide",
-      "selector_hint": "a:has-text('Get started →')",
-      "purpose": "Navigates to the web application documentation for sending documents and managing teams.",
-      "is_interactive": true
-    },
-    {
-      "type": "card",
-      "label": "Developer Guide",
-      "selector_hint": "a:has-text('View API docs →')",
-      "purpose": "Navigates to developer resources including API documentation and webhooks.",
-      "is_interactive": true
-    },
-    {
-      "type": "card",
-      "label": "Self-Hosting Guide",
-      "selector_hint": "a:has-text('Deploy now →')",
-      "purpose": "Navigates to deployment guides for Docker, Kubernetes, and Railway.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Create an account",
-      "selector_hint": "a:has-text('Create an account')",
-      "purpose": "Guides the user on setting up a new account.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Upload and send a document",
-      "selector_hint": "a:has-text('Upload and send a document')",
-      "purpose": "Directs to instructions for sending a document for signing.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Get your API key",
-      "selector_hint": "a:has-text('Get your API key')",
-      "purpose": "Explains how to generate API authentication credentials.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Make your first API call",
-      "selector_hint": "a:has-text('Make your first API call')",
-      "purpose": "Provides a tutorial on executing initial API requests.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Check requirements",
-      "selector_hint": "a:has-text('Check requirements')",
-      "purpose": "Outlines system requirements for self-hosting Documenso.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Run with Docker",
-      "selector_hint": "a:has-text('Run with Docker')",
-      "purpose": "Shows instructions for running Documenso using Docker containers.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "GitHub",
-      "selector_hint": "a:has-text('GitHub')",
-      "purpose": "Links to the community GitHub repository.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Discord",
-      "selector_hint": "a:has-text('Discord')",
-      "purpose": "Links to the community Discord server for support and discussions.",
-      "is_interactive": true
-    },
-    {
-      "type": "button",
-      "label": "Try Documenso",
-      "selector_hint": "a:has-text('Try Documenso')",
-      "purpose": "Navigates to the live Documenso web application.",
-      "is_interactive": true
-    }
+    "Navigation header menu",
+    "Action button",
+    "Main content card",
+    "Documenso",
+    "SearchCtrlK button",
+    "Get Started",
+    "View on GitHub",
+    "Create an account"
   ],
-  "outbound_links": [
-    "https://github.com/documenso/documenso",
-    "https://discord.gg/documenso",
-    "https://app.documenso.com"
-  ],
-  "user_flows": [
-    "Navigating Documentation",
-    "Searching Documentation",
-    "Accessing Developer Resources",
-    "Accessing Self-Hosting Guides",
-    "Joining the Community"
-  ],
+  "outbound_links": [],
+  "user_flows": [],
   "screenshot_path": "outputs\\crawl\\screenshots\\docs_documenso_com.png",
   "requires_auth": false,
   "documenso_entity": "general"

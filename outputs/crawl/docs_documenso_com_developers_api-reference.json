@@ -1,31 +1,16 @@
 {
   "url": "https://docs.documenso.com/developers/api-reference",
   "title": "Documenso Docs",
-  "purpose": "Displays a 404 Not Found error page indicating that the developer documentation has been restructured and provides navigation links to recover.",
+  "purpose": "Page at https://docs.documenso.com/developers/api-reference",
   "ui_components": [
-    {
-      "type": "link",
-      "label": "Browse documentation",
-      "selector_hint": "a:contains('Browse documentation')",
-      "purpose": "Navigates the user to the main documentation hub.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Go to homepage",
-      "selector_hint": "a:contains('Go to homepage')",
-      "purpose": "Redirects the user back to the Documenso home page.",
-      "is_interactive": true
-    }
+    "Navigation header menu",
+    "Action button",
+    "Main content card",
+    "Browse documentation",
+    "Go to homepage"
   ],
-  "outbound_links": [
-    "/",
-    "https://documenso.com"
-  ],
-  "user_flows": [
-    "Documentation Browsing",
-    "Error Recovery"
-  ],
+  "outbound_links": [],
+  "user_flows": [],
   "screenshot_path": "outputs\\crawl\\screenshots\\docs_documenso_com_developers_api-reference.png",
   "requires_auth": false,
   "documenso_entity": "general"

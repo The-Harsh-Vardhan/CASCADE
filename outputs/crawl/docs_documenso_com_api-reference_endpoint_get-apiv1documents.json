@@ -2,7 +2,13 @@
   "url": "https://docs.documenso.com/api-reference/endpoint/get-apiv1documents",
   "title": "Documenso Docs",
   "purpose": "Page at https://docs.documenso.com/api-reference/endpoint/get-apiv1documents",
-  "ui_components": [],
+  "ui_components": [
+    "Navigation header menu",
+    "Action button",
+    "Main content card",
+    "Browse documentation",
+    "Go to homepage"
+  ],
   "outbound_links": [],
   "user_flows": [],
   "screenshot_path": "outputs\\crawl\\screenshots\\docs_documenso_com_api-reference_endpoint_get-apiv1documents.png",

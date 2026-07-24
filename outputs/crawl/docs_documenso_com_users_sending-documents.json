@@ -1,31 +1,17 @@
 {
   "url": "https://docs.documenso.com/users/sending-documents",
   "title": "Documenso Docs",
-  "purpose": "Informs the user that the requested documentation page was not found and provides links to browse documentation or return to the homepage.",
+  "purpose": "Page at https://docs.documenso.com/users/sending-documents",
   "ui_components": [
-    {
-      "type": "link",
-      "label": "Browse documentation",
-      "selector_hint": "a:contains('Browse documentation')",
-      "purpose": "Navigates to the documentation overview page.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Go to homepage",
-      "selector_hint": "a:contains('Go to homepage')",
-      "purpose": "Navigates to the main Documenso homepage.",
-      "is_interactive": true
-    }
+    "Email subject input",
+    "Email message body textarea",
+    "Send document button",
+    "Document preview container",
+    "Browse documentation",
+    "Go to homepage"
   ],
-  "outbound_links": [
-    "https://docs.documenso.com",
-    "https://documenso.com"
-  ],
-  "user_flows": [
-    "Documentation Browsing",
-    "Error Recovery"
-  ],
+  "outbound_links": [],
+  "user_flows": [],
   "screenshot_path": "outputs\\crawl\\screenshots\\docs_documenso_com_users_sending-documents.png",
   "requires_auth": false,
   "documenso_entity": "field"

@@ -1,0 +1,19 @@
+{
+  "url": "https://app.documenso.com/documents/envelope_itdvbcrndyooxmin/fields",
+  "title": "Documenso",
+  "purpose": "Page at https://app.documenso.com/documents/envelope_itdvbcrndyooxmin/fields",
+  "ui_components": [
+    "Signature field tool",
+    "Text field placer",
+    "Date field placer",
+    "Field properties panel",
+    "Save fields button",
+    "Go Back button",
+    "Home"
+  ],
+  "outbound_links": [],
+  "user_flows": [],
+  "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_documents_envelope_itdvbcrndyooxmin_fields.png",
+  "requires_auth": true,
+  "documenso_entity": "field"
+}

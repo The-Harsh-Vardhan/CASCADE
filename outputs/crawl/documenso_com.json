@@ -1,130 +1,19 @@
 {
-  "url": "https://documenso.com/",
+  "url": "https://documenso.com",
   "title": "Documenso - The Open Source DocuSign Alternative",
-  "purpose": "Serve as the main landing page for Documenso, presenting platform features, enterprise e-signature solutions, API capabilities, and entry points for signing up or logging in.",
+  "purpose": "Page at https://documenso.com",
   "ui_components": [
-    {
-      "type": "nav",
-      "label": "Header Navigation",
-      "selector_hint": "header nav",
-      "purpose": "Provides primary navigation across the marketing website sections.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Solutions",
-      "selector_hint": "nav a[href*='/solutions']",
-      "purpose": "Navigates to the solutions page.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Enterprise",
-      "selector_hint": "nav a[href*='/enterprise']",
-      "purpose": "Navigates to information about enterprise features and plans.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Platform",
-      "selector_hint": "nav a[href*='/platform']",
-      "purpose": "Navigates to platform details and options.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Self-Hosted",
-      "selector_hint": "nav a[href*='/self-hosted']",
-      "purpose": "Navigates to self-hosting options and guide.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Developers",
-      "selector_hint": "nav a[href*='/developers']",
-      "purpose": "Navigates to developer tools, documentation, and API guides.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Pricing",
-      "selector_hint": "nav a[href*='/pricing']",
-      "purpose": "Navigates to subscription plans and pricing details.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Sign In",
-      "selector_hint": "a[href*='/sign-in']",
-      "purpose": "Directs user to the sign-in authentication page.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Sign Up",
-      "selector_hint": "a[href*='/sign-up']",
-      "purpose": "Directs user to account registration.",
-      "is_interactive": true
-    },
-    {
-      "type": "button",
-      "label": "Get Started",
-      "selector_hint": "section.hero a:has-text('Get Started')",
-      "purpose": "Triggers the onboarding or sign-up flow.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Check out the Platform Plan",
-      "selector_hint": "a:has-text('Check out the Platform Plan')",
-      "purpose": "Navigates to information regarding the Platform Plan.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Check our API",
-      "selector_hint": "a:has-text('Check our API')",
-      "purpose": "Navigates to the API overview or documentation page.",
-      "is_interactive": true
-    },
-    {
-      "type": "button",
-      "label": "Talk to Us",
-      "selector_hint": "a:has-text('Talk to Us')",
-      "purpose": "Opens contact form or calendar booking to connect with sales/support.",
-      "is_interactive": true
-    },
-    {
-      "type": "card",
-      "label": "How secure is Documenso?",
-      "selector_hint": "details:has-text('How secure is Documenso?')",
-      "purpose": "Expands to show details on security standards.",
-      "is_interactive": true
-    },
-    {
-      "type": "card",
-      "label": "How does Documenso ensure compliance with data protection laws?",
-      "selector_hint": "details:has-text('compliance with data protection')",
-      "purpose": "Expands to show information on data compliance.",
-      "is_interactive": true
-    },
-    {
-      "type": "select",
-      "label": "Select Language",
-      "selector_hint": "select[aria-label='Select Language']",
-      "purpose": "Changes the visible language of the website.",
-      "is_interactive": true
-    }
+    "Navigation header menu",
+    "Action button",
+    "Main content card",
+    "Documenso",
+    "Enterprise",
+    "Platform",
+    "Self-Hosted",
+    "Pricing"
   ],
-  "outbound_links": [
-    "https://github.com/documenso/documenso",
-    "https://app.documenso.com/d/b89Lai"
-  ],
-  "user_flows": [
-    "User Onboarding",
-    "Product Evaluation",
-    "Developer API Exploration"
-  ],
+  "outbound_links": [],
+  "user_flows": [],
   "screenshot_path": "outputs\\crawl\\screenshots\\documenso_com.png",
   "requires_auth": false,
   "documenso_entity": "general"

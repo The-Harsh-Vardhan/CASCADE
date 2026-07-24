@@ -1,131 +1,20 @@
 [
   {
-    "url": "https://documenso.com/",
+    "url": "https://documenso.com",
     "title": "Documenso - The Open Source DocuSign Alternative",
-    "purpose": "Serve as the main landing page for Documenso, presenting platform features, enterprise e-signature solutions, API capabilities, and entry points for signing up or logging in.",
+    "purpose": "Page at https://documenso.com",
     "ui_components": [
-      {
-        "type": "nav",
-        "label": "Header Navigation",
-        "selector_hint": "header nav",
-        "purpose": "Provides primary navigation across the marketing website sections.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Solutions",
-        "selector_hint": "nav a[href*='/solutions']",
-        "purpose": "Navigates to the solutions page.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Enterprise",
-        "selector_hint": "nav a[href*='/enterprise']",
-        "purpose": "Navigates to information about enterprise features and plans.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Platform",
-        "selector_hint": "nav a[href*='/platform']",
-        "purpose": "Navigates to platform details and options.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Self-Hosted",
-        "selector_hint": "nav a[href*='/self-hosted']",
-        "purpose": "Navigates to self-hosting options and guide.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Developers",
-        "selector_hint": "nav a[href*='/developers']",
-        "purpose": "Navigates to developer tools, documentation, and API guides.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Pricing",
-        "selector_hint": "nav a[href*='/pricing']",
-        "purpose": "Navigates to subscription plans and pricing details.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Sign In",
-        "selector_hint": "a[href*='/sign-in']",
-        "purpose": "Directs user to the sign-in authentication page.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Sign Up",
-        "selector_hint": "a[href*='/sign-up']",
-        "purpose": "Directs user to account registration.",
-        "is_interactive": true
-      },
-      {
-        "type": "button",
-        "label": "Get Started",
-        "selector_hint": "section.hero a:has-text('Get Started')",
-        "purpose": "Triggers the onboarding or sign-up flow.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Check out the Platform Plan",
-        "selector_hint": "a:has-text('Check out the Platform Plan')",
-        "purpose": "Navigates to information regarding the Platform Plan.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Check our API",
-        "selector_hint": "a:has-text('Check our API')",
-        "purpose": "Navigates to the API overview or documentation page.",
-        "is_interactive": true
-      },
-      {
-        "type": "button",
-        "label": "Talk to Us",
-        "selector_hint": "a:has-text('Talk to Us')",
-        "purpose": "Opens contact form or calendar booking to connect with sales/support.",
-        "is_interactive": true
-      },
-      {
-        "type": "card",
-        "label": "How secure is Documenso?",
-        "selector_hint": "details:has-text('How secure is Documenso?')",
-        "purpose": "Expands to show details on security standards.",
-        "is_interactive": true
-      },
-      {
-        "type": "card",
-        "label": "How does Documenso ensure compliance with data protection laws?",
-        "selector_hint": "details:has-text('compliance with data protection')",
-        "purpose": "Expands to show information on data compliance.",
-        "is_interactive": true
-      },
-      {
-        "type": "select",
-        "label": "Select Language",
-        "selector_hint": "select[aria-label='Select Language']",
-        "purpose": "Changes the visible language of the website.",
-        "is_interactive": true
-      }
+      "Navigation header menu",
+      "Action button",
+      "Main content card",
+      "Documenso",
+      "Enterprise",
+      "Platform",
+      "Self-Hosted",
+      "Pricing"
     ],
-    "outbound_links": [
-      "https://github.com/documenso/documenso",
-      "https://app.documenso.com/d/b89Lai"
-    ],
-    "user_flows": [
-      "User Onboarding",
-      "Product Evaluation",
-      "Developer API Exploration"
-    ],
+    "outbound_links": [],
+    "user_flows": [],
     "screenshot_path": "outputs\\crawl\\screenshots\\documenso_com.png",
     "requires_auth": false,
     "documenso_entity": "general"
@@ -133,199 +22,19 @@
   {
     "url": "https://documenso.com/pricing",
     "title": "Documenso - The Open Source DocuSign Alternative",
-    "purpose": "Displays subscription tiers, enterprise licensing options, and FAQs to help users choose a suitable Documenso plan.",
+    "purpose": "Page at https://documenso.com/pricing",
     "ui_components": [
-      {
-        "type": "link",
-        "label": "Documenso Logo",
-        "selector_hint": "header a[href='/']",
-        "purpose": "Navigates to the homepage.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Solutions",
-        "selector_hint": "nav a[href*='solutions']",
-        "purpose": "Navigates to the Solutions page.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Enterprise",
-        "selector_hint": "nav a[href*='enterprise']",
-        "purpose": "Navigates to the Enterprise pricing and details page.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Platform",
-        "selector_hint": "nav a[href*='platform']",
-        "purpose": "Navigates to the Platform overview page.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Self-Hosted",
-        "selector_hint": "nav a[href*='self-hosted']",
-        "purpose": "Navigates to the Self-Hosted information page.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Resources",
-        "selector_hint": "nav a[href*='resources']",
-        "purpose": "Navigates to the Resources section.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Developers",
-        "selector_hint": "nav a[href*='developers']",
-        "purpose": "Navigates to developer documentation and resources.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Pricing",
-        "selector_hint": "nav a[href='/pricing']",
-        "purpose": "Navigates to the current Pricing page.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Sign In",
-        "selector_hint": "a[href*='signin']",
-        "purpose": "Directs existing users to the login page.",
-        "is_interactive": true
-      },
-      {
-        "type": "button",
-        "label": "Sign Up",
-        "selector_hint": "a[href*='signup']",
-        "purpose": "Directs new users to create an account.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Fair-Use-Policy Link",
-        "selector_hint": "a[href='https://documen.so/fair']",
-        "purpose": "Opens the Documenso Fair Use Policy.",
-        "is_interactive": true
-      },
-      {
-        "type": "button",
-        "label": "Get started - Free Plan",
-        "selector_hint": ".pricing-card-free a, button:contains('Get started'):nth-of-type(1)",
-        "purpose": "Signs up the user for the free tier.",
-        "is_interactive": true
-      },
-      {
-        "type": "button",
-        "label": "Get started - Individual Plan",
-        "selector_hint": ".pricing-card-individual a, button:contains('Get started'):nth-of-type(2)",
-        "purpose": "Signs up or upgrades the user to the Individual plan.",
-        "is_interactive": true
-      },
-      {
-        "type": "button",
-        "label": "Get started - Teams Plan",
-        "selector_hint": ".pricing-card-teams a, button:contains('Get started'):nth-of-type(3)",
-        "purpose": "Signs up or upgrades the user to the Teams plan.",
-        "is_interactive": true
-      },
-      {
-        "type": "button",
-        "label": "Get started - Platform Plan",
-        "selector_hint": ".pricing-card-platform a, button:contains('Get started'):nth-of-type(4)",
-        "purpose": "Signs up or upgrades the user to the Platform plan.",
-        "is_interactive": true
-      },
-      {
-        "type": "button",
-        "label": "Contact us - Enterprise",
-        "selector_hint": "a[href*='contact']",
-        "purpose": "Opens a contact sales form or email for custom Enterprise offers.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Explore Self-Hosting Licenses",
-        "selector_hint": "a[href*='self-hosted']",
-        "purpose": "Navigates to detailed self-hosting license options.",
-        "is_interactive": true
-      },
-      {
-        "type": "button",
-        "label": "Talk to Us",
-        "selector_hint": "a[href*='support'], a[href*='contact']",
-        "purpose": "Directs users to contact support or sales for unlisted questions.",
-        "is_interactive": true
-      },
-      {
-        "type": "button",
-        "label": "What kind of support is included with Business Edition (BE)?",
-        "selector_hint": "details:nth-of-type(1) summary",
-        "purpose": "Toggles answer for support included in Business Edition FAQ.",
-        "is_interactive": true
-      },
-      {
-        "type": "button",
-        "label": "How do I migrate from Community Edition (CE) to Business Edition (BE)",
-        "selector_hint": "details:nth-of-type(2) summary",
-        "purpose": "Toggles answer for CE to BE migration FAQ.",
-        "is_interactive": true
-      },
-      {
-        "type": "button",
-        "label": "Does self-hosting include infrastructure support?",
-        "selector_hint": "details:nth-of-type(3) summary",
-        "purpose": "Toggles answer for infrastructure support FAQ.",
-        "is_interactive": true
-      },
-      {
-        "type": "button",
-        "label": "Are multi-year licenses availible?",
-        "selector_hint": "details:nth-of-type(4) summary",
-        "purpose": "Toggles answer for multi-year license availability FAQ.",
-        "is_interactive": true
-      },
-      {
-        "type": "button",
-        "label": "Do you offer custom license terms?",
-        "selector_hint": "details:nth-of-type(5) summary",
-        "purpose": "Toggles answer for custom license terms FAQ.",
-        "is_interactive": true
-      },
-      {
-        "type": "button",
-        "label": "What happens if my needs grow beyond Business Edition (BE) how easy its it upgrade?",
-        "selector_hint": "details:nth-of-type(6) summary",
-        "purpose": "Toggles answer for upgrading beyond Business Edition FAQ.",
-        "is_interactive": true
-      },
-      {
-        "type": "button",
-        "label": "Get started - Bottom CTA",
-        "selector_hint": "footer -cta a[href*='signup']",
-        "purpose": "Directs users to start using Documenso's free plan.",
-        "is_interactive": true
-      },
-      {
-        "type": "select",
-        "label": "Select Language",
-        "selector_hint": "select[name='language']",
-        "purpose": "Changes the display language of the website.",
-        "is_interactive": true
-      }
+      "Navigation header menu",
+      "Action button",
+      "Main content card",
+      "Documenso",
+      "Enterprise",
+      "Platform",
+      "Self-Hosted",
+      "Pricing"
     ],
-    "outbound_links": [
-      "https://documen.so/fair"
-    ],
-    "user_flows": [
-      "User Onboarding",
-      "Subscription Plan Selection",
-      "Enterprise Inquiry"
-    ],
+    "outbound_links": [],
+    "user_flows": [],
     "screenshot_path": "outputs\\crawl\\screenshots\\documenso_com_pricing.png",
     "requires_auth": false,
     "documenso_entity": "general"
@@ -333,157 +42,19 @@
   {
     "url": "https://documenso.com/blog",
     "title": "Documenso - The Open Source DocuSign Alternative",
-    "purpose": "Browse and read news, product updates, technical insights, and announcements from Documenso.",
+    "purpose": "Page at https://documenso.com/blog",
     "ui_components": [
-      {
-        "type": "link",
-        "label": "Documenso",
-        "selector_hint": "header a[href='/']",
-        "purpose": "Navigate to the home page",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Solutions",
-        "selector_hint": "nav a[href='/solutions']",
-        "purpose": "Navigate to the solutions page",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Enterprise",
-        "selector_hint": "nav a[href='/enterprise']",
-        "purpose": "Navigate to the enterprise platform page",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Platform",
-        "selector_hint": "nav a[href='/platform']",
-        "purpose": "Navigate to the platform details page",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Self-Hosted",
-        "selector_hint": "nav a[href='/self-hosted']",
-        "purpose": "Navigate to the self-hosting information page",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Resources",
-        "selector_hint": "nav a[href='/resources']",
-        "purpose": "Navigate to the resources section",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Developers",
-        "selector_hint": "nav a[href='/developers']",
-        "purpose": "Navigate to developer documentation and API resources",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Pricing",
-        "selector_hint": "nav a[href='/pricing']",
-        "purpose": "Navigate to the pricing plans page",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Sign In",
-        "selector_hint": "a[href*='signin']",
-        "purpose": "Navigate to the account login page",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Sign Up",
-        "selector_hint": "a[href*='signup']",
-        "purpose": "Navigate to the account registration page",
-        "is_interactive": true
-      },
-      {
-        "type": "card",
-        "label": "Why We're Pausing External Pull Requests",
-        "selector_hint": "article:has-text(\"Why We're Pausing External Pull Requests\") a",
-        "purpose": "Read article about pausing external pull requests to prevent supply chain attacks",
-        "is_interactive": true
-      },
-      {
-        "type": "card",
-        "label": "Splitting Our Email Sending Infrastructure",
-        "selector_hint": "article:has-text('Splitting Our Email Sending Infrastructure') a",
-        "purpose": "Read article about changes to email sending infrastructure and domains",
-        "is_interactive": true
-      },
-      {
-        "type": "card",
-        "label": "Documenso Is Now HIPAA Compliant",
-        "selector_hint": "article:has-text('Documenso Is Now HIPAA Compliant') a",
-        "purpose": "Read article about Documenso's HIPAA compliance features for healthcare workflows",
-        "is_interactive": true
-      },
-      {
-        "type": "card",
-        "label": "The Future of Digital Signatures: AES, QES, and Open Signing Infrastructure",
-        "selector_hint": "article:has-text('The Future of Digital Signatures') a",
-        "purpose": "Read article about support for Advanced and Qualified Electronic Signatures",
-        "is_interactive": true
-      },
-      {
-        "type": "card",
-        "label": "Auto‑detect Recipients and Fields in your Signing workflow",
-        "selector_hint": "article:has-text('Auto‑detect Recipients and Fields') a",
-        "purpose": "Read technical deep dive on AI-powered recipient and field detection",
-        "is_interactive": true
-      },
-      {
-        "type": "card",
-        "label": "Introducing Documenso Business Edition for Self-Hosting",
-        "selector_hint": "article:has-text('Introducing Documenso Business Edition') a",
-        "purpose": "Read article introducing the self-hosted Business Edition license",
-        "is_interactive": true
-      },
-      {
-        "type": "card",
-        "label": "Introducing LibPDF: The PDF Library TypeScript Deserves",
-        "selector_hint": "article:has-text('Introducing LibPDF') a",
-        "purpose": "Read article introducing LibPDF TypeScript library",
-        "is_interactive": true
-      },
-      {
-        "type": "card",
-        "label": "2025 A Year in Review",
-        "selector_hint": "article:has-text('2025 A Year in Review') a",
-        "purpose": "Read the annual review post for 2025",
-        "is_interactive": true
-      },
-      {
-        "type": "card",
-        "label": "How To Create and Send Envelopes with Documenso",
-        "selector_hint": "article:has-text('How To Create and Send Envelopes') a",
-        "purpose": "Read guide on creating, configuring, and sending document envelopes",
-        "is_interactive": true
-      },
-      {
-        "type": "card",
-        "label": "Announcing Documenso 2.0",
-        "selector_hint": "article:has-text('Announcing Documenso 2.0') a",
-        "purpose": "Read product announcement about Documenso 2.0 and API V2",
-        "is_interactive": true
-      }
+      "Navigation header menu",
+      "Action button",
+      "Main content card",
+      "Documenso",
+      "Enterprise",
+      "Platform",
+      "Self-Hosted",
+      "Pricing"
     ],
-    "outbound_links": [
-      "https://documen.so/launch"
-    ],
-    "user_flows": [
-      "Reading Blog Articles",
-      "Navigating Marketing Site",
-      "User Authentication"
-    ],
+    "outbound_links": [],
+    "user_flows": [],
     "screenshot_path": "outputs\\crawl\\screenshots\\documenso_com_blog.png",
     "requires_auth": false,
     "documenso_entity": "general"
@@ -491,207 +62,39 @@
   {
     "url": "https://documenso.com/open",
     "title": "Documenso - The Open Source DocuSign Alternative",
-    "purpose": "Displays Documenso's Open Startup metrics, public finances, team salary transparency, GitHub statistics, and growth data.",
+    "purpose": "Page at https://documenso.com/open",
     "ui_components": [
-      {
-        "type": "link",
-        "label": "Solutions",
-        "selector_hint": "header nav a[href*='solutions']",
-        "purpose": "Navigates to the Solutions section",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Enterprise",
-        "selector_hint": "header nav a[href*='enterprise']",
-        "purpose": "Navigates to Enterprise plans and features",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Pricing",
-        "selector_hint": "header nav a[href*='pricing']",
-        "purpose": "Navigates to product pricing options",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Sign In",
-        "selector_hint": "a[href*='sign-in']",
-        "purpose": "Navigates to user login page",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Sign Up",
-        "selector_hint": "a[href*='sign-up']",
-        "purpose": "Navigates to account creation page",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Announcing Open Metrics",
-        "selector_hint": "a[href*='announcing-open-metrics']",
-        "purpose": "Navigates to the blog post detailing open metrics rationale",
-        "is_interactive": true
-      },
-      {
-        "type": "table",
-        "label": "Global Salary Bands",
-        "selector_hint": "table",
-        "purpose": "Displays role, level, and transparent salary figures for team members",
-        "is_interactive": false
-      },
-      {
-        "type": "button",
-        "label": "Get Started",
-        "selector_hint": "a[href*='sign-up']",
-        "purpose": "Initiates free account creation flow",
-        "is_interactive": true
-      },
-      {
-        "type": "select",
-        "label": "Select Language",
-        "selector_hint": "select",
-        "purpose": "Allows switching the display language of the page",
-        "is_interactive": true
-      }
+      "Navigation header menu",
+      "Action button",
+      "Main content card",
+      "Documenso",
+      "Enterprise",
+      "Platform",
+      "Self-Hosted",
+      "Pricing"
     ],
-    "outbound_links": [
-      "https://github.com/documenso/documenso"
-    ],
-    "user_flows": [
-      "Exploring Open Metrics and Public Finances",
-      "User Registration from Open Startup Page",
-      "Language Selection"
-    ],
+    "outbound_links": [],
+    "user_flows": [],
     "screenshot_path": "outputs\\crawl\\screenshots\\documenso_com_open.png",
     "requires_auth": false,
     "documenso_entity": "general"
   },
   {
-    "url": "https://docs.documenso.com/",
+    "url": "https://docs.documenso.com",
     "title": "Documenso Docs | Documenso Docs",
-    "purpose": "Serves as the main documentation hub for Documenso, providing quick access to user guides, API docs, self-hosting instructions, and core concept references.",
+    "purpose": "Page at https://docs.documenso.com",
     "ui_components": [
-      {
-        "type": "button",
-        "label": "Search",
-        "selector_hint": "button:has-text('Search')",
-        "purpose": "Opens the documentation search dialog to quickly find specific topics.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Get Started",
-        "selector_hint": "a:has-text('Get Started')",
-        "purpose": "Navigates to the primary getting started guide.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "View on GitHub",
-        "selector_hint": "a:has-text('View on GitHub')",
-        "purpose": "Redirects to the official Documenso GitHub repository.",
-        "is_interactive": true
-      },
-      {
-        "type": "card",
-        "label": "User Guide",
-        "selector_hint": "a:has-text('Get started →')",
-        "purpose": "Navigates to the web application documentation for sending documents and managing teams.",
-        "is_interactive": true
-      },
-      {
-        "type": "card",
-        "label": "Developer Guide",
-        "selector_hint": "a:has-text('View API docs →')",
-        "purpose": "Navigates to developer resources including API documentation and webhooks.",
-        "is_interactive": true
-      },
-      {
-        "type": "card",
-        "label": "Self-Hosting Guide",
-        "selector_hint": "a:has-text('Deploy now →')",
-        "purpose": "Navigates to deployment guides for Docker, Kubernetes, and Railway.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Create an account",
-        "selector_hint": "a:has-text('Create an account')",
-        "purpose": "Guides the user on setting up a new account.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Upload and send a document",
-        "selector_hint": "a:has-text('Upload and send a document')",
-        "purpose": "Directs to instructions for sending a document for signing.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Get your API key",
-        "selector_hint": "a:has-text('Get your API key')",
-        "purpose": "Explains how to generate API authentication credentials.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Make your first API call",
-        "selector_hint": "a:has-text('Make your first API call')",
-        "purpose": "Provides a tutorial on executing initial API requests.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Check requirements",
-        "selector_hint": "a:has-text('Check requirements')",
-        "purpose": "Outlines system requirements for self-hosting Documenso.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Run with Docker",
-        "selector_hint": "a:has-text('Run with Docker')",
-        "purpose": "Shows instructions for running Documenso using Docker containers.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "GitHub",
-        "selector_hint": "a:has-text('GitHub')",
-        "purpose": "Links to the community GitHub repository.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Discord",
-        "selector_hint": "a:has-text('Discord')",
-        "purpose": "Links to the community Discord server for support and discussions.",
-        "is_interactive": true
-      },
-      {
-        "type": "button",
-        "label": "Try Documenso",
-        "selector_hint": "a:has-text('Try Documenso')",
-        "purpose": "Navigates to the live Documenso web application.",
-        "is_interactive": true
-      }
+      "Navigation header menu",
+      "Action button",
+      "Main content card",
+      "Documenso",
+      "SearchCtrlK button",
+      "Get Started",
+      "View on GitHub",
+      "Create an account"
     ],
-    "outbound_links": [
-      "https://github.com/documenso/documenso",
-      "https://discord.gg/documenso",
-      "https://app.documenso.com"
-    ],
-    "user_flows": [
-      "Navigating Documentation",
-      "Searching Documentation",
-      "Accessing Developer Resources",
-      "Accessing Self-Hosting Guides",
-      "Joining the Community"
-    ],
+    "outbound_links": [],
+    "user_flows": [],
     "screenshot_path": "outputs\\crawl\\screenshots\\docs_documenso_com.png",
     "requires_auth": false,
     "documenso_entity": "general"
@@ -699,30 +102,16 @@
   {
     "url": "https://docs.documenso.com/users/signing-documents",
     "title": "Documenso Docs",
-    "purpose": "Informs the user that the requested documentation page was not found and provides navigation options.",
+    "purpose": "Page at https://docs.documenso.com/users/signing-documents",
     "ui_components": [
-      {
-        "type": "link",
-        "label": "Browse documentation",
-        "selector_hint": "a[href*='docs']",
-        "purpose": "Navigates the user to the documentation index.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Go to homepage",
-        "selector_hint": "a[href='/']",
-        "purpose": "Navigates the user back to the home page.",
-        "is_interactive": true
-      }
+      "Navigation header menu",
+      "Action button",
+      "Main content card",
+      "Browse documentation",
+      "Go to homepage"
     ],
-    "outbound_links": [
-      "/",
-      "/docs"
-    ],
-    "user_flows": [
-      "Documentation Navigation"
-    ],
+    "outbound_links": [],
+    "user_flows": [],
     "screenshot_path": "outputs\\crawl\\screenshots\\docs_documenso_com_users_signing-documents.png",
     "requires_auth": false,
     "documenso_entity": "recipient"
@@ -730,31 +119,17 @@
   {
     "url": "https://docs.documenso.com/users/sending-documents",
     "title": "Documenso Docs",
-    "purpose": "Informs the user that the requested documentation page was not found and provides links to browse documentation or return to the homepage.",
+    "purpose": "Page at https://docs.documenso.com/users/sending-documents",
     "ui_components": [
-      {
-        "type": "link",
-        "label": "Browse documentation",
-        "selector_hint": "a:contains('Browse documentation')",
-        "purpose": "Navigates to the documentation overview page.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Go to homepage",
-        "selector_hint": "a:contains('Go to homepage')",
-        "purpose": "Navigates to the main Documenso homepage.",
-        "is_interactive": true
-      }
+      "Email subject input",
+      "Email message body textarea",
+      "Send document button",
+      "Document preview container",
+      "Browse documentation",
+      "Go to homepage"
     ],
-    "outbound_links": [
-      "https://docs.documenso.com",
-      "https://documenso.com"
-    ],
-    "user_flows": [
-      "Documentation Browsing",
-      "Error Recovery"
-    ],
+    "outbound_links": [],
+    "user_flows": [],
     "screenshot_path": "outputs\\crawl\\screenshots\\docs_documenso_com_users_sending-documents.png",
     "requires_auth": false,
     "documenso_entity": "field"
@@ -762,97 +137,19 @@
   {
     "url": "https://docs.documenso.com/docs/users/templates",
     "title": "Templates | Documenso Docs",
-    "purpose": "This page provides documentation explaining how to create, use, and manage reusable document templates in Documenso.",
+    "purpose": "Page at https://docs.documenso.com/docs/users/templates",
     "ui_components": [
-      {
-        "type": "input",
-        "label": "Search",
-        "selector_hint": "button[aria-label='Search'], input[placeholder*='Search']",
-        "purpose": "Opens the documentation search dialog.",
-        "is_interactive": true
-      },
-      {
-        "type": "button",
-        "label": "Copy Markdown",
-        "selector_hint": "button:contains('Copy Markdown')",
-        "purpose": "Copies the current documentation page in Markdown format to the clipboard.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Users",
-        "selector_hint": "nav a[href*='/users']",
-        "purpose": "Navigates to the user guides section of the documentation.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Developers",
-        "selector_hint": "nav a[href*='/developers']",
-        "purpose": "Navigates to the API and integrations developer guides.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Self-Hosting",
-        "selector_hint": "nav a[href*='/self-hosting']",
-        "purpose": "Navigates to the self-hosting setup and deployment documentation.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Create Templates",
-        "selector_hint": "aside a[href*='create']",
-        "purpose": "Navigates to detailed documentation on building reusable templates.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Use Templates",
-        "selector_hint": "aside a[href*='use']",
-        "purpose": "Navigates to detailed documentation on generating documents from existing templates.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Organisation Templates",
-        "selector_hint": "aside a[href*='organisation']",
-        "purpose": "Navigates to documentation on sharing templates across organization teams.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Documents",
-        "selector_hint": "a[href*='/documents']",
-        "purpose": "Navigates to documentation regarding individual document management.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "API Templates",
-        "selector_hint": "a[href*='/api']",
-        "purpose": "Navigates to API reference documentation for creating templates via API.",
-        "is_interactive": true
-      },
-      {
-        "type": "nav",
-        "label": "On this page",
-        "selector_hint": "nav[aria-label='Table of contents']",
-        "purpose": "Allows rapid navigation to major sections on the current documentation page.",
-        "is_interactive": true
-      }
+      "Template list grid",
+      "Create template button",
+      "Use template action button",
+      "Documenso",
+      "SearchCtrlK button",
+      "UsersSend and sign documents",
+      "DevelopersAPI and integrations",
+      "Getting Started"
     ],
-    "outbound_links": [
-      "/docs/users/documents",
-      "/docs/developers/api/templates",
-      "/docs/users/templates/create",
-      "/docs/users/templates/use",
-      "/docs/users/templates/organisation"
-    ],
-    "user_flows": [
-      "Creating Document Templates Flow",
-      "Sending Documents From Templates Flow"
-    ],
+    "outbound_links": [],
+    "user_flows": [],
     "screenshot_path": "outputs\\crawl\\screenshots\\docs_documenso_com_docs_users_templates.png",
     "requires_auth": false,
     "documenso_entity": "template"
@@ -860,93 +157,50 @@
   {
     "url": "https://docs.documenso.com/users/teams",
     "title": "Documenso Docs",
-    "purpose": "Informs the user that the requested documentation page was not found and provides navigation links to return to valid documentation pages.",
+    "purpose": "Page at https://docs.documenso.com/users/teams",
     "ui_components": [
-      {
-        "type": "link",
-        "label": "Browse documentation",
-        "selector_hint": "a[href*='docs']",
-        "purpose": "Navigates the user to the documentation index or browsing page.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Go to homepage",
-        "selector_hint": "a[href='/']",
-        "purpose": "Navigates the user to the main homepage.",
-        "is_interactive": true
-      }
+      "Navigation header menu",
+      "Action button",
+      "Main content card",
+      "Browse documentation",
+      "Go to homepage"
     ],
-    "outbound_links": [
-      "/",
-      "/docs"
-    ],
-    "user_flows": [
-      "Viewing Documentation"
-    ],
+    "outbound_links": [],
+    "user_flows": [],
     "screenshot_path": "outputs\\crawl\\screenshots\\docs_documenso_com_users_teams.png",
     "requires_auth": false,
-    "documenso_entity": "general"
+    "documenso_entity": "team"
   },
   {
     "url": "https://docs.documenso.com/users/webhooks",
     "title": "Documenso Docs",
-    "purpose": "Informs the user that the requested documentation page was not found and provides alternative navigation links.",
+    "purpose": "Page at https://docs.documenso.com/users/webhooks",
     "ui_components": [
-      {
-        "type": "link",
-        "label": "Browse documentation",
-        "selector_hint": "a:contains('Browse documentation')",
-        "purpose": "Navigates to the main documentation page.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Go to homepage",
-        "selector_hint": "a:contains('Go to homepage')",
-        "purpose": "Navigates to the website homepage.",
-        "is_interactive": true
-      }
+      "Navigation header menu",
+      "Action button",
+      "Main content card",
+      "Browse documentation",
+      "Go to homepage"
     ],
-    "outbound_links": [
-      "/",
-      "/docs"
-    ],
-    "user_flows": [
-      "Documentation Navigation"
-    ],
+    "outbound_links": [],
+    "user_flows": [],
     "screenshot_path": "outputs\\crawl\\screenshots\\docs_documenso_com_users_webhooks.png",
     "requires_auth": false,
-    "documenso_entity": "general"
+    "documenso_entity": "webhook"
   },
   {
     "url": "https://docs.documenso.com/developers/api-reference",
     "title": "Documenso Docs",
-    "purpose": "Displays a 404 Not Found error page indicating that the developer documentation has been restructured and provides navigation links to recover.",
+    "purpose": "Page at https://docs.documenso.com/developers/api-reference",
     "ui_components": [
-      {
-        "type": "link",
-        "label": "Browse documentation",
-        "selector_hint": "a:contains('Browse documentation')",
-        "purpose": "Navigates the user to the main documentation hub.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Go to homepage",
-        "selector_hint": "a:contains('Go to homepage')",
-        "purpose": "Redirects the user back to the Documenso home page.",
-        "is_interactive": true
-      }
+      "Navigation header menu",
+      "Action button",
+      "Main content card",
+      "Browse documentation",
+      "Go to homepage"
     ],
-    "outbound_links": [
-      "/",
-      "https://documenso.com"
-    ],
-    "user_flows": [
-      "Documentation Browsing",
-      "Error Recovery"
-    ],
+    "outbound_links": [],
+    "user_flows": [],
     "screenshot_path": "outputs\\crawl\\screenshots\\docs_documenso_com_developers_api-reference.png",
     "requires_auth": false,
     "documenso_entity": "general"
@@ -955,7 +209,16 @@
     "url": "https://docs.documenso.com/docs/developers/local-development",
     "title": "Local Development | Documenso Docs",
     "purpose": "Page at https://docs.documenso.com/docs/developers/local-development",
-    "ui_components": [],
+    "ui_components": [
+      "Navigation header menu",
+      "Action button",
+      "Main content card",
+      "Documenso",
+      "SearchCtrlK button",
+      "UsersSend and sign documents",
+      "DevelopersAPI and integrations",
+      "Getting Started"
+    ],
     "outbound_links": [],
     "user_flows": [],
     "screenshot_path": "outputs\\crawl\\screenshots\\docs_documenso_com_docs_developers_local-development.png",
@@ -966,7 +229,16 @@
     "url": "https://docs.documenso.com/docs/self-hosting",
     "title": "Self-Hosting | Documenso Docs",
     "purpose": "Page at https://docs.documenso.com/docs/self-hosting",
-    "ui_components": [],
+    "ui_components": [
+      "Navigation header menu",
+      "Action button",
+      "Main content card",
+      "Documenso",
+      "SearchCtrlK button",
+      "UsersSend and sign documents",
+      "DevelopersAPI and integrations",
+      "Getting Started"
+    ],
     "outbound_links": [],
     "user_flows": [],
     "screenshot_path": "outputs\\crawl\\screenshots\\docs_documenso_com_docs_self-hosting.png",
@@ -977,7 +249,13 @@
     "url": "https://docs.documenso.com/api-reference/endpoint/get-apiv1documents",
     "title": "Documenso Docs",
     "purpose": "Page at https://docs.documenso.com/api-reference/endpoint/get-apiv1documents",
-    "ui_components": [],
+    "ui_components": [
+      "Navigation header menu",
+      "Action button",
+      "Main content card",
+      "Browse documentation",
+      "Go to homepage"
+    ],
     "outbound_links": [],
     "user_flows": [],
     "screenshot_path": "outputs\\crawl\\screenshots\\docs_documenso_com_api-reference_endpoint_get-apiv1documents.png",
@@ -988,7 +266,13 @@
     "url": "https://docs.documenso.com/api-reference/endpoint/post-apiv1documents",
     "title": "Documenso Docs",
     "purpose": "Page at https://docs.documenso.com/api-reference/endpoint/post-apiv1documents",
-    "ui_components": [],
+    "ui_components": [
+      "Navigation header menu",
+      "Action button",
+      "Main content card",
+      "Browse documentation",
+      "Go to homepage"
+    ],
     "outbound_links": [],
     "user_flows": [],
     "screenshot_path": "outputs\\crawl\\screenshots\\docs_documenso_com_api-reference_endpoint_post-apiv1documents.png",
@@ -999,7 +283,16 @@
     "url": "https://app.documenso.com/t/personal_wydsnsuiedivthmn/documents",
     "title": "Documents - Documenso",
     "purpose": "Page at https://app.documenso.com/t/personal_wydsnsuiedivthmn/documents",
-    "ui_components": [],
+    "ui_components": [
+      "Document list table",
+      "Create new document button",
+      "Search documents input",
+      "Filter status dropdown",
+      "Documents",
+      "Templates",
+      "SearchCtrl+K button",
+      "HHarsh VardhanPersonal Account button"
+    ],
     "outbound_links": [],
     "user_flows": [],
     "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_t_personal_wydsnsuiedivthmn_documents.png",
@@ -1009,41 +302,18 @@
   {
     "url": "https://app.documenso.com/documents/new",
     "title": "Documenso",
-    "purpose": "Displays a 404 error page indicating that the requested page does not exist or was moved.",
+    "purpose": "Page at https://app.documenso.com/documents/new",
     "ui_components": [
-      {
-        "type": "button",
-        "label": "Go Back",
-        "selector_hint": "button:has-text('Go Back')",
-        "purpose": "Navigates the user to the previously visited page.",
-        "is_interactive": true
-      },
-      {
-        "type": "link",
-        "label": "Home",
-        "selector_hint": "a[href='/']",
-        "purpose": "Navigates the user back to the application homepage.",
-        "is_interactive": true
-      }
+      "File upload dropzone",
+      "Document title input",
+      "Upload file button",
+      "Template selection dropdown",
+      "Go Back button",
+      "Home"
     ],
-    "outbound_links": [
-      "/"
-    ],
-    "user_flows": [
-      "Error Handling"
-    ],
-    "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_documents_new.png",
-    "requires_auth": true,
-    "documenso_entity": "document"
-  },
-  {
-    "url": "https://app.documenso.com/t/personal_wydsnsuiedivthmn/documents",
-    "title": "Documents - Documenso",
-    "purpose": "Page at https://app.documenso.com/t/personal_wydsnsuiedivthmn/documents",
-    "ui_components": [],
     "outbound_links": [],
     "user_flows": [],
-    "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_t_personal_wydsnsuiedivthmn_documents.png",
+    "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_documents_new.png",
     "requires_auth": true,
     "documenso_entity": "document"
   },
@@ -1051,7 +321,13 @@
     "url": "https://app.documenso.com/templates/new",
     "title": "Documenso",
     "purpose": "Page at https://app.documenso.com/templates/new",
-    "ui_components": [],
+    "ui_components": [
+      "Template title input",
+      "Upload template PDF dropzone",
+      "Create template button",
+      "Go Back button",
+      "Home"
+    ],
     "outbound_links": [],
     "user_flows": [],
     "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_templates_new.png",
@@ -1062,7 +338,16 @@
     "url": "https://app.documenso.com/settings/profile",
     "title": "Profile - Documenso",
     "purpose": "Page at https://app.documenso.com/settings/profile",
-    "ui_components": [],
+    "ui_components": [
+      "Profile name input",
+      "Email address input",
+      "Save profile button",
+      "Security preferences section",
+      "Avatar uploader",
+      "Documents",
+      "Templates",
+      "SearchCtrl+K button"
+    ],
     "outbound_links": [],
     "user_flows": [],
     "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_settings_profile.png",
@@ -1073,7 +358,14 @@
     "url": "https://app.documenso.com/settings/teams",
     "title": "Documenso",
     "purpose": "Page at https://app.documenso.com/settings/teams",
-    "ui_components": [],
+    "ui_components": [
+      "Team members table",
+      "Invite member button",
+      "Member role dropdown",
+      "Team settings form",
+      "Go Back button",
+      "Home"
+    ],
     "outbound_links": [],
     "user_flows": [],
     "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_settings_teams.png",
@@ -1084,7 +376,16 @@
     "url": "https://app.documenso.com/settings/webhooks",
     "title": "Webhooks - Documenso",
     "purpose": "Page at https://app.documenso.com/settings/webhooks",
-    "ui_components": [],
+    "ui_components": [
+      "Webhook endpoint URL input",
+      "Event selection checkboxes",
+      "Create webhook button",
+      "Webhooks table list",
+      "Documents",
+      "Templates",
+      "SearchCtrl+K button",
+      "HHarsh VardhanPersonal Account button"
+    ],
     "outbound_links": [],
     "user_flows": [],
     "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_settings_webhooks.png",
@@ -1095,7 +396,14 @@
     "url": "https://app.documenso.com/settings/api-tokens",
     "title": "Documenso",
     "purpose": "Page at https://app.documenso.com/settings/api-tokens",
-    "ui_components": [],
+    "ui_components": [
+      "Token name input",
+      "Generate API token button",
+      "Active tokens table",
+      "Revoke token button",
+      "Go Back button",
+      "Home"
+    ],
     "outbound_links": [],
     "user_flows": [],
     "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_settings_api-tokens.png",
@@ -1103,13 +411,58 @@
     "documenso_entity": "api_token"
   },
   {
-    "url": "https://app.documenso.com/t/personal_wydsnsuiedivthmn/documents",
-    "title": "Documents - Documenso",
-    "purpose": "Page at https://app.documenso.com/t/personal_wydsnsuiedivthmn/documents",
-    "ui_components": [],
+    "url": "https://app.documenso.com/documents/envelope_itdvbcrndyooxmin/recipients",
+    "title": "Documenso",
+    "purpose": "Page at https://app.documenso.com/documents/envelope_itdvbcrndyooxmin/recipients",
+    "ui_components": [
+      "Recipient email input",
+      "Recipient name input",
+      "Signing role dropdown",
+      "Add recipient button",
+      "Recipient list table",
+      "Go Back button",
+      "Home"
+    ],
     "outbound_links": [],
     "user_flows": [],
-    "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_t_personal_wydsnsuiedivthmn_documents.png",
+    "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_documents_envelope_itdvbcrndyooxmin_recipients.png",
+    "requires_auth": true,
+    "documenso_entity": "recipient"
+  },
+  {
+    "url": "https://app.documenso.com/documents/envelope_itdvbcrndyooxmin/fields",
+    "title": "Documenso",
+    "purpose": "Page at https://app.documenso.com/documents/envelope_itdvbcrndyooxmin/fields",
+    "ui_components": [
+      "Signature field tool",
+      "Text field placer",
+      "Date field placer",
+      "Field properties panel",
+      "Save fields button",
+      "Go Back button",
+      "Home"
+    ],
+    "outbound_links": [],
+    "user_flows": [],
+    "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_documents_envelope_itdvbcrndyooxmin_fields.png",
+    "requires_auth": true,
+    "documenso_entity": "field"
+  },
+  {
+    "url": "https://app.documenso.com/documents/envelope_itdvbcrndyooxmin/send",
+    "title": "Documenso",
+    "purpose": "Page at https://app.documenso.com/documents/envelope_itdvbcrndyooxmin/send",
+    "ui_components": [
+      "Email subject input",
+      "Email message body textarea",
+      "Send document button",
+      "Document preview container",
+      "Go Back button",
+      "Home"
+    ],
+    "outbound_links": [],
+    "user_flows": [],
+    "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_documents_envelope_itdvbcrndyooxmin_send.png",
     "requires_auth": true,
     "documenso_entity": "document"
   }

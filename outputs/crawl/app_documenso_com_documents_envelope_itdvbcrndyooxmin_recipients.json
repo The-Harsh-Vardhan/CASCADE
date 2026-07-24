@@ -1,0 +1,19 @@
+{
+  "url": "https://app.documenso.com/documents/envelope_itdvbcrndyooxmin/recipients",
+  "title": "Documenso",
+  "purpose": "Page at https://app.documenso.com/documents/envelope_itdvbcrndyooxmin/recipients",
+  "ui_components": [
+    "Recipient email input",
+    "Recipient name input",
+    "Signing role dropdown",
+    "Add recipient button",
+    "Recipient list table",
+    "Go Back button",
+    "Home"
+  ],
+  "outbound_links": [],
+  "user_flows": [],
+  "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_documents_envelope_itdvbcrndyooxmin_recipients.png",
+  "requires_auth": true,
+  "documenso_entity": "recipient"
+}

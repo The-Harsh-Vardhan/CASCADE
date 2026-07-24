@@ -2,7 +2,14 @@
   "url": "https://app.documenso.com/settings/teams",
   "title": "Documenso",
   "purpose": "Page at https://app.documenso.com/settings/teams",
-  "ui_components": [],
+  "ui_components": [
+    "Team members table",
+    "Invite member button",
+    "Member role dropdown",
+    "Team settings form",
+    "Go Back button",
+    "Home"
+  ],
   "outbound_links": [],
   "user_flows": [],
   "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_settings_teams.png",

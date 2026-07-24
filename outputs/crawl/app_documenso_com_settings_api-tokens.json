@@ -2,7 +2,14 @@
   "url": "https://app.documenso.com/settings/api-tokens",
   "title": "Documenso",
   "purpose": "Page at https://app.documenso.com/settings/api-tokens",
-  "ui_components": [],
+  "ui_components": [
+    "Token name input",
+    "Generate API token button",
+    "Active tokens table",
+    "Revoke token button",
+    "Go Back button",
+    "Home"
+  ],
   "outbound_links": [],
   "user_flows": [],
   "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_settings_api-tokens.png",

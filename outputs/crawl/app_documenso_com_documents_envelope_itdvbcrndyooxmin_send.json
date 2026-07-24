@@ -1,0 +1,18 @@
+{
+  "url": "https://app.documenso.com/documents/envelope_itdvbcrndyooxmin/send",
+  "title": "Documenso",
+  "purpose": "Page at https://app.documenso.com/documents/envelope_itdvbcrndyooxmin/send",
+  "ui_components": [
+    "Email subject input",
+    "Email message body textarea",
+    "Send document button",
+    "Document preview container",
+    "Go Back button",
+    "Home"
+  ],
+  "outbound_links": [],
+  "user_flows": [],
+  "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_documents_envelope_itdvbcrndyooxmin_send.png",
+  "requires_auth": true,
+  "documenso_entity": "document"
+}

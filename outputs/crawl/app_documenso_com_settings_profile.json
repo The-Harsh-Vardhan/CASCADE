@@ -2,7 +2,16 @@
   "url": "https://app.documenso.com/settings/profile",
   "title": "Profile - Documenso",
   "purpose": "Page at https://app.documenso.com/settings/profile",
-  "ui_components": [],
+  "ui_components": [
+    "Profile name input",
+    "Email address input",
+    "Save profile button",
+    "Security preferences section",
+    "Avatar uploader",
+    "Documents",
+    "Templates",
+    "SearchCtrl+K button"
+  ],
   "outbound_links": [],
   "user_flows": [],
   "screenshot_path": "outputs\\crawl\\screenshots\\app_documenso_com_settings_profile.png",

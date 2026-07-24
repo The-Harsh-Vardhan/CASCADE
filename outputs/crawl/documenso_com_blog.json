@@ -1,157 +1,19 @@
 {
   "url": "https://documenso.com/blog",
   "title": "Documenso - The Open Source DocuSign Alternative",
-  "purpose": "Browse and read news, product updates, technical insights, and announcements from Documenso.",
+  "purpose": "Page at https://documenso.com/blog",
   "ui_components": [
-    {
-      "type": "link",
-      "label": "Documenso",
-      "selector_hint": "header a[href='/']",
-      "purpose": "Navigate to the home page",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Solutions",
-      "selector_hint": "nav a[href='/solutions']",
-      "purpose": "Navigate to the solutions page",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Enterprise",
-      "selector_hint": "nav a[href='/enterprise']",
-      "purpose": "Navigate to the enterprise platform page",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Platform",
-      "selector_hint": "nav a[href='/platform']",
-      "purpose": "Navigate to the platform details page",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Self-Hosted",
-      "selector_hint": "nav a[href='/self-hosted']",
-      "purpose": "Navigate to the self-hosting information page",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Resources",
-      "selector_hint": "nav a[href='/resources']",
-      "purpose": "Navigate to the resources section",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Developers",
-      "selector_hint": "nav a[href='/developers']",
-      "purpose": "Navigate to developer documentation and API resources",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Pricing",
-      "selector_hint": "nav a[href='/pricing']",
-      "purpose": "Navigate to the pricing plans page",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Sign In",
-      "selector_hint": "a[href*='signin']",
-      "purpose": "Navigate to the account login page",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Sign Up",
-      "selector_hint": "a[href*='signup']",
-      "purpose": "Navigate to the account registration page",
-      "is_interactive": true
-    },
-    {
-      "type": "card",
-      "label": "Why We're Pausing External Pull Requests",
-      "selector_hint": "article:has-text(\"Why We're Pausing External Pull Requests\") a",
-      "purpose": "Read article about pausing external pull requests to prevent supply chain attacks",
-      "is_interactive": true
-    },
-    {
-      "type": "card",
-      "label": "Splitting Our Email Sending Infrastructure",
-      "selector_hint": "article:has-text('Splitting Our Email Sending Infrastructure') a",
-      "purpose": "Read article about changes to email sending infrastructure and domains",
-      "is_interactive": true
-    },
-    {
-      "type": "card",
-      "label": "Documenso Is Now HIPAA Compliant",
-      "selector_hint": "article:has-text('Documenso Is Now HIPAA Compliant') a",
-      "purpose": "Read article about Documenso's HIPAA compliance features for healthcare workflows",
-      "is_interactive": true
-    },
-    {
-      "type": "card",
-      "label": "The Future of Digital Signatures: AES, QES, and Open Signing Infrastructure",
-      "selector_hint": "article:has-text('The Future of Digital Signatures') a",
-      "purpose": "Read article about support for Advanced and Qualified Electronic Signatures",
-      "is_interactive": true
-    },
-    {
-      "type": "card",
-      "label": "Auto‑detect Recipients and Fields in your Signing workflow",
-      "selector_hint": "article:has-text('Auto‑detect Recipients and Fields') a",
-      "purpose": "Read technical deep dive on AI-powered recipient and field detection",
-      "is_interactive": true
-    },
-    {
-      "type": "card",
-      "label": "Introducing Documenso Business Edition for Self-Hosting",
-      "selector_hint": "article:has-text('Introducing Documenso Business Edition') a",
-      "purpose": "Read article introducing the self-hosted Business Edition license",
-      "is_interactive": true
-    },
-    {
-      "type": "card",
-      "label": "Introducing LibPDF: The PDF Library TypeScript Deserves",
-      "selector_hint": "article:has-text('Introducing LibPDF') a",
-      "purpose": "Read article introducing LibPDF TypeScript library",
-      "is_interactive": true
-    },
-    {
-      "type": "card",
-      "label": "2025 A Year in Review",
-      "selector_hint": "article:has-text('2025 A Year in Review') a",
-      "purpose": "Read the annual review post for 2025",
-      "is_interactive": true
-    },
-    {
-      "type": "card",
-      "label": "How To Create and Send Envelopes with Documenso",
-      "selector_hint": "article:has-text('How To Create and Send Envelopes') a",
-      "purpose": "Read guide on creating, configuring, and sending document envelopes",
-      "is_interactive": true
-    },
-    {
-      "type": "card",
-      "label": "Announcing Documenso 2.0",
-      "selector_hint": "article:has-text('Announcing Documenso 2.0') a",
-      "purpose": "Read product announcement about Documenso 2.0 and API V2",
-      "is_interactive": true
-    }
+    "Navigation header menu",
+    "Action button",
+    "Main content card",
+    "Documenso",
+    "Enterprise",
+    "Platform",
+    "Self-Hosted",
+    "Pricing"
   ],
-  "outbound_links": [
-    "https://documen.so/launch"
-  ],
-  "user_flows": [
-    "Reading Blog Articles",
-    "Navigating Marketing Site",
-    "User Authentication"
-  ],
+  "outbound_links": [],
+  "user_flows": [],
   "screenshot_path": "outputs\\crawl\\screenshots\\documenso_com_blog.png",
   "requires_auth": false,
   "documenso_entity": "general"

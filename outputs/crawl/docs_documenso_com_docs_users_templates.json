@@ -1,97 +1,19 @@
 {
   "url": "https://docs.documenso.com/docs/users/templates",
   "title": "Templates | Documenso Docs",
-  "purpose": "This page provides documentation explaining how to create, use, and manage reusable document templates in Documenso.",
+  "purpose": "Page at https://docs.documenso.com/docs/users/templates",
   "ui_components": [
-    {
-      "type": "input",
-      "label": "Search",
-      "selector_hint": "button[aria-label='Search'], input[placeholder*='Search']",
-      "purpose": "Opens the documentation search dialog.",
-      "is_interactive": true
-    },
-    {
-      "type": "button",
-      "label": "Copy Markdown",
-      "selector_hint": "button:contains('Copy Markdown')",
-      "purpose": "Copies the current documentation page in Markdown format to the clipboard.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Users",
-      "selector_hint": "nav a[href*='/users']",
-      "purpose": "Navigates to the user guides section of the documentation.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Developers",
-      "selector_hint": "nav a[href*='/developers']",
-      "purpose": "Navigates to the API and integrations developer guides.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Self-Hosting",
-      "selector_hint": "nav a[href*='/self-hosting']",
-      "purpose": "Navigates to the self-hosting setup and deployment documentation.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Create Templates",
-      "selector_hint": "aside a[href*='create']",
-      "purpose": "Navigates to detailed documentation on building reusable templates.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Use Templates",
-      "selector_hint": "aside a[href*='use']",
-      "purpose": "Navigates to detailed documentation on generating documents from existing templates.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Organisation Templates",
-      "selector_hint": "aside a[href*='organisation']",
-      "purpose": "Navigates to documentation on sharing templates across organization teams.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "Documents",
-      "selector_hint": "a[href*='/documents']",
-      "purpose": "Navigates to documentation regarding individual document management.",
-      "is_interactive": true
-    },
-    {
-      "type": "link",
-      "label": "API Templates",
-      "selector_hint": "a[href*='/api']",
-      "purpose": "Navigates to API reference documentation for creating templates via API.",
-      "is_interactive": true
-    },
-    {
-      "type": "nav",
-      "label": "On this page",
-      "selector_hint": "nav[aria-label='Table of contents']",
-      "purpose": "Allows rapid navigation to major sections on the current documentation page.",
-      "is_interactive": true
-    }
+    "Template list grid",
+    "Create template button",
+    "Use template action button",
+    "Documenso",
+    "SearchCtrlK button",
+    "UsersSend and sign documents",
+    "DevelopersAPI and integrations",
+    "Getting Started"
   ],
-  "outbound_links": [
-    "/docs/users/documents",
-    "/docs/developers/api/templates",
-    "/docs/users/templates/create",
-    "/docs/users/templates/use",
-    "/docs/users/templates/organisation"
-  ],
-  "user_flows": [
-    "Creating Document Templates Flow",
-    "Sending Documents From Templates Flow"
-  ],
+  "outbound_links": [],
+  "user_flows": [],
   "screenshot_path": "outputs\\crawl\\screenshots\\docs_documenso_com_docs_users_templates.png",
   "requires_auth": false,
   "documenso_entity": "template"
