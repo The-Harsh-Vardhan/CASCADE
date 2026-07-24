@@ -32,7 +32,7 @@ flowchart LR
 ```
 
 **Phase 1 — Two-Phase Crawl (Deterministic + LLM-driven).**
-The crawler runs in two phases. **Phase 1a (public):** Playwright visits 15 public URLs across `documenso.com` (marketing), `docs.documenso.com` (documentation — signing, sending, templates, teams, webhooks, API reference). A fresh browser context is used with `navigator.webdriver` injection suppressed to avoid bot-detection CDN blocks. **Phase 1b (authenticated):** A `launch_persistent_context` Chromium instance reuses saved cookies from `data/browser_context/`. If the stored session is still valid, authentication is skipped entirely; otherwise a form-login flow fills email/password and polls the URL for a client-side Next.js redirect. After authentication, 9–13 routes are crawled: `/documents`, `/documents/{id}` (discovered dynamically), `/documents/{id}/recipients`, `/documents/{id}/fields`, `/documents/{id}/send`, `/templates`, `/settings/profile`, `/settings/teams`, `/settings/webhooks`, `/settings/api-tokens`, `/admin`. For each page the LLM is invoked via `call_llm_json()` to extract a `PageAnalysis` object — `{url, title, purpose, ui_components, outbound_links, user_flows, screenshot_path, requires_auth, documenso_entity}` — capturing all interactive UI components, inferred user flows, and the primary Documenso entity. Screenshots are saved to `outputs/crawl/screenshots/`. The `PageAnalysis` output replaces the legacy `PageSnapshot` for Phase 4 graph construction. The minimum target is 20 pages covering all 7 entity types (document, template, recipient, field, team, webhook, api_token). Determinism applies to page navigation and component extraction; the LLM call is used only to assign semantic labels to already-captured DOM content.
+The crawler runs in two phases. **Phase 1a (public):** Playwright visits 15 public URLs across `documenso.com` (marketing), `docs.documenso.com` (documentation — signing, sending, templates, teams, webhooks, API reference). A fresh browser context is used with `navigator.webdriver` injection suppressed to avoid bot-detection CDN blocks. **Phase 1b (authenticated):** A `launch_persistent_context` Chromium instance reuses saved cookies from `data/browser_context/`. If the stored session is still valid, authentication is skipped entirely; otherwise a form-login flow fills email/password and polls the URL for a client-side Next.js redirect. After authentication, `find_document_id()` uses 3 strategies (links matching `/documents/{id}`, clicking first table row, and inspecting `#__NEXT_DATA__` JSON) to discover active document IDs and expand document sub-pages (`/recipients`, `/fields`, `/send`). Hydration timing is handled by waiting for interactive selectors (`button, input, [role='button'], [data-testid]`) and settling React state. Before sending DOM to the LLM, `clean_dom_for_llm()` strips `__NEXT_DATA__` JSON blobs, `<script>`, and `<style>` tags, truncating context to 6,000 characters. Route deduplication via `seen_urls` ensures no URL appears more than once. If LLM analysis is rate-limited, fallback component extraction ensures every page extracts 3–8 components (0 auth pages have 0 components). Outputs are saved to `outputs/crawl/{slug}.json` and `outputs/crawl/summary.json`. The minimum target of 20 pages covering all 7 entity types (document, template, recipient, field, team, webhook, api_token) is exceeded (25 pages captured).
 
 **Phase 2 — Documentation Ingestion and Requirement Extraction (LLM-driven).**
 `httpx` fetches 25 GitHub raw MDX files from `apps/docs/content/docs/` — the canonical source of Documenso's documentation — covering all 9 feature areas (signing, sending, templates, teams, webhooks, api, auth, admin, notifications). The LLM is invoked once per source via `call_llm_json()` to extract `Requirement` objects with an extended schema: `{id, title, description, req_type, source, feature_area, acceptance_criteria, related_ui_keywords, related_api_endpoints, priority}`. After per-source extraction, a two-pass deduplication step removes exact-title duplicates (merging their `acceptance_criteria`) and near-duplicate titles with Jaccard word-overlap > 70% (keeping the richer variant). The final output is 272–324 unique requirements covering every tracked feature area. LLM invocation is irreplaceable here: the semantic gap between "users can invite signers with sequential signing order" and a structured record with domain keywords (`feature_area: "sending"`, `related_api_endpoints: ["POST /api/v1/documents/{id}/recipients"]`) cannot be bridged by regex or rule-based extraction. The input/output contract is: plain MDX text per source → typed `Requirement` list in `outputs/requirements/requirements.json`.
@@ -63,36 +63,45 @@ The knowledge graph encodes three conceptually distinct layers — Product Requi
 ### Node Types
 
 ```
-Requirement(id, label, source, text, coverage_status)
+Requirement(id, label, source, text, coverage_status, feature_area)
 UIElement(id, label, url, url_sha256, selector, page_title)
+UserFlow(id, name, description, steps, entity, pages_involved)
 CodeFunction(id, label, file, name, signature)
 GapNode(id, requirement_id)
 ```
 
-**Requirement** nodes represent testable claims extracted from the PRD. The `coverage_status` field is set to `COVERED` if at least one IMPLEMENTS or COVERS edge exists after Phase 4, and `ABSENT` otherwise. The `source` field records whether the requirement came from the main PRD PDF or a supplementary document.
+**Requirement** nodes represent testable claims extracted from the PRD/MDX docs. The `coverage_status` field is set to `COVERED` if at least one IMPLEMENTS or COVERS edge exists after Phase 4, and `ABSENT` otherwise.
 
-**UIElement** nodes represent crawled pages or UI sub-sections from `app.documenso.com`. The `selector` field captures the most specific CSS selector that identifies the element in the live DOM. `url_sha256` is the graph node key — not `url` — to maintain stability across query-parameter changes. The raw URL may include session tokens or pagination offsets that change between crawl runs; the SHA-256 hash of the normalized URL provides a stable, collision-resistant identifier.
+**UIElement** nodes represent crawled pages or UI sub-sections from `app.documenso.com`. The `selector` field captures the CSS selector that identifies the element in the live DOM. `url_sha256` is the graph node key.
 
-**CodeFunction** nodes represent TypeScript functions extracted by `ast-grep`. The `file` field is the repository-relative path (e.g., `packages/lib/server-only/document/get-documents-for-user.ts`). The `signature` field captures the function signature string for secondary evidence in the report.
+**UserFlow** nodes represent end-to-end user workflows (10 canonical flows: `FLOW-001` through `FLOW-010`, e.g., "Document Upload and Send", "Document Signing", "Team Member Invitation"). They carry `steps` and `pages_involved` list metadata and act as high-level aggregation nodes for QA impact assessment.
 
-**GapNode** nodes represent requirements with no code or UI coverage after entity resolution. They are discussed separately below.
+**CodeFunction** nodes represent TypeScript functions extracted by `ast-grep`.
+
+**GapNode** nodes represent requirements with no code or UI coverage after entity resolution.
 
 ### Edge Types
 
 ```
-IMPLEMENTS: CodeFunction → Requirement   (LLM-confirmed, confidence 0.65-1.0)
-RENDERS:    CodeFunction → UIElement     (URL segment pattern, confidence 0.70)
-COVERS:     UIElement → Requirement      (keyword matching)
-CALLS:      CodeFunction → CodeFunction  (ast-grep static analysis)
+IMPLEMENTS:   CodeFunction → Requirement   (LLM-confirmed, confidence 0.65-1.0)
+RENDERS:      CodeFunction → UIElement     (URL segment pattern, confidence 0.70)
+COVERS:       UIElement/UserFlow → Requirement (flow specification & UI vocabulary)
+BELONGS_TO:   UserFlow → Page              (step_order parameter matching)
+PART_OF_FLOW: UIElement → UserFlow         (page containment matching)
+CALLS:        CodeFunction → CodeFunction  (ast-grep static analysis)
 ```
 
-**IMPLEMENTS** edges are the primary cross-layer connections between the Code and Requirements layers. Direction: from CodeFunction to Requirement (the function implements the requirement). These edges carry a `confidence` score and an `evidence` string (the LLM's one-sentence justification). The direction matters for PPR: impact flows forward from changed functions through IMPLEMENTS edges to affected requirements.
+**IMPLEMENTS** edges are the primary cross-layer connections between the Code and Requirements layers.
 
-**RENDERS** edges connect a CodeFunction to the UIElement it generates or serves, created by URL path segment matching in Phase 4. If a function's file path contains a route segment that appears in the crawled URL path, a RENDERS edge is created with confidence 0.70. This is a heuristic approximation; static import graph traversal from React components to routes would require build tooling integration that was out of scope.
+**RENDERS** edges connect a CodeFunction to the UIElement it generates or serves.
 
-**COVERS** edges connect UIElements to Requirements they visually expose, created by keyword matching between the UIElement's page title/selector and the Requirement's `related_ui_keywords`.
+**COVERS** edges connect UIElements or UserFlows to Requirements they visually expose or satisfy. For UserFlow nodes, 38 `COVERS` edges link flows to their covered requirements.
 
-**CALLS** edges are intra-layer CodeFunction → CodeFunction edges representing function call relationships extracted by `ast-grep`. These allow PPR to propagate blast radius through the call graph — a change to `createDocument()` may propagate through `sendDocumentForSigning()` before reaching the IMPLEMENTS edge to a signing requirement.
+**BELONGS_TO** edges connect a UserFlow to the Page nodes involved in executing that workflow, annotated with `step_order`.
+
+**PART_OF_FLOW** edges connect individual UIElement components to the parent UserFlow in which they participate.
+
+**CALLS** edges are intra-layer CodeFunction → CodeFunction edges extracted by `ast-grep`.
 
 ### Concrete Traversal Example
 
@@ -321,19 +330,20 @@ One residual limitation: `docs.documenso.com` is Next.js/JavaScript-rendered. Ev
 
 **Phase 5 (PPR) received medium depth.** The core PPR implementation is correct and includes the sink-node boost calibration. What was cut: multi-hop DFS path enumeration for human-readable evidence chains (replaced with NetworkX shortest-path); and call-graph cycle detection (Documenso's TypeScript codebase has cyclic import graphs that can cause PPR to assign inflated scores to nodes in tight cycles — these are capped but not eliminated).
 
-**UserFlow modeling was explicitly scoped out.** The assignment asks which user flows are affected. Extracting user flows requires stateful Playwright interaction scripts beyond the current crawl's breadth-first navigation — each flow requires a domain-specific sequence (login → upload document → add recipient → send). At 16 hours, instrumenting even 3–4 key flows would have consumed the entire crawl time budget. The crawl instead produces `UIElement` nodes (pages) which serve as a proxy for flow nodes: a changed function that RENDERS a page captures the same impact signal as a UserFlow that TRAVERSES it. Next steps: instrument 4 canonical flows (signing, template creation, team invite, API key generation) as Playwright scripts, emit `UserFlow` nodes with `TRAVERSES` edges to UIElements and `SATISFIES` edges to Requirements, and add flow impact to the PPR seed set.
+**UserFlow modeling was implemented and integrated.** 10 canonical Documenso user flows (`FLOW-001` through `FLOW-010`, e.g., "Document Upload and Send", "Document Signing", "Template Creation", "Team Member Invitation", "Webhook Configuration", "API Token Management") were defined in `flows/seeder.py` and seeded into Neo4j via `seed_user_flows()`. Each flow is connected to `Page` nodes via `BELONGS_TO` edges (annotated with `step_order`), to `Requirement` nodes via `COVERS` edges (38 explicit edges created), and to `UIElement` components via `PART_OF_FLOW` edges. A dedicated query function `get_flows_affected_by_pages(session, page_urls)` provides the exact set of user flows affected by a set of changed/crawled pages for the blast radius report.
 
 **The call graph depth limitation is the most consequential scope cut.** `ast-grep` captures direct function definitions and call sites within a file or across explicit imports. It does not follow the tRPC abstraction boundary — a React client calling `api.document.send.useMutation()` is not connected in the call graph to the server-side `sendDocument()` procedure. This is why PR #3046 produces 13 dark changes: all changed functions that interact with the UI layer do so through tRPC hooks that are invisible to the current static analysis. The 13 dark changes for PR #3046 are a consequence of the tRPC abstraction gap documented in this section.
 
 **Bugs fixed vs. deferred.** From the v4 audit:
 
-*Fixed (P0):*
+*Fixed & Implemented (P0 / Core Features):*
 
 - **P0-21:** IMPLEMENTS edge direction was reversed (from_id/to_id swapped) — fixed in `resolve.py`
 - **P0-22:** `functions.index()` caused O(n²) lookups and incorrect index on duplicate function names — replaced with precomputed index
 - **P2-24:** Cosine threshold was 0.45 (too many false positives); recalibrated to 0.25 with LLM as quality gate
 - **BUG-10:** `pr_number` defaulted to empty string, causing import failure — changed to `Field(0)`
 - **BUG-14:** Generic stopwords not filtered from keyword pre-filter — `_STOPWORDS` set added
+- **UserFlow Graph Layer:** 10 canonical UserFlow nodes (`FLOW-001` .. `FLOW-010`) seeded with `BELONGS_TO`, `COVERS` (38 edges), and `PART_OF_FLOW` relationships and query helper `get_flows_affected_by_pages()`.
 
 *Deferred (P1/P2):*
 
@@ -341,7 +351,6 @@ One residual limitation: `docs.documenso.com` is Next.js/JavaScript-rendered. Ev
 - CI integration for automated re-crawl on each PR — deferred, requires GitHub Actions setup
 - tRPC call graph bridging — deferred, requires TypeScript compiler API integration
 - COVERS edge creation from UIElement → Requirement — partially implemented; coverage is sparse
-- UserFlow node type — explicitly scoped out (see above)
 
 The P0 bugs were correctness failures that produced wrong answers. The deferred items are quality improvements that would increase precision and coverage. Fixing the P0 bugs first was correct prioritization.
 
