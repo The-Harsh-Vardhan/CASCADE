@@ -95,7 +95,7 @@ CALLS:        CodeFunction → CodeFunction  (ast-grep static analysis)
 
 **RENDERS** edges connect a CodeFunction to the UIElement it generates or serves.
 
-**COVERS** edges connect UIElements or UserFlows to Requirements they visually expose or satisfy. For UserFlow nodes, 38 `COVERS` edges link flows to their covered requirements.
+**COVERS** edges connect UIElements or UserFlows to Requirements they visually expose or satisfy. For UserFlow nodes, keyword matching connects flows to matching requirement text (title + description), capped at 40 requirements per flow to prevent blast radius report inflation.
 
 **BELONGS_TO** edges connect a UserFlow to the Page nodes involved in executing that workflow, annotated with `step_order`.
 
@@ -330,7 +330,9 @@ One residual limitation: `docs.documenso.com` is Next.js/JavaScript-rendered. Ev
 
 **Phase 5 (PPR) received medium depth.** The core PPR implementation is correct and includes the sink-node boost calibration. What was cut: multi-hop DFS path enumeration for human-readable evidence chains (replaced with NetworkX shortest-path); and call-graph cycle detection (Documenso's TypeScript codebase has cyclic import graphs that can cause PPR to assign inflated scores to nodes in tight cycles — these are capped but not eliminated).
 
-**UserFlow modeling was implemented and integrated.** 10 canonical Documenso user flows (`FLOW-001` through `FLOW-010`, e.g., "Document Upload and Send", "Document Signing", "Template Creation", "Team Member Invitation", "Webhook Configuration", "API Token Management") were defined in `flows/seeder.py` and seeded into Neo4j via `seed_user_flows()`. Each flow is connected to `Page` nodes via `BELONGS_TO` edges (annotated with `step_order`), to `Requirement` nodes via `COVERS` edges (38 explicit edges created), and to `UIElement` components via `PART_OF_FLOW` edges. A dedicated query function `get_flows_affected_by_pages(session, page_urls)` provides the exact set of user flows affected by a set of changed/crawled pages for the blast radius report.
+**UserFlow modeling was implemented and integrated.** 10 canonical Documenso user flows (`FLOW-001` through `FLOW-010`, e.g., "Document Upload and Send", "Document Signing", "Template Creation", "Team Member Invitation", "Webhook Configuration", "API Token Management") were defined in `flows/seeder.py` and seeded into Neo4j via `seed_user_flows()`. Each flow is connected to `Page` nodes via `BELONGS_TO` edges (annotated with `step_order`), to `Requirement` nodes via keyword-matched `COVERS` edges (259 total relationships created), and to `UIElement` components via `PART_OF_FLOW` edges. A dedicated query function `get_flows_affected_by_pages(session, page_urls)` provides the exact set of user flows affected by a set of changed/crawled pages for the blast radius report.
+
+COVERS edges are capped at 40 per flow. Three flows (sending, signing, templates) hit this cap, meaning their true keyword-match set is larger. The cap prevents blast radius inflation at the cost of potentially missing some requirement links for high-coverage flows.
 
 **The call graph depth limitation is the most consequential scope cut.** `ast-grep` captures direct function definitions and call sites within a file or across explicit imports. It does not follow the tRPC abstraction boundary — a React client calling `api.document.send.useMutation()` is not connected in the call graph to the server-side `sendDocument()` procedure. This is why PR #3046 produces 13 dark changes: all changed functions that interact with the UI layer do so through tRPC hooks that are invisible to the current static analysis. The 13 dark changes for PR #3046 are a consequence of the tRPC abstraction gap documented in this section.
 
