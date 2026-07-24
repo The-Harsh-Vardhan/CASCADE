@@ -61,14 +61,12 @@ def create_flow_covers_requirement(
     MATCH (r:Requirement)
     WHERE r.id = $req_id 
        OR r.id STARTS WITH $req_id
-       OR ($req_id CONTAINS '-' AND toLower(r.feature_area) = toLower(split($req_id, '-')[1]))
-       OR ($req_id CONTAINS '-' AND toLower(r.feature_area) CONTAINS toLower(split($req_id, '-')[1]))
-       OR toLower(r.title) CONTAINS toLower(f.entity)
+       OR (f.entity IS NOT NULL AND r.req_type IS NOT NULL AND toLower(r.req_type) = toLower(f.entity))
+       OR (f.entity IS NOT NULL AND r.text IS NOT NULL AND toLower(r.text) CONTAINS toLower(f.entity))
     MERGE (f)-[c:COVERS]->(r)
     SET c.confidence = $confidence,
         c.evidence = $evidence,
-        c.source = "manual_flow_definition",
-        c.verified_at = datetime()
+        c.source = "manual_flow_definition"
     """
     session.run(query, flow_id=flow_id, req_id=req_id, confidence=confidence, evidence=evidence).consume()
 
