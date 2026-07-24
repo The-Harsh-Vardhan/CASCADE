@@ -147,8 +147,8 @@ def build_graph() -> dict:
     renders_links = resolve_ui_to_functions(snapshots, functions, run_id=run_id)
     print(f"[graph]   {len(renders_links)} RENDERS links resolved")
 
-    # ── Stage 3: COVERS links (UI → Requirement keyword match) ───────────
-    print("[graph] Resolving COVERS edges (UI → Requirement)...")
+    # Stage 3: COVERS links (UI -> Requirement keyword match)
+    print("[graph] Resolving COVERS edges (UI -> Requirement)...")
     covers_links = resolve_ui_to_requirements(snapshots, requirements, run_id=run_id)
     print(f"[graph]   {len(covers_links)} COVERS links resolved")
 

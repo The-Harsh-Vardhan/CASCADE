@@ -28,6 +28,7 @@ def build_projection(functions: list, entity_links: list) -> nx.DiGraph:
         "CALLS":      1.0,
         "RENDERS":    0.95,
         "IMPLEMENTS": 0.85,
+        "COVERS":     0.75,   # Page/UIElement → Requirement (FIX-1 new edge type)
     }
 
     g = nx.DiGraph()
@@ -43,21 +44,31 @@ def build_projection(functions: list, entity_links: list) -> nx.DiGraph:
                 rel_type="CALLS",
             )
 
-    # Add IMPLEMENTS and RENDERS edges from Phase 4 entity links
+    # Add IMPLEMENTS, RENDERS, and COVERS edges from Phase 4 entity links
     for link in entity_links:
         w = WEIGHTS.get(link.rel_type, 0.5) * link.confidence
         g.add_edge(link.from_id, link.to_id, weight=w, rel_type=link.rel_type)
         # Annotate target nodes with their type (for impact.py classification)
-        if link.rel_type == "IMPLEMENTS":
+        if link.rel_type in ("IMPLEMENTS",):
             if link.to_id not in g.nodes:
                 g.add_node(link.to_id, node_type="Requirement", label=link.to_id)
             elif "node_type" not in g.nodes[link.to_id]:
                 g.nodes[link.to_id]["node_type"] = "Requirement"
-        elif link.rel_type == "RENDERS":
+        elif link.rel_type in ("RENDERS",):
             if link.to_id not in g.nodes:
                 g.add_node(link.to_id, node_type="Page", label=link.to_id)
             elif "node_type" not in g.nodes[link.to_id]:
                 g.nodes[link.to_id]["node_type"] = "Page"
+        elif link.rel_type == "COVERS":
+            # Source is a Page; target is a Requirement
+            if link.from_id not in g.nodes:
+                g.add_node(link.from_id, node_type="Page", label=link.from_id)
+            elif "node_type" not in g.nodes[link.from_id]:
+                g.nodes[link.from_id]["node_type"] = "Page"
+            if link.to_id not in g.nodes:
+                g.add_node(link.to_id, node_type="Requirement", label=link.to_id)
+            elif "node_type" not in g.nodes[link.to_id]:
+                g.nodes[link.to_id]["node_type"] = "Requirement"
 
     return g
 

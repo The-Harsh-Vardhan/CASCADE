@@ -5,13 +5,8 @@
     "reason": "No IMPLEMENTS link above confidence threshold"
   },
   {
-    "requirement_id": "REQ-19F24CC173B80DF4",
-    "text": "Enterprise plan offering tailored for large organizations requiring enhanced administrative control and flexibility.",
-    "reason": "No IMPLEMENTS link above confidence threshold"
-  },
-  {
-    "requirement_id": "REQ-898727E9AA664C3D",
-    "text": "Embedded PDF document viewer functionality utilizing pdf.js.",
+    "requirement_id": "REQ-842243203048E352",
+    "text": "The platform provides digital document signing capabilities as an open-source alternative to proprietary signature tools",
     "reason": "No IMPLEMENTS link above confidence threshold"
   },
   {
@@ -30,16 +25,6 @@
     "reason": "No IMPLEMENTS link above confidence threshold"
   },
   {
-    "requirement_id": "REQ-CE59C6B66F8ACA67",
-    "text": "The platform provides REST API endpoints and webhooks for integration with third-party applications.",
-    "reason": "No IMPLEMENTS link above confidence threshold"
-  },
-  {
-    "requirement_id": "REQ-2AB7886FCC79B8C2",
-    "text": "The platform supports embedding document signing workflows directly inside external applications.",
-    "reason": "No IMPLEMENTS link above confidence threshold"
-  },
-  {
     "requirement_id": "REQ-B9C06609F45FD37C",
     "text": "The platform tracks document status transitions across a predefined lifecycle from draft to completed.",
     "reason": "No IMPLEMENTS link above confidence threshold"
@@ -52,11 +37,6 @@
   {
     "requirement_id": "REQ-D8940375FBCE77ED",
     "text": "The platform applies digital signing certificates to enable digital verification of signed documents.",
-    "reason": "No IMPLEMENTS link above confidence threshold"
-  },
-  {
-    "requirement_id": "REQ-1DADD5F11791A9DC",
-    "text": "The platform complies with electronic signature standards (ESIGN, UETA, eIDAS signature levels) and privacy laws (GDPR).",
     "reason": "No IMPLEMENTS link above confidence threshold"
   },
   {

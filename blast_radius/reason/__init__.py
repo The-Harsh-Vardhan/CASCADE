@@ -112,6 +112,20 @@ def _load_graph_data(functions: list[CodeFunction]) -> tuple[list[EntityLink], d
                     "node_type": "Page",
                     "label": to_id,  # page:{sha} — enriched below if crawl available
                 }
+        elif link.rel_type == "COVERS":
+            # Source = Page node; Target = Requirement node
+            if link.from_id not in node_meta:
+                node_meta[link.from_id] = {
+                    "node_type": "Page",
+                    "label": link.from_id,
+                }
+            to_id = link.to_id
+            if to_id not in node_meta:
+                req = req_by_id.get(to_id)
+                node_meta[to_id] = {
+                    "node_type": "Requirement",
+                    "label": req.text[:80] if req else to_id[:40],
+                }
 
     # Enrich Page labels from crawl snapshots if available
     try:
