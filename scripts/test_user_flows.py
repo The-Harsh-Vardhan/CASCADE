@@ -1,6 +1,9 @@
-"""
-scripts/test_user_flows.py — Smoke test script for UserFlow seeding & queries.
-"""
+import sys
+from pathlib import Path
+
+root = Path(__file__).resolve().parent.parent
+if str(root) not in sys.path:
+    sys.path.insert(0, str(root))
 
 from blast_radius.graph.writer import get_driver
 from blast_radius.graph.queries import (
