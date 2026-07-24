@@ -83,14 +83,29 @@ def _condense_html(html: str, max_chars: int = 10_000) -> str:
 
 
 def _guess_entity(url: str) -> str:
-    """Heuristic entity classification from URL when LLM fails."""
+    """
+    Heuristic entity classification from URL.
+    Ordered from most-specific to least-specific so settings routes
+    win over bare /documents or /templates matches.
+    """
     u = url.lower()
+    # Settings sub-pages (most specific first)
+    if "/settings/api-token" in u or "/settings/api_token" in u:
+        return "api_token"
+    if "/settings/team" in u:
+        return "team"
+    if "/settings/webhook" in u:
+        return "webhook"
+    if "/settings/profile" in u or "/settings/security" in u:
+        return "user"
+    # Document sub-pages & doc pages for recipient/field flows
+    if "/recipients" in u or "signing-documents" in u or "/recipient" in u:
+        return "recipient"
+    if "/fields" in u or "sending-documents" in u or "/field" in u:
+        return "field"
+    # Top-level entity pages
     if "/template" in u:
         return "template"
-    if "/recipient" in u:
-        return "recipient"
-    if "/field" in u:
-        return "field"
     if "/document" in u:
         return "document"
     if "/team" in u or "/organisation" in u:
@@ -99,9 +114,39 @@ def _guess_entity(url: str) -> str:
         return "webhook"
     if "/api-token" in u or "/api_token" in u:
         return "api_token"
-    if "/setting" in u or "/profile" in u or "/security" in u:
+    if "/profile" in u or "/security" in u:
         return "user"
     return "general"
+
+
+def _entity_from_url_strict(url: str) -> str | None:
+    """
+    Return entity ONLY for URL patterns that are unambiguously specific.
+    Used to override LLM 'general' classification on known-entity settings pages.
+    Returns None if the URL is not a strong indicator.
+    """
+    u = url.lower()
+    # Settings pages are the most common false-general case
+    if "/settings/api-token" in u or "/settings/api_token" in u:
+        return "api_token"
+    if "/settings/team" in u:
+        return "team"
+    if "/settings/webhook" in u:
+        return "webhook"
+    if "/settings/profile" in u:
+        return "user"
+    # Document workflow sub-pages & docs
+    if "/recipients" in u or "signing-documents" in u:
+        return "recipient"
+    if "/fields" in u or "sending-documents" in u:
+        return "field"
+    # Upload/creation pages clearly belong to their parent entity
+    if "/documents/new" in u:
+        return "document"
+    if "/templates/new" in u:
+        return "template"
+    return None
+
 
 
 # ── Main analyzer ──────────────────────────────────────────────────────────────

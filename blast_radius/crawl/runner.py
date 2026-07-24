@@ -28,7 +28,7 @@ from playwright.async_api import async_playwright
 
 from blast_radius.config import settings
 from blast_radius.crawl.auth import find_document_id, login
-from blast_radius.crawl.page_analysis import PageAnalysis, slug, _guess_entity
+from blast_radius.crawl.page_analysis import PageAnalysis, slug, _guess_entity, _entity_from_url_strict
 
 logger = logging.getLogger(__name__)
 
@@ -197,6 +197,13 @@ async def _analyze_with_text(
     )
     try:
         data = await call_llm_json(prompt, temperature=0.1)
+        entity = str(data.get("documenso_entity", _guess_entity(url)))
+        # Override LLM 'general' when the URL unambiguously indicates an entity type
+        # (common on empty settings pages where LLM sees minimal content)
+        if entity == "general":
+            override = _entity_from_url_strict(url)
+            if override:
+                entity = override
         return PageAnalysis(
             url=url,
             title=title,
@@ -206,7 +213,7 @@ async def _analyze_with_text(
             user_flows=list(data.get("user_flows", [])),
             screenshot_path=screenshot_path,
             requires_auth=requires_auth,
-            documenso_entity=str(data.get("documenso_entity", _guess_entity(url))),
+            documenso_entity=entity,
         )
     except Exception as exc:
         logger.warning("LLM analysis failed for %s: %s — heuristic stub.", url, exc)
@@ -326,21 +333,35 @@ async def run_full_crawl_async() -> list[PageAnalysis]:
 
             if logged_in:
                 # Discover a real document ID
-                doc_id = await find_document_id(auth_page)
+                # Returns (team_prefix, doc_id) or None
+                doc_result = await find_document_id(auth_page)
 
                 auth_paths = list(_AUTH_PATHS_BASE)
-                if doc_id:
-                    auth_paths.append(f"/documents/{doc_id}")
+                if doc_result:
+                    team_prefix, doc_id = doc_result
+                    # team_prefix is already an absolute URL (e.g. https://app.documenso.com/t/personal_xxx)
+                    doc_sub_urls = [f"{team_prefix}/documents/{doc_id}"]
                     for sub in _DOC_SUB_PATHS:
-                        auth_paths.append(f"/documents/{doc_id}{sub}")
+                        doc_sub_urls.append(f"{team_prefix}/documents/{doc_id}{sub}")
+                else:
+                    doc_id = None
+                    doc_sub_urls = []
 
                 logger.info(
-                    "Crawling %d authenticated paths (doc_id=%s)",
-                    len(auth_paths), doc_id or "N/A",
+                    "Crawling %d authenticated paths + %d doc sub-pages (doc_id=%s)",
+                    len(auth_paths), len(doc_sub_urls), doc_id or "N/A",
                 )
 
+                # Crawl base auth paths (team-scoped redirects handled automatically)
                 for path in auth_paths:
                     url = f"{base}{path}"
+                    r = await _capture(auth_page, url, requires_auth=True,
+                                       out_dir=out_dir, ss_dir=ss_dir)
+                    if r:
+                        results.append(r)
+
+                # Crawl document sub-pages (absolute URLs, already team-prefixed)
+                for url in doc_sub_urls:
                     r = await _capture(auth_page, url, requires_auth=True,
                                        out_dir=out_dir, ss_dir=ss_dir)
                     if r:

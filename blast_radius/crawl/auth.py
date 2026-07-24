@@ -138,19 +138,35 @@ async def login(page: Page) -> bool:
         return False
 
 
-async def find_document_id(page: Page) -> str | None:
+async def find_document_id(page: Page) -> tuple[str, str] | None:
     """
     Navigate to /documents and extract a real document ID from href links.
-    Returns the first ID found (UUIDs or numeric IDs), or None.
+
+    Documenso v2 redirects /documents to /t/{team_slug}/documents.
+    Returns (url_base_prefix, doc_id) so the caller can build correct sub-page
+    URLs like {url_base_prefix}/documents/{doc_id}/recipients.
+    Returns None if no document IDs are found.
     """
     base = settings.documenso_base_url.rstrip("/")
     docs_url = f"{base}/documents"
 
     try:
         await page.goto(docs_url, wait_until="domcontentloaded", timeout=20_000)
-        await page.wait_for_timeout(2_500)
+        try:
+            await page.wait_for_load_state("networkidle", timeout=8_000)
+        except Exception:
+            pass
+        await page.wait_for_timeout(2_000)
 
-        # Collect all hrefs that look like /documents/<id>
+        # Record the actual URL after redirect (may be /t/{slug}/documents)
+        actual_url = page.url
+        # Derive team prefix: everything up to /documents
+        if "/documents" in actual_url:
+            team_prefix = actual_url.split("/documents")[0]
+        else:
+            team_prefix = base
+
+        # Collect all hrefs containing /documents/<id>
         hrefs: list[str] = await page.evaluate(
             """
             () => Array.from(document.querySelectorAll('a[href]'))
@@ -159,20 +175,23 @@ async def find_document_id(page: Page) -> str | None:
             """
         )
 
-        _skip = {"new", "inbox", "", "pending", "completed", "draft", "all"}
+        _skip = {"new", "inbox", "", "pending", "completed", "draft", "all", "move"}
 
         for href in hrefs:
-            # Extract the segment after /documents/
             m = re.search(r"/documents/([^/?#]+)", href)
             if not m:
                 continue
             doc_id = m.group(1)
             if doc_id.lower() in _skip:
                 continue
-            logger.info("Found document ID: %s", doc_id)
-            return doc_id
+            logger.info("Found document ID: %s (team prefix: %s)", doc_id, team_prefix)
+            return (team_prefix, doc_id)
 
-        logger.warning("No usable document IDs found on %s.", docs_url)
+        logger.warning(
+            "No usable document IDs found on %s "
+            "(account may have no documents).",
+            actual_url,
+        )
         return None
 
     except Exception as exc:
