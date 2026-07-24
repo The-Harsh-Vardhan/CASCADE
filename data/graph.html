@@ -596,19 +596,30 @@
       else if (clustersVisible) drawClusterLabels();
     });
 
+    function saveToCache(data) {
+      try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      } catch (e) {
+        console.warn('[Cache] localStorage quota skipped:', e);
+      }
+    }
+
     // Dynamic Data Fetcher with Local Caching and file:// fallback
     async function loadGraphData(forceRefresh = false) {
       const loadingScreen = document.getElementById('loading-screen');
       const loadingText = document.getElementById('loading-text');
-      loadingScreen.style.opacity = '1';
-      loadingScreen.style.pointerEvents = 'all';
+      if (loadingScreen) {
+        loadingScreen.style.display = 'flex';
+        loadingScreen.style.opacity = '1';
+        loadingScreen.style.pointerEvents = 'all';
+      }
 
       if (!forceRefresh) {
         // 1. Check window.GRAPH_DATA from local script tag first
         if (window.GRAPH_DATA && window.GRAPH_DATA.nodes && window.GRAPH_DATA.nodes.length > 0) {
           console.log('[Script Tag] Loaded graph data from window.GRAPH_DATA');
           fullGraphData = window.GRAPH_DATA;
-          localStorage.setItem(CACHE_KEY, JSON.stringify(fullGraphData));
+          saveToCache(fullGraphData);
           renderGraph();
           return;
         }
@@ -630,20 +641,20 @@
         }
       }
 
-      loadingText.innerText = 'Loading graph data...';
+      if (loadingText) loadingText.innerText = 'Loading graph data...';
       try {
         const resp = await fetch('./graph_data.json');
         if (!resp.ok) throw new Error(`HTTP error! status: ${resp.status}`);
         fullGraphData = await resp.json();
         
         // Save to cache
-        localStorage.setItem(CACHE_KEY, JSON.stringify(fullGraphData));
-        console.log(`[Fetch] Cached ${fullGraphData.nodes.length} nodes to localStorage`);
+        saveToCache(fullGraphData);
+        console.log(`[Fetch] Loaded ${fullGraphData.nodes.length} nodes from graph_data.json`);
       } catch (err) {
         console.warn('[Fetch Warning] Local fetch failed/blocked by CORS. Falling back to window.GRAPH_DATA:', err);
         if (window.GRAPH_DATA && window.GRAPH_DATA.nodes) {
           fullGraphData = window.GRAPH_DATA;
-          localStorage.setItem(CACHE_KEY, JSON.stringify(fullGraphData));
+          saveToCache(fullGraphData);
         }
       }
 
@@ -731,8 +742,11 @@
 
       // Hide Loading Screen
       const loadingScreen = document.getElementById('loading-screen');
-      loadingScreen.style.opacity = '0';
-      setTimeout(() => loadingScreen.style.pointerEvents = 'none', 500);
+      if (loadingScreen) {
+        loadingScreen.style.opacity = '0';
+        loadingScreen.style.display = 'none';
+        loadingScreen.style.pointerEvents = 'none';
+      }
     }
 
     // Add semi-transparent 3D Layer Planes (Fixed 600x600 size)
@@ -1033,7 +1047,6 @@
 
       // Display top 100 matching cards for smooth rendering
       filteredNodes.slice(0, 100).forEach(node => {
-        const sec = getLayerSpecificSector(node);
         const card = document.createElement('div');
         card.className = 'node-card';
         card.onclick = () => focusNode(node);
@@ -1044,7 +1057,7 @@
             <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 220px;">${node.name}</span>
             <span class="node-badge ${badgeClass}">${node.node_type}</span>
           </div>
-          <div class="node-card-desc">Sector: ${sec.name} | Z=${node.fz}</div>
+          <div class="node-card-desc">Layer: ${(node.layer || 'code').toUpperCase()} | Z=${node.fz}</div>
         `;
         listContainer.appendChild(card);
       });
@@ -1057,11 +1070,9 @@
       const body = document.getElementById('inspector-body');
 
       title.innerText = node.name;
-      const sec = getLayerSpecificSector(node);
       
       let propsHtml = `<div><b>Node ID:</b> ${node.id}</div>`;
       propsHtml += `<div><b>Type:</b> ${node.node_type} (${node.layer.toUpperCase()})</div>`;
-      propsHtml += `<div><b>Layer Sector:</b> ${sec.name}</div>`;
       propsHtml += `<div><b>Z-Plane:</b> ${node.fz}</div>`;
       
       if (node.properties) {
