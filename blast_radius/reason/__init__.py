@@ -101,7 +101,7 @@ def _load_graph_data(functions: list[CodeFunction]) -> tuple[list[EntityLink], d
                 if req:
                     node_meta[to_id] = {
                         "node_type": "Requirement",
-                        "label": req.text[:80],
+                        "label": req.text,
                     }
                 else:
                     node_meta[to_id] = {"node_type": "Requirement", "label": to_id[:40]}
@@ -124,7 +124,7 @@ def _load_graph_data(functions: list[CodeFunction]) -> tuple[list[EntityLink], d
                 req = req_by_id.get(to_id)
                 node_meta[to_id] = {
                     "node_type": "Requirement",
-                    "label": req.text[:80] if req else to_id[:40],
+                    "label": req.text if req else to_id,
                 }
 
     # Enrich Page labels from crawl snapshots if available
@@ -145,7 +145,7 @@ def _load_graph_data(functions: list[CodeFunction]) -> tuple[list[EntityLink], d
             absent_requirements.append(AffectedNode(
                 node_id=g["requirement_id"],
                 node_type="Requirement",
-                label=g.get("text", g["requirement_id"])[:80],
+                label=g.get("text", g["requirement_id"]),
                 impact_score=0.0,
                 traceability_confidence=0.0,
                 evidence_path=[],

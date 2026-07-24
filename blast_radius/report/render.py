@@ -154,31 +154,46 @@ def render(report: BlastRadiusReport) -> tuple[Path, Path]:
 
     lines += [f"## Affected Requirements ({len(report.affected_requirements)})", ""]
     if high_req:
-        lines += ["### 🔴 High Confidence", ""]
+        lines += ["### High Risk", ""]
         for n in high_req:
             lines += [
                 f"- **{n.label}**",
                 f"  - Impact: {n.impact_score:.2f} | Confidence: {n.traceability_confidence:.2f}",
-                f"  - Evidence: {' → '.join(n.evidence_path)}",
+                f"  - Evidence path: {' -> '.join(n.evidence_path)}",
                 "",
             ]
     if medium_req:
-        lines += ["### 🟡 Medium Confidence", ""]
+        lines += ["### Medium Risk", ""]
         for n in medium_req:
-            lines.append(f"- **{n.label}** (impact: {n.impact_score:.2f})")
-        lines.append("")
+            lines += [
+                f"- **{n.label}**",
+                f"  - Impact: {n.impact_score:.2f} | Confidence: {n.traceability_confidence:.2f}",
+                f"  - Evidence path: {' -> '.join(n.evidence_path)}",
+                "",
+            ]
+    low_req = [n for n in report.affected_requirements if n.risk_tier == "LOW"]
+    if low_req:
+        lines += ["### Low Risk (verify before updating test plans)", ""]
+        for n in low_req:
+            lines += [
+                f"- **{n.label}**",
+                f"  - Confidence: {n.traceability_confidence:.2f}",
+                f"  - Evidence path: {' -> '.join(n.evidence_path)}",
+                "",
+            ]
     if not report.affected_requirements:
         lines.append("_No requirements directly traced to changed code._\n")
 
     if report.absent_requirements:
         lines += [
-            f"## 🟣 Absent Requirements — No Coverage Found ({len(report.absent_requirements)})",
+            f"## Absent Requirements - No Coverage Found ({len(report.absent_requirements)})",
             "",
             "These requirements exist in documentation but have no CodeFunction or UIElement "
             "linked in the graph. Each is a candidate for manual verification.",
             "",
         ]
         for req in report.absent_requirements:
+            # Use full label without truncation
             lines.append(f"- **{req.label}**")
         lines.append("")
 
