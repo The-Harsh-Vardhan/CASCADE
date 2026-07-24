@@ -517,14 +517,67 @@
       { id: 'core', name: 'Core Application Sector', color: '#8b949e', keywords: [] }
     ];
 
-    function getSectorForNode(node) {
-      const text = (node.name + " " + node.id + " " + (node.file || '')).toLowerCase();
-      for (const sec of SECTOR_DEFINITIONS) {
-        if (sec.keywords.length > 0 && sec.keywords.some(kw => text.includes(kw))) {
-          return sec;
+    function getLayerSpecificSector(node) {
+      const layer = node.layer || 'code';
+      const text = (node.name + " " + node.id + " " + (node.properties?.file || node.properties?.url || '')).toLowerCase();
+
+      if (layer === 'req' || layer === 'gap') {
+        if (layer === 'gap') {
+          return { id: 'req_gap', name: 'Uncovered Requirement Gaps', color: '#a32d2d' };
         }
+        if (text.includes('auth') || text.includes('security') || text.includes('permission') || text.includes('key')) {
+          return { id: 'req_auth', name: 'Security & Auth Requirements', color: '#3fb950' };
+        }
+        if (text.includes('stripe') || text.includes('billing') || text.includes('license') || text.includes('enterprise')) {
+          return { id: 'req_billing', name: 'Billing & Enterprise Requirements', color: '#d29922' };
+        }
+        if (text.includes('docker') || text.includes('prisma') || text.includes('postgres') || text.includes('infra') || text.includes('host')) {
+          return { id: 'req_infra', name: 'Infrastructure & Deployment', color: '#f85149' };
+        }
+        if (text.includes('email') || text.includes('notification') || text.includes('lingui') || text.includes('trpc')) {
+          return { id: 'req_integ', name: 'Integration Requirements', color: '#bc8cff' };
+        }
+        return { id: 'req_core', name: 'Core Feature Requirements', color: '#7f77dd' };
       }
-      return SECTOR_DEFINITIONS[SECTOR_DEFINITIONS.length - 1];
+
+      if (layer === 'ui') {
+        if (text.includes('setting') || text.includes('profile') || text.includes('account')) {
+          return { id: 'ui_settings', name: 'Settings & Profile UI', color: '#58a6ff' };
+        }
+        if (text.includes('documen') || text.includes('sign') || text.includes('envelope')) {
+          return { id: 'ui_signing', name: 'Document & Signing UI', color: '#1d9e75' };
+        }
+        if (text.includes('auth') || text.includes('login') || text.includes('passkey')) {
+          return { id: 'ui_auth', name: 'Auth & Onboarding UI', color: '#3fb950' };
+        }
+        if (text.includes('admin') || text.includes('team') || text.includes('organisation')) {
+          return { id: 'ui_admin', name: 'Admin & Team UI', color: '#bc8cff' };
+        }
+        return { id: 'ui_components', name: 'UI Components & Elements', color: '#2da44e' };
+      }
+
+      // Code Layer (layer === 'code')
+      const file = (node.properties?.file || node.file || node.name || '').toLowerCase();
+      if (file.includes('packages/trpc') || file.includes('router')) {
+        return { id: 'code_trpc', name: 'tRPC API Routers', color: '#bc8cff' };
+      }
+      if (file.includes('server-only') || file.includes('backend')) {
+        return { id: 'code_backend', name: 'Backend Business Logic', color: '#ba7517' };
+      }
+      if (file.includes('apps/remix') || file.includes('component')) {
+        return { id: 'code_frontend', name: 'Remix Frontend UI Code', color: '#58a6ff' };
+      }
+      if (file.includes('email') || file.includes('webhook') || file.includes('job')) {
+        return { id: 'code_jobs', name: 'Jobs & Integration Handlers', color: '#d29922' };
+      }
+      if (file.includes('prisma') || file.includes('util') || file.includes('lib')) {
+        return { id: 'code_utils', name: 'Core Utilities & Data Models', color: '#8b949e' };
+      }
+      return { id: 'code_general', name: 'Application Code Modules', color: '#d97706' };
+    }
+
+    function getSectorForNode(node) {
+      return getLayerSpecificSector(node);
     }
 
     function isInterLayerLink(link) {
@@ -671,13 +724,13 @@
         .backgroundColor(isDark ? '#0b0c10' : '#f8f9fa')
         .nodeId('id')
         .nodeLabel(node => {
-          const sec = getSectorForNode(node);
+          const sec = getLayerSpecificSector(node);
           return `<div style="color:#fff; background:rgba(15,23,42,0.9); padding:6px 10px; border-radius:6px; border:1px solid ${sec.color};">
             <b>${node.name}</b> (${node.node_type})<br/>
-            <span style="font-size:11px; color:#94a3b8;">Sector: ${sec.name}</span>
+            <span style="font-size:11px; color:#94a3b8;">Layer Sector: ${sec.name}</span>
           </div>`;
         })
-        .nodeColor(node => node.color || getSectorForNode(node).color)
+        .nodeColor(node => node.color || getLayerSpecificSector(node).color)
         .nodeVal(node => {
           if (node.layer === 'req') return 12;
           if (node.layer === 'ui') return 8;
@@ -716,39 +769,64 @@
       setTimeout(() => loadingScreen.style.pointerEvents = 'none', 500);
     }
 
-    // Add semi-transparent 3D Layer Planes
+    // Add semi-transparent 3D Layer Planes (Dynamically expanded to fit max node spread)
+    let layerPlanesGroup = null;
+
     function addLayerPlanes() {
+      if (!Graph) return;
       const scene = Graph.scene();
 
+      if (layerPlanesGroup) {
+        scene.remove(layerPlanesGroup);
+      }
+      layerPlanesGroup = new THREE.Group();
+
+      // Calculate max node 2D spread across graph
+      let maxAbsX = 300;
+      let maxAbsY = 300;
+      fullGraphData.nodes.forEach(n => {
+        const absX = Math.abs(n.x || 0);
+        const absY = Math.abs(n.y || 0);
+        if (absX > maxAbsX) maxAbsX = absX;
+        if (absY > maxAbsY) maxAbsY = absY;
+      });
+
+      // Expand square planes dynamically to enclose the layout spread
+      const maxSpread = Math.max(maxAbsX, maxAbsY);
+      const planeSize = Math.max(750, Math.ceil((maxSpread * 2 + 160) / 100) * 100);
+      const gridDivisions = Math.min(80, Math.max(20, Math.floor(planeSize / 35)));
+
       const layers = [
-        { z: 200, color: 0x7f77dd, label: "Requirement Layer (Z=+200)" },
-        { z: 0, color: 0x1d9e75, label: "UI Layer (Z=0)" },
-        { z: -200, color: 0xba7517, label: "Code Layer (Z=-200)" }
+        { z: 200, color: 0x7f77dd, label: `Requirement Layer (Z=+200, Size=${planeSize})` },
+        { z: 0, color: 0x1d9e75, label: `UI Layer (Z=0, Size=${planeSize})` },
+        { z: -200, color: 0xba7517, label: `Code Layer (Z=-200, Size=${planeSize})` }
       ];
 
       layers.forEach(l => {
-        const planeGeo = new THREE.PlaneGeometry(600, 600);
+        const planeGeo = new THREE.PlaneGeometry(planeSize, planeSize);
         const planeMat = new THREE.MeshBasicMaterial({
           color: l.color,
           transparent: true,
-          opacity: 0.05,
+          opacity: 0.06,
           side: THREE.DoubleSide
         });
         const planeMesh = new THREE.Mesh(planeGeo, planeMat);
         planeMesh.position.z = l.z;
-        scene.add(planeMesh);
+        layerPlanesGroup.add(planeMesh);
 
-        // Grid helper
-        const grid = new THREE.GridHelper(600, 20, l.color, l.color);
+        // Grid helper dynamically matched to plane size
+        const grid = new THREE.GridHelper(planeSize, gridDivisions, l.color, l.color);
         grid.rotation.x = Math.PI / 2;
         grid.position.z = l.z;
         grid.material.opacity = 0.15;
         grid.material.transparent = true;
-        scene.add(grid);
+        layerPlanesGroup.add(grid);
       });
+
+      scene.add(layerPlanesGroup);
     }
 
-    // Draw 3D Sector Lassos and Labels around node clusters
+    // Draw 3D Layer-Specific Sector Lassos around node groups in each layer plane
     function drawSectorLassos() {
       if (!Graph) return;
       const scene = Graph.scene();
@@ -760,46 +838,57 @@
       sectorGroup = new THREE.Group();
       sectorGroup.visible = sectorsVisible;
 
-      const layerPlanes = [200, 0, -200];
-      
-      layerPlanes.forEach(zVal => {
-        SECTOR_DEFINITIONS.forEach(sec => {
-          const nodesInSectorLayer = fullGraphData.nodes.filter(n => {
-            const nSec = getSectorForNode(n);
-            const nodeZ = n.z !== undefined ? n.z : (n.fz !== undefined ? n.fz : 0);
-            return nSec.id === sec.id && Math.abs(nodeZ - zVal) < 50;
-          });
+      const layerPlanes = [
+        { z: 200, name: 'req' },
+        { z: 0, name: 'ui' },
+        { z: -200, name: 'code' }
+      ];
 
-          if (nodesInSectorLayer.length < 2) return;
+      layerPlanes.forEach(lp => {
+        const sectorMap = new Map();
+
+        fullGraphData.nodes.forEach(n => {
+          const nodeZ = n.z !== undefined ? n.z : (n.fz !== undefined ? n.fz : 0);
+          if (Math.abs(nodeZ - lp.z) < 50) {
+            const sec = getLayerSpecificSector(n);
+            if (!sectorMap.has(sec.id)) {
+              sectorMap.set(sec.id, { sec: sec, nodes: [] });
+            }
+            sectorMap.get(sec.id).nodes.push(n);
+          }
+        });
+
+        sectorMap.forEach(({ sec, nodes }) => {
+          if (nodes.length < 2) return; // skip isolated singletons
 
           let sumX = 0, sumY = 0;
-          nodesInSectorLayer.forEach(n => {
+          nodes.forEach(n => {
             sumX += (n.x || 0);
             sumY += (n.y || 0);
           });
-          const centerX = sumX / nodesInSectorLayer.length;
-          const centerY = sumY / nodesInSectorLayer.length;
+          const centerX = sumX / nodes.length;
+          const centerY = sumY / nodes.length;
 
           let maxDistSq = 0;
-          nodesInSectorLayer.forEach(n => {
+          nodes.forEach(n => {
             const dx = (n.x || 0) - centerX;
             const dy = (n.y || 0) - centerY;
             const distSq = dx * dx + dy * dy;
             if (distSq > maxDistSq) maxDistSq = distSq;
           });
 
-          const radius = Math.max(Math.sqrt(maxDistSq) + 22, 38);
+          const radius = Math.max(Math.sqrt(maxDistSq) + 24, 40);
 
-          // Outer Lasso Circle / Ring
+          // Outer Lasso Ring
           const ringGeo = new THREE.RingGeometry(radius - 2.5, radius + 2.5, 64);
           const ringMat = new THREE.MeshBasicMaterial({
             color: new THREE.Color(sec.color),
             side: THREE.DoubleSide,
             transparent: true,
-            opacity: 0.75
+            opacity: 0.80
           });
           const ringMesh = new THREE.Mesh(ringGeo, ringMat);
-          ringMesh.position.set(centerX, centerY, zVal + 1);
+          ringMesh.position.set(centerX, centerY, lp.z + 1);
           sectorGroup.add(ringMesh);
 
           // Inner Translucent Shading Disk
@@ -811,17 +900,20 @@
             opacity: 0.08
           });
           const fillMesh = new THREE.Mesh(fillGeo, fillMat);
-          fillMesh.position.set(centerX, centerY, zVal + 0.5);
+          fillMesh.position.set(centerX, centerY, lp.z + 0.5);
           sectorGroup.add(fillMesh);
 
           // Sector Label Billboard Sprite
           const sprite = createTextSprite(sec.name, sec.color);
-          sprite.position.set(centerX, centerY + radius + 16, zVal + 6);
+          sprite.position.set(centerX, centerY + radius + 16, lp.z + 6);
           sectorGroup.add(sprite);
         });
       });
 
       scene.add(sectorGroup);
+
+      // Dynamically expand layer planes to fit the layout bounds
+      addLayerPlanes();
     }
 
     function createTextSprite(text, colorHex) {
@@ -915,6 +1007,7 @@
 
       // Display top 100 matching cards for smooth rendering
       filteredNodes.slice(0, 100).forEach(node => {
+        const sec = getLayerSpecificSector(node);
         const card = document.createElement('div');
         card.className = 'node-card';
         card.onclick = () => focusNode(node);
@@ -925,7 +1018,7 @@
             <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 220px;">${node.name}</span>
             <span class="node-badge ${badgeClass}">${node.node_type}</span>
           </div>
-          <div class="node-card-desc">Layer: ${node.layer.toUpperCase()} | Z=${node.fz}</div>
+          <div class="node-card-desc">Sector: ${sec.name} | Z=${node.fz}</div>
         `;
         listContainer.appendChild(card);
       });
@@ -938,9 +1031,11 @@
       const body = document.getElementById('inspector-body');
 
       title.innerText = node.name;
+      const sec = getLayerSpecificSector(node);
       
       let propsHtml = `<div><b>Node ID:</b> ${node.id}</div>`;
       propsHtml += `<div><b>Type:</b> ${node.node_type} (${node.layer.toUpperCase()})</div>`;
+      propsHtml += `<div><b>Layer Sector:</b> ${sec.name}</div>`;
       propsHtml += `<div><b>Z-Plane:</b> ${node.fz}</div>`;
       
       if (node.properties) {
@@ -957,7 +1052,7 @@
       document.getElementById('inspector').style.display = 'none';
     }
 
-    // Blast Simulator Shockwave Mode
+    // Blast Simulator Shockwave Mode (Traces connected impact paths from selected node)
     document.getElementById('blast-sim-btn').addEventListener('click', () => {
       if (!selectedNode) {
         alert('Please click and select a node first to simulate its blast radius impact!');
@@ -965,16 +1060,42 @@
       }
       
       blastSimulationActive = true;
-      Graph.linkDirectionalParticles(6)
-           .linkDirectionalParticleWidth(4)
-           .linkDirectionalParticleSpeed(0.02);
+      const selectedId = selectedNode.id;
+
+      // Find 1-hop and 2-hop connected links radiating from selected node
+      const impactedLinks = new Set();
+      const connectedNodeIds = new Set([selectedId]);
+
+      fullGraphData.links.forEach(l => {
+        const sId = typeof l.source === 'object' ? l.source.id : l.source;
+        const tId = typeof l.target === 'object' ? l.target.id : l.target;
+        if (sId === selectedId || tId === selectedId) {
+          impactedLinks.add(l);
+          connectedNodeIds.add(sId);
+          connectedNodeIds.add(tId);
+        }
+      });
+
+      // 2-hop propagation
+      fullGraphData.links.forEach(l => {
+        const sId = typeof l.source === 'object' ? l.source.id : l.source;
+        const tId = typeof l.target === 'object' ? l.target.id : l.target;
+        if (connectedNodeIds.has(sId) || connectedNodeIds.has(tId)) {
+          impactedLinks.add(l);
+        }
+      });
+
+      // Launch particle shockwave specifically along impact paths
+      Graph.linkDirectionalParticles(link => impactedLinks.has(link) ? 8 : 1)
+           .linkDirectionalParticleWidth(link => impactedLinks.has(link) ? 5 : 1)
+           .linkDirectionalParticleSpeed(link => impactedLinks.has(link) ? 0.025 : 0.003);
 
       setTimeout(() => {
         Graph.linkDirectionalParticles(2)
-             .linkDirectionalParticleWidth(link => link.rel_type === 'EXECUTES' ? 3 : 1)
+             .linkDirectionalParticleWidth(link => isInterLayerLink(link) ? 3 : 1)
              .linkDirectionalParticleSpeed(0.005);
         blastSimulationActive = false;
-      }, 5000);
+      }, 6000);
     });
 
     // Initialize Page
