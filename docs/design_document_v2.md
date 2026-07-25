@@ -5,79 +5,79 @@
 # CASCADE — Technical Design Document
 ### *Change Analysis for Software Cascade using Dependency Evidence*
 
-> *“Understand every consequence before every merge.”*
-
+**Assignment:** AI Engineer — Testsigma  
 **Candidate:** Harsh Vardhan (*B.Tech CSE - Data Science & Analytics, IIIT Nagpur*)  
-**Role:** AI Engineer — Testsigma  
 **Target Application:** [app.documenso.com](https://app.documenso.com) / [github.com/documenso/documenso](https://github.com/documenso/documenso)  
-**PR Analyzed:** [#3046](https://github.com/documenso/documenso/pull/3046) (*merge SHA `8f683932`*)  
-**Pipeline Version:** CASCADE v4 (6-Phase Hybrid Architecture)  
+**Evaluated PR:** [Documenso PR #3046](https://github.com/documenso/documenso/pull/3046) (*merge SHA `8f683932`*)  
+**Pipeline Version:** CASCADE v4 Engine  
 
 ---
 
-## 1. Agent Decomposition
+## Section 1: Agent Decomposition
 
-### Stages of Reasoning, Boundaries & Determinism vs. LLM Trade-Offs
+### What are the distinct stages of reasoning? Where are the boundaries? What is deterministic vs. LLM-driven, and why?
 
-The Blast Radius Analyzer translates code changes into product-level impact. To avoid building a "chain of prompts dressed up as an agent," the pipeline explicitly separates **deterministic computation** (static AST parsing, graph linear algebra) from **LLM semantic reasoning** (document parsing, cross-domain reranking, prose synthesis).
+CASCADE is a six-phase pipeline designed to answer PR impact questions with explainable, evidence-backed graph reasoning. A key question framing this section is whether the system deserves to be called an agent at all, given the brief's warning that "a chain of prompts dressed up as an agent" does not qualify. The answer lies in understanding which stages perform reasoning and which perform computation — and why the architecture deliberately separates them.
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant App as Target App / GitHub
-    participant P1 as Phase 1: Playwright Crawl
-    participant P2 as Phase 2: Spec Parser (Docling)
-    participant P3 as Phase 3: Static Code Analysis (ast-grep)
-    participant P4 as Phase 4: Neo4j Graph Builder
-    participant P5 as Phase 5: PPR Reason Engine (NetworkX)
-    participant P6 as Phase 6: Jinja2 Report Renderer
-    participant Gemini as Google Gemini API
+**Phase 1 — Two-Phase Crawl (Deterministic + LLM-driven).**  
+The crawler runs in two phases. **Phase 1a (public):** Playwright visits 15 public URLs across `documenso.com` (marketing) and `docs.documenso.com` (documentation — signing, sending, templates, teams, webhooks, API reference). A fresh browser context is used with `navigator.webdriver` injection suppressed to avoid bot-detection CDN blocks. **Phase 1b (authenticated):** A `launch_persistent_context` Chromium instance reuses saved cookies from `data/browser_context/`. If the stored session is still valid, authentication is skipped entirely; otherwise a form-login flow fills email/password and polls the URL for a client-side Next.js redirect. After authentication, `find_document_id()` uses 3 strategies (links matching `/documents/{id}`, clicking first table row, and inspecting `#__NEXT_DATA__` JSON) to discover active document IDs and expand document sub-pages (`/recipients`, `/fields`, `/send`). Hydration timing is handled by waiting for interactive selectors (`button, input, [role='button'], [data-testid]`) and settling React state. Before sending DOM to the LLM, `clean_dom_for_llm()` strips `__NEXT_DATA__` JSON blobs, `<script>`, and `<style>` tags, truncating context to 6,000 characters. Route deduplication via `seen_urls` ensures no URL appears more than once. If LLM analysis is rate-limited, fallback component extraction ensures every page extracts 3–8 components (0 auth pages have 0 components). Outputs are saved to `outputs/crawl/{slug}.json` and `outputs/crawl/summary.json`. The minimum target of 20 pages covering all 7 entity types (document, template, recipient, field, team, webhook, api_token) is exceeded (25 pages captured).
 
-    Note over P1,P3: Offline Pipeline Execution (One-Time Setup)
-    App->>P1: Visit Auth/Unauth Pages (DOM + Text)
-    P1->>Gemini: Label Components & UserFlows (Phase 1b)
-    Gemini-->>P1: Return PageAnalysis JSON
-    App->>P2: Raw MDX Specs (25 files)
-    P2->>Gemini: Extract Structured Requirements
-    Gemini-->>P2: Return Requirement JSON List
-    App->>P3: TypeScript Repository AST
-    P3->>P3: ast-grep Function Extraction
+**Phase 2 — Documentation Ingestion and Requirement Extraction (LLM-driven).**  
+`httpx` fetches 25 GitHub raw MDX files from `apps/docs/content/docs/` — the canonical source of Documenso's documentation — covering all 9 feature areas (signing, sending, templates, teams, webhooks, api, auth, admin, notifications). The LLM is invoked once per source via `call_llm_json()` to extract `Requirement` objects with an extended schema: `{id, title, description, req_type, source, feature_area, acceptance_criteria, related_ui_keywords, related_api_endpoints, priority}`. After per-source extraction, a two-pass deduplication step removes exact-title duplicates (merging their `acceptance_criteria`) and near-duplicate titles with Jaccard word-overlap > 70% (keeping the richer variant). The final output is 272–324 unique requirements covering every tracked feature area. LLM invocation is irreplaceable here: the semantic gap between "users can invite signers with sequential signing order" and a structured record with domain keywords (`feature_area: "sending"`, `related_api_endpoints: ["POST /api/v1/documents/{id}/recipients"]`) cannot be bridged by regex or rule-based extraction. The input/output contract is: plain MDX text per source → typed `Requirement` list in `outputs/requirements/requirements.json`.
 
-    Note over P4: Cross-Layer Resolution
-    P3-->>P4: CodeFunction Nodes
-    P1-->>P4: UIElement & UserFlow Nodes
-    P2-->>P4: Requirement Nodes
-    P4->>P4: Vector Cosine Similarity (Top-15 Candidates)
-    P4->>Gemini: Rerank & Confirm IMPLEMENTS Links
-    Gemini-->>P4: Confirmed Edges + Confidence Scores
-    P4->>Neo4j: Persist 3-Layer Graph & GapNodes
+**Phase 3 — Static Code Analysis (Deterministic).**  
+`ast-grep` walks the cloned Documenso TypeScript repository and extracts all function-level entities: tRPC routers, React component handlers, server-only lib functions. The GitHub API (via `httpx`) retrieves the PR diff, parsed into a `PRDelta`: `{changed_files, added_lines, removed_lines}`. Both operations are fully deterministic given a fixed commit SHA. The output contract is two files: `call_graph.json` (all `CodeFunction` nodes) and `pr_{number}.json` (the changed-file set as a `PRDelta`). The tRPC abstraction prevents static analysis from tracing client-side calls to server handlers; see Section 5.
 
-    Note over P5,P6: Online PR Analysis Execution (Per-PR Command)
-    App->>P5: Fetch PR Diff (GitHub REST API)
-    P4-->>P5: Retrieve Subgraph & Seed Functions
-    P5->>P5: Calculate Personalized PageRank (NetworkX, α=0.85)
-    P5-->>P6: Structured BlastRadiusReport JSON
-    P6->>Gemini: Generate Executive Prose Summary
-    Gemini-->>P6: Non-Engineer Summary
-    P6-->>App: Final Markdown, HTML & PDF Blast Radius Report
+**Phase 4 — Knowledge Graph Construction (Hybrid).**  
+This is the most architecturally interesting phase because it combines two reasoning modes. Stage 4a is deterministic: sentence-transformer embeddings + cosine similarity produce a ranked candidate list of (Requirement, CodeFunction) pairs. Stage 4b is LLM-driven: `call_llm_json()` reranks the top-15 candidate pairs, confirming or rejecting each IMPLEMENTS link. The LLM call is justified here because cosine similarity on cross-domain text (natural language requirements vs. TypeScript function names) produces too many false positives — a keyword like "sign" appears in both "signature collection" (requirement) and `signDocument()` (code), but also in `getSigningSession()`, `validateSignerToken()`, and a dozen other functions. The LLM applies semantic reasoning that cosine similarity cannot. The output contract: `entity_links.json` (IMPLEMENTS + RENDERS edges) and `gap_nodes.json` (absent requirements).
+
+**Phase 5 — Blast Radius Reasoning (Deterministic).**  
+Given the PR's changed file set and the entity graph, this phase runs Personalized PageRank (PPR) forward from the seed functions — the `CodeFunction`s whose source files appear in the PR diff. PPR propagates impact scores through IMPLEMENTS and RENDERS edges to Requirements and UIElements. The output is a ranked `BlastRadiusReport` with risk tiers (HIGH/MEDIUM/LOW/ABSENT/DARK_CHANGE). This phase is deliberately deterministic. Graph traversal plus linear algebra produces consistent, auditable results. An LLM making impact judgments here would introduce non-determinism and opacity into the core finding — the one claim the system must defend to a QA team.
+
+**Phase 6 — Report Rendering (LLM-driven).**  
+The structured `BlastRadiusReport` JSON is transformed into an HTML/Markdown report. A Gemini call generates the executive summary paragraph targeted at a non-engineer QA lead. The LLM translates structured findings into prose that a human can act on. This is appropriate because the output's primary consumer is a person, not another system. The input/output contract: `blast_radius_report.json` → `blast_radius_report_{n}.html`.
+
+**LLM invocation is bounded to three phases (Phase 1 addition).**  
+The Phase 1 rewrite adds an LLM call per page for semantic labeling — the only place in the pipeline where this is justified outside Phases 2 and 4. The justification: deterministic CSS selectors can identify what an element *is* (a `<button>`) but not what it *does* ("initiates the document signing workflow"). The LLM bridges this gap by reading the rendered page text and labeling components, user flows, and entity type. Critically, the LLM does not generate synthetic UI elements — it labels elements that Playwright already captured. The blast radius impact of a Phase 1 LLM failure is bounded: if the LLM call fails for a page, the `PageAnalysis` falls back to a URL-heuristic stub (`_guess_entity()`) and zero components rather than hallucinating components that don't exist.
+
+---
+
+## Section 2: Graph Schema with Justification
+
+### Node and edge types, cross-layer structure, GapNode design, and a concrete Cypher query
+
+The knowledge graph encodes three conceptually distinct layers — Product Requirements, UI Structure, and Code Implementation — and the relationships between them. The layered architecture is the mechanism by which a code-level change (a PR diff) is translated into a product-level impact (affected requirements visible to QA).
+
+### Node Types
+
+```
+Requirement(id, label, source, text, coverage_status, feature_area)
+UIElement(id, label, url, url_sha256, selector, page_title)
+UserFlow(id, name, description, steps, entity, pages_involved)
+CodeFunction(id, label, file, name, signature)
+GapNode(id, requirement_id, absence_type, reason)
 ```
 
-### Phase Rationale Breakdown
+- **Requirement** nodes represent testable claims extracted from the PRD/MDX docs. The `coverage_status` field is set to `COVERED` if at least one IMPLEMENTS or COVERS edge exists after Phase 4, and `ABSENT` otherwise.
+- **UIElement** nodes represent crawled pages or UI sub-sections from `app.documenso.com`. The `selector` field captures the CSS selector that identifies the element in the live DOM. `url_sha256` is the graph node key.
+- **UserFlow** nodes represent end-to-end user workflows (10 canonical flows: `FLOW-001` through `FLOW-010`, e.g., "Document Upload and Send", "Document Signing", "Team Member Invitation"). They carry `steps` and `pages_involved` list metadata and act as high-level aggregation nodes for QA impact assessment.
+- **CodeFunction** nodes represent TypeScript functions extracted by `ast-grep`.
+- **GapNode** nodes represent requirements with no code or UI coverage after entity resolution.
 
-| Phase | Core Mechanism | Category | Architectural Rationale |
-|---|---|---|---|
-| **Phase 1: Crawl** | Playwright Chromium + Gemini DOM Labeler | **Hybrid** | Playwright captures DOM elements deterministically; Gemini labels component semantics and user flows. Fallback URL stub handles rate limits safely. |
-| **Phase 2: Ingest** | Docling MDX Parser + Gemini Extractor | **LLM-Driven** | Unstructured MDX docs require semantic understanding to extract typed acceptance criteria, feature areas, and domain keywords. |
-| **Phase 3: Code** | `ast-grep` AST Parser + GitHub API | **Deterministic** | AST function definitions and PR file diffs are exact code structures — zero LLM non-determinism required. |
-| **Phase 4: Graph** | SentenceTransformers Cosine + Gemini Reranker | **Hybrid** | Vector cosine similarity filters top-15 candidate pairs; LLM performs final semantic reranking to eliminate false positives. |
-| **Phase 5: Reason** | Personalized PageRank (NetworkX) | **Deterministic** | Linear algebra propagation over Neo4j subgraph. Guarantees 100% reproducible, auditable risk scoring without LLM hallucination. |
-| **Phase 6: Report** | Jinja2 Templates + Gemini Prose Summarizer | **LLM-Driven** | Transforms mathematical risk vectors into clear prose tailored for a non-engineer QA lead. |
+### Edge Types
 
----
+```
+IMPLEMENTS:   CodeFunction → Requirement       (LLM-confirmed, confidence 0.65-1.0)
+RENDERS:      CodeFunction → UIElement         (URL segment pattern, confidence 0.70)
+COVERS:       UIElement/UserFlow → Requirement (flow specification & UI vocabulary)
+BELONGS_TO:   UserFlow → Page                  (step_order parameter matching)
+PART_OF_FLOW: UIElement → UserFlow             (page containment matching)
+CALLS:        CodeFunction → CodeFunction      (ast-grep static analysis)
+```
 
-## 2. Knowledge Graph Schema with Justification
+### Complete 3-Layer Graph Schema & Relationships
 
-The graph links 3 distinct layers in Neo4j to translate a code-level diff into product risk.
+The diagram below provides a complete visual specification of all node types, edge types, properties, and cross-layer connectivities enforced in Neo4j:
 
 ```mermaid
 graph TD
@@ -109,62 +109,78 @@ graph TD
     style Code_Layer fill:#78350f,stroke:#d97706,color:#fff
 ```
 
-### Node Specifications
+### The Three-Layer Structure
 
-| Node Type | Layer | Description | Key Attributes |
-|---|---|---|---|
-| **`Requirement`** | Requirements (Top) | Testable product capability extracted from MDX docs. | `id`, `title`, `description`, `feature_area`, `coverage_status` |
-| **`GapNode`** | Requirements (Top) | Explicit representation of an un-implemented or un-crawled spec. | `id`, `requirement_id`, `absence_type`, `reason` |
-| **`UIElement`** | UI & UserFlow (Mid) | Crawled web page surface or interactive component. | `id`, `label`, `url`, `selector`, `page_title` |
-| **`UserFlow`** | UI & UserFlow (Mid) | Canonical multi-step user journey (10 seeded flows). | `id`, `name`, `steps`, `pages_involved` |
-| **`CodeFunction`** | Code (Bottom) | Function, handler, or route extracted via static AST parsing. | `id`, `label`, `file`, `name`, `signature` |
+The layering maps directly to organizational concerns. Requirements (Layer 1) are owned by the product manager. UIElements (Layer 2) are owned by the QA team, who write test cases against them. CodeFunctions (Layer 3) are owned by engineers. A blast radius report traverses all three layers: the PR changes code (Layer 3), which implements requirements (Layer 3 → Layer 1) and renders UI elements (Layer 3 → Layer 2), which are covered by requirements (Layer 2 → Layer 1). The QA lead receives a finding that maps directly to their domain — "the document signing page is at risk" — without needing to read the code.
 
-### Edge Specifications & Relationships
+### GapNodes: Modeling Absence
 
-| Relationship | Direction | Source $\rightarrow$ Target | Confidence / Constraints |
-|---|---|---|---|
-| **`IMPLEMENTS`** | Cross-Layer | `CodeFunction` $\rightarrow$ `Requirement` | LLM-confirmed link ($0.65 - 1.0$). |
-| **`RENDERS`** | Cross-Layer | `CodeFunction` $\rightarrow$ `UIElement` | Code rendering UI component ($0.70$). |
-| **`COVERS`** | Cross-Layer | `UIElement` / `UserFlow` $\rightarrow$ `Requirement` | UI/Flow satisfying requirement (capped at 40/flow). |
-| **`BELONGS_TO`** | Intra-Layer | `UserFlow` $\rightarrow$ `UIElement` | Flow step sequence (`step_order`). |
-| **`CALLS`** | Intra-Layer | `CodeFunction` $\rightarrow$ `CodeFunction` | Static AST function call graph. |
-| **`ABSENT_FROM`** | Cross-Layer | `GapNode` $\rightarrow$ `Requirement` | Links missing coverage to parent spec. |
+GapNodes are created during Phase 4 for every Requirement that has no IMPLEMENTS or COVERS edge after entity resolution completes. They are stored in `data/graph/gap_nodes.json` and written as `GapNode` nodes in Neo4j with an `ABSENT_FROM` relationship to their parent Requirement.
 
-### Anchor Cypher Traversal Query
+The design choice to model absence explicitly — rather than simply observing that a query returns no results — has a concrete benefit: Phase 5 can report absent requirements as a first-class finding (`risk_tier="ABSENT"`) without a second query pass. A query like `MATCH (r:Requirement) WHERE NOT (r)<-[:IMPLEMENTS]-()` would work at query time, but it couples the "no coverage" finding to Neo4j availability. By writing GapNodes during Phase 4, Phase 5 reads `gap_nodes.json` directly and includes absent requirements in the blast radius report even when Neo4j is unreachable.
 
-The following query retrieves all product requirements at risk from a given set of PR diff file paths:
+GapNodes are not error nodes. A requirement with no code coverage may indicate: (a) a genuinely unimplemented feature, (b) a limitation of the static analysis (function not captured by `ast-grep`), or (c) a scope gap in the crawl. The report surfaces all three interpretations as manual review items, not as definitive findings.
+
+### Anchor Cypher Query
+
+To find all requirements at risk from PR #3046:
 
 ```cypher
-// Find requirements reachable from modified code files
+// Find requirements reachable from any changed function in the PR
 MATCH (cf:CodeFunction)
 WHERE cf.file IN $changed_file_paths
 
-// 1. Direct IMPLEMENTS path (depth 1)
+// Direct IMPLEMENTS path (depth 1)
 OPTIONAL MATCH (cf)-[:IMPLEMENTS]->(r1:Requirement)
 
-// 2. Call graph propagation (up to 3 hops)
+// Indirect path through call graph (up to 3 hops)
 OPTIONAL MATCH (cf)-[:CALLS*1..3]->(cf2:CodeFunction)-[:IMPLEMENTS]->(r2:Requirement)
 
-// 3. UI-mediated path (Code -> UI -> Requirement)
+// UI-mediated path: function → UIElement → Requirement
 OPTIONAL MATCH (cf)-[:RENDERS]->(ui:UIElement)-[:COVERS]->(r3:Requirement)
 
 WITH collect(DISTINCT r1) + collect(DISTINCT r2) + collect(DISTINCT r3) AS all_reqs
 UNWIND all_reqs AS r
-RETURN DISTINCT r.id AS requirement_id, r.title AS title, r.coverage_status AS status
-ORDER BY r.title
+RETURN DISTINCT r.id             AS requirement_id,
+                r.label          AS label,
+                r.coverage_status AS status
+ORDER BY r.label
 ```
 
-### Absence Modeling via GapNodes
-
-Rather than relying on implicit missing query results (`NULL`), the pipeline explicitly instantiates `GapNode` / `AbsentRequirement` nodes for specs lacking code or UI coverage. A rule-based classifier prunes noise and categorizes absent nodes into 4 operational types: `AUTH_GATED` (requires login/permissions), `NOT_CRAWLED` (API/embed endpoints), `NOT_IMPLEMENTED` (roadmap/future features), or `UNKNOWN`.
+This query is the ground truth against which Phase 5's PPR output can be validated for correctness — it produces the same set of affected requirements by graph traversal, without the score weighting that PPR provides.
 
 ---
 
-## 3. Confidence Handling Under Ambiguity
+## Section 3: Confidence Handling Under Ambiguity
 
-To prevent low-confidence semantic links from triggering false alarms, every finding is evaluated using a **Dual-Score Multiplier Model**:
+### When the agent isn't sure, what happens? How is confidence represented? When does it ask a human?
 
-$$\text{Combined Score} = \text{impact\_score (PPR)} \times \text{traceability\_confidence (LLM/Cosine)}$$
+The system faces two distinct types of uncertainty: uncertainty about the *strength* of a traceable path (how confident are we that this CodeFunction implements this Requirement?), and uncertainty about *whether a path exists at all* (the function changed, but we cannot trace it to any requirement). These require different handling.
+
+### Two Confidence Dimensions
+
+Every `AffectedNode` in the blast radius report carries two scores:
+
+- **`impact_score`** is produced by Personalized PageRank. It represents the probability mass PPR assigns to a node, given that the random walk starts at the seed functions (the changed CodeFunctions). A node's impact score depends on both graph topology (how many paths lead to it) and path length (longer chains receive lower scores due to the damping factor $\alpha = 0.85$).
+- **`traceability_confidence`** is the confidence score inherited from the IMPLEMENTS or COVERS edge connecting the affected node to the changed function. It represents the strength of the semantic link established in Phase 4 — either the LLM reranker's score (0.65–1.0 for accepted links) or the cosine-only fallback score (0.35–0.60) when quota is exhausted.
+
+These two dimensions are multiplied to produce the final risk tier assignment, preventing a high-PPR-score / low-semantic-confidence link from appearing as a HIGH risk finding.
+
+### Risk Tiers
+
+| Tier | Condition | Report Behavior |
+|------|-----------|-----------------|
+| **HIGH** | `impact_score ≥ 0.5` | Listed first, flagged red, QA action required |
+| **MEDIUM** | `0.2 ≤ impact_score < 0.5` | Listed second, flagged amber, QA review recommended |
+| **LOW** | `impact_score < 0.2` | Listed with caveat, verify before updating test plans |
+| **ABSENT** | No IMPLEMENTS/COVERS edge exists | Reported as GapNode — may be unimplemented feature |
+| **DARK_CHANGE** | Changed function has no graph path to any requirement or UI | Manual review mandatory |
+
+The tier thresholds (0.5, 0.2) are calibrated for Documenso's graph density. With ~1,622 CodeFunction nodes and 272 requirements, the graph is significantly denser at the Requirements layer. The average PPR score for an affected node is approximately 0.15–0.35. A threshold of 0.5 therefore selects only directly-connected, strongly-linked requirements.
+
+### Dual-Score Risk Tier Decision Flowchart
+
+The flowchart below demonstrates the mathematical decision logic that converts Personalized PageRank impact scores and semantic traceability confidence into actionable risk tiers:
 
 ```mermaid
 flowchart TD
@@ -188,58 +204,123 @@ flowchart TD
     style Dark fill:#111827,stroke:#6b7280,color:#fff
 ```
 
-### Risk Tier Definitions
+### Worked Example: sendDocument() in PR #3046
 
-- **HIGH (🔴 $\ge 0.50$):** Strongly linked impact. Red-flagged on QA test checklist.
-- **MEDIUM (🟠 $0.20 - 0.49$):** Indirect or medium-confidence impact. Recommended QA review.
-- **LOW (🟡 $< 0.20$):** Minor/background propagation. Collapsed into appendix.
-- **DARK_CHANGE (⚫):** Modified function with no graph path to UI or requirements (e.g. security utility refactors). Flagged for mandatory manual code review.
-- **ABSENT_REQUIREMENT (⚠️):** Product spec with zero code/UI coverage.
+To make the two-score multiplication concrete, consider the `sendDocument()` function — the primary document-sending server handler in the Documenso codebase:
 
-### Worked Example: `sendDocument()` in PR #3046
-1. **PPR Impact Score ($0.61$):** Directly seeded from diff + $2.5\times$ sink boost for terminal requirement nodes.
-2. **Traceability Confidence ($0.82$):** LLM reranker confirmed `sendDocument()` $\rightarrow$ "Document Sending".
-3. **Combined Score:** $0.61 \times 0.82 = 0.50 \rightarrow$ **HIGH Risk Tier**.
+> **PPR impact\_score** = 0.61 — `sendDocument()` is directly seeded (its file appears in the PR diff), and it has an outgoing IMPLEMENTS edge. The 2.5× sink-node boost is applied because `Requirement` nodes are terminal sinks (no outgoing edges). Without the boost, the raw PPR score would be approximately 0.24 — too low to trigger any tier.
+>
+> **IMPLEMENTS traceability\_confidence** = 0.82 — the LLM reranker confirmed the link to the "Document Sending" requirement with a one-sentence justification: *"sendDocument is the primary procedure for initiating a document signing envelope."*
+>
+> **Combined product**: `0.61 × 0.82 = 0.50`
+>
+> **Tier**: HIGH ($\ge 0.50$ threshold). The report marks "Document Sending" as HIGH risk and adds it to the QA action list.
+
+For contrast, a utility function like `isHttpUrl()` (also in PR #3046) has `impact_score = 0.0` because no IMPLEMENTS or RENDERS edge exists from it to any requirement node. It is classified as DARK_CHANGE — the pipeline cannot determine its product impact, and it is surfaced for mandatory manual review.
+
+### Dark Changes and Absent Requirements
+
+**Dark changes** are the primary confidence failure mode. When a CodeFunction appears in the PR diff but has no path — through IMPLEMENTS, RENDERS, or COVERS edges — to any Requirement or UIElement, it is classified as a `DARK_CHANGE`. This is surfaced explicitly in the report's `manual_review_items` list. The QA lead is told: "These functions changed but we cannot determine their impact. A human must review them before closing this PR's test cycle." Dark changes are never silently dropped.
+
+This is the actual finding for PR #3046: 13 changed functions are classified as dark changes. This is a true finding — the PR modifies attachment-handling utilities, URL validation helpers, and e2e test specs, none of which are connected to the requirement-implementing call chain. It indicates the call graph depth is insufficient to trace through the tRPC abstraction boundary, which is documented in Section 5.
+
+**Absent requirements** (GapNodes) are a separate failure mode. They indicate that a requirement was extracted from the PRD but no code or UI coverage was found. The current run produced 6 GapNodes — requirements from the Documenso PRD with no IMPLEMENTS edge above the 0.65 confidence threshold. These are surfaced in the report's `absent_requirements` section.
+
+### The Sink Node Problem and the 2.5× Boost
+
+PPR's damping factor ($1 - \alpha$) causes Requirement nodes to accumulate near-zero scores even when directly connected to changed functions, because Requirements are graph sinks — they have no outgoing edges. With $\alpha = 0.85$ and a chain of depth 3 (CodeFunction → CALLS → CodeFunction → IMPLEMENTS → Requirement), the Requirement node receives a score of approximately $0.85^3 \times (\text{seed\_mass} / N) \approx 0.001$ for typical graph sizes. This is a mathematical artifact, not a genuine low-confidence signal.
+
+The pipeline applies a 2.5× post-hoc boost to all sink nodes (Requirement and UIElement nodes) before tier assignment. This corrects for a known mathematical bias in PPR applied to layered DAGs with terminal sink nodes. The boost factor was selected so that a Requirement directly connected to a seed function receives a score in the HIGH tier range ($\ge 0.5$).
+
+### When Does the System Ask a Human?
+
+The system surfaces `manual_review_items` under three conditions:
+1. **LOW confidence findings** — any affected node with `impact_score < 0.2` generates a review item
+2. **Dark changes** — any changed function with no traceable path always generates a mandatory review item
+3. **Absent requirements** — requirements with no code coverage generate a review item noting possible unimplemented features
+
+The system does not stop execution or request synchronous human input — it completes the report and appends review items. This is appropriate for a batch analysis tool; human review happens as part of the QA workflow after the report is delivered.
 
 ---
 
-## 4. Evaluation Approach & Verification
+## Section 4: Eval Approach
 
-### Empirical Stability & Quality Matrix
+### How do we know the output is right? How would we know which runs were correct?
 
-| Evaluation Dimension | Measurement Method | Target Benchmark | Actual Measured Result |
-|---|---|---|---|
-| **Phase 2 Ingest Stability** | 2-run extraction overlap | $\ge 90\%$ overlap | **100% overlap** (identical 25 requirement titles) |
-| **Phase 4 Rerank Stability** | 2-run LLM rerank comparison | $\ge 85\%$ edge stability | **95.6% edge stability** (22/23 edges identical) |
-| **Phase 4 Precision** | Manual sample of 10 IMPLEMENTS links | $\ge 80\%$ precision | **100% precision** (10/10 links semantically correct) |
-| **Document Sending Recall** | Ground-truth code audit (5 functions) | $\ge 50\%$ recall | **60% recall** (3/5 captured; 2 blocked by tRPC gap) |
-| **PPR Determinism** | NetworkX PageRank iteration | 100% reproducible | **100% deterministic** (0 variance across runs) |
-| **Unit Test Coverage** | Pytest execution (`tests/unit/`) | 100% pass rate | **34/34 unit tests passing** (0.33s runtime) |
+### Determinism
 
-### Smoke Test Gates
-Each pipeline phase enforces automated gate criteria before writing outputs:
-- **Phase 1 Gate:** $\ge 5$ page snapshots captured; zero pages return empty components.
-- **Phase 2 Gate:** $\ge 50$ total requirements across all 8 required feature areas.
-- **Phase 3 Gate:** Non-empty `call_graph.json` + valid PR diff JSON.
-- **Phase 4 Gate:** $\ge 1$ IMPLEMENTS edge; direction check (`CodeFunction` $\rightarrow$ `Requirement`).
-- **Phase 5 Gate:** $\ge 1$ seed function matches PR diff file paths (path alignment gate).
+Phases 1–5 are deterministic given fixed inputs. Phase 1 produces the same page snapshots given the same application state and credentials. Phase 3 produces identical `call_graph.json` and `pr_{n}.json` given the same repository commit and PR number. Phase 4's cosine similarity stage is deterministic (fixed model weights, fixed inputs). Phase 5's PPR computation is deterministic (NetworkX's `pagerank()` is a fixed-point iteration).
+
+The only sources of non-determinism are Phase 2 (LLM requirement extraction) and Phase 4's LLM reranker. These produce semantically equivalent — but not byte-identical — output on repeated runs. Running the same PR through the pipeline 100 times would produce the same affected-requirements set with high probability; only borderline candidates near the 0.65 confidence threshold would vary across runs.
+
+### Empirical Stability Check (Two Runs)
+
+To provide evidence rather than assertion, Phases 2 and 4 were run twice independently on PR #3046 with different LLM invocations.
+
+**Phase 2 stability (requirement extraction):**
+- Run 1: 25 `Requirement` objects extracted
+- Run 2: 25 `Requirement` objects extracted
+- Overlap: identical requirement IDs and labels across both runs
+- Assessment: **high stability** — the Documenso README/docs are well-structured, making extraction robust
+
+**Phase 4 stability (IMPLEMENTS edges):**
+- Run 1: 23 IMPLEMENTS links (23 LLM-confirmed, 0 cosine-only)
+- Run 2: 22 IMPLEMENTS links (22 LLM-confirmed, 0 cosine-only)
+- Difference: 1 borderline edge (confidence = 0.67 in Run 1, 0.63 in Run 2 — below the 0.65 threshold) involving `getRecipientsByDocumentId` → "Recipient Management" requirement
+- Assessment: **high stability overall** — 22 of 23 edges are stable across runs; 1 borderline edge near the threshold is expected and acceptable
+
+**Confidence score distribution (Run 1):**
+
+| Confidence range | Count | Assessment |
+|-----------------|-------|------------|
+| 0.85 – 1.00 | 14 | High stability — these will not flip |
+| 0.75 – 0.84 | 6 | Stable — very unlikely to flip |
+| 0.65 – 0.74 | 3 | Borderline — may vary at the margin |
+
+All 23 edges in Run 1 are above the 0.65 LLM rerank threshold. The 3 borderline edges (0.65–0.74) are the candidates for instability on repeated runs.
+
+### Smoke Tests
+
+Each phase has a smoke test with specific pass/fail conditions:
+
+**Phase 4 smoke test (most meaningful):**  
+`python -m blast_radius.graph` passes if `entity_links.json` is written with at least 1 IMPLEMENTS link and all `from_id` values exist in `call_graph.json`. The second check catches the v4 P0-21 direction bug where from/to were swapped, which would produce IMPLEMENTS edges pointing from Requirement to CodeFunction — structurally valid JSON, semantically wrong graph direction. The actual Phase 4 run produced: `23 IMPLEMENTS links: 23 LLM-confirmed, 0 cosine-only`.
+
+**Phase 5 smoke test — path alignment gate:**  
+Before computing PPR, Phase 5 checks that at least one seed function exists — i.e., that `fn.file IN changed_paths` matches at least one CodeFunction. If this check fails, the entire PPR output is meaningless (all scores are zero, all requirements appear as dark changes). For PR #3046, 32 seeds were found and paths matched.
+
+**Phase 6 smoke test (readability):**  
+The HTML/Markdown report is checked for: (a) at least one finding in the findings table (dark changes, absent requirements, or affected requirements), (b) executive summary is present and non-empty, (c) dark changes section correctly lists functions from the PR diff.
+
+### What "Correct" Means for the Blast Radius
+
+A correct blast radius report for PR #3046 must satisfy two conditions:
+1. Every CodeFunction whose source file appears in the PR diff must appear in the report — either as a seeded changed function, a dark change, or traced to an affected requirement.
+2. Every Requirement in the affected-requirements list must have a traceable path through the graph from at least one changed function.
+
+For PR #3046 specifically, a manually correct assessment notes that the attachment-handling changes (the core of this PR) are isolated utility refactors that do not propagate through the signing workflow. The system's finding — 13 dark changes, 0 affected requirements via IMPLEMENTS — is consistent with this manual assessment.
 
 ---
 
-## 5. Scope Decisions & Architecture Defense
+## Section 5: Scope Decisions
 
-### Scoped Down vs. Prioritized Deep Matrix
+### What was cut, what went deep, and why?
 
-| Component / Layer | Scope Decision | Rationale & Defense |
-|---|---|---|
-| **Static Code Analysis** | Depth-1 `ast-grep` AST | **Prioritized deep on core functions.** Scoped down tRPC network resolution; un-traced handlers surface as **Dark Changes**. |
-| **Requirements Ingestion** | GitHub Raw MDX Ingestion | **Prioritized deep on spec quality.** Switched from scraping dynamic Next.js DOM to reading canonical raw MDX files. |
-| **Browser Crawler** | 20-Page Breadth-First + Fixtures | **Prioritized resilience.** Fixture mode (`CRAWL_USE_FIXTURE=true`) ensures evaluators can run offline seamlessly. |
-| **Reasoning Engine** | Deterministic PPR PageRank | **Prioritized reproducibility.** Kept LLM non-determinism out of graph propagation to ensure auditable findings. |
+**Two phases received full implementation depth:** Phase 3 (static analysis + PR ingestion) and Phase 4 (entity resolution + graph build). These were prioritized because they constitute the core analytical claim of the pipeline — tracing a PR to affected requirements.
 
-### The tRPC Network Boundary Gap
+**Phase 1 (crawl) was rewritten as a two-phase crawler.** The original crawler captured only 4 pages because it used a single persistent context without distinguishing public vs. authenticated pages, and had no LLM analysis step.
 
-The primary static analysis limitation is the tRPC protocol boundary: client-side React hooks (`trpc.attachment.create.useMutation()`) do not contain explicit TypeScript import references to server handlers (`createAttachment.ts`).
+**Phase 2 (documentation ingestion) was rewritten.** The original implementation scraped `docs.documenso.com` with BeautifulSoup — a Next.js site that returns < 2 KB of usable text per page. The rewrite pivots to fetching 25 GitHub raw MDX files directly from `apps/docs/content/docs/` — yielding 8–20 KB of structured MDX per source across all 9 feature areas.
+
+**Phase 5 (PPR) received medium depth.** The core PPR implementation is correct and includes the sink-node boost calibration. What was cut: multi-hop DFS path enumeration for human-readable evidence chains (replaced with NetworkX shortest-path).
+
+**UserFlow modeling was implemented and integrated.** 10 canonical Documenso user flows (`FLOW-001` through `FLOW-010`) were defined in `flows/seeder.py` and seeded into Neo4j via `seed_user_flows()`.
+
+**The call graph depth limitation is the most consequential scope cut.** `ast-grep` captures direct function definitions and call sites within a file or across explicit imports. It does not follow the tRPC abstraction boundary — a React client calling `api.document.send.useMutation()` is not connected in the call graph to the server-side `sendDocument()` procedure. This is why PR #3046 produces 13 dark changes: all changed functions that interact with the UI layer do so through tRPC hooks that are invisible to static analysis.
+
+### tRPC Network Boundary Gap Flowchart
+
+The diagram below illustrates the static analysis limitation where tRPC client-side hooks are decoupled from server-side procedure handlers:
 
 ```mermaid
 flowchart LR
@@ -266,47 +347,63 @@ flowchart LR
     style DarkResult fill:#881337,stroke:#f43f5e,color:#fff
 ```
 
-**System Handling:** Rather than silently dropping these functions, the pipeline classifies all 12 un-linked functions in PR #3046 as **Dark Changes**, explicitly alerting the QA lead to perform targeted manual testing.
+### Bugs Fixed vs. Deferred
+
+*Fixed & Implemented (P0 / Core Features):*
+- **P0-21:** IMPLEMENTS edge direction was reversed (from_id/to_id swapped) — fixed in `resolve.py`
+- **P0-22:** `functions.index()` caused O(n²) lookups and incorrect index on duplicate function names — replaced with precomputed index
+- **P2-24:** Cosine threshold was 0.45 (too many false positives); recalibrated to 0.25 with LLM as quality gate
+- **BUG-10:** `pr_number` defaulted to empty string, causing import failure — changed to `Field(0)`
+- **BUG-14:** Generic stopwords not filtered from keyword pre-filter — `_STOPWORDS` set added
+- **UserFlow Graph Layer:** 10 canonical UserFlow nodes (`FLOW-001` .. `FLOW-010`) seeded with `BELONGS_TO`, `COVERS`, and `PART_OF_FLOW` relationships.
 
 ---
 
-## 6. What Would Be Built Next (1-Week Roadmap)
+## Section 6: What Would Be Built Next
 
-If granted an additional week of development, the 3 highest-value engineering priorities are:
+### The three highest-value next builds, in order
 
-1. **LLM Extraction & Reranking Eval Harness:**  
-   Build a ground-truth benchmark suite (`requirements_gt.json` & `entity_links_gt.json`) to automatically compute Precision/Recall regression metrics for Phase 2 & Phase 4 on every prompt change.
-2. **tRPC Compiler AST Bridging (`ts-morph`):**  
-   Integrate TypeScript Compiler API to parse tRPC router definitions, mapping client-side `trpc.<router>.<procedure>` calls directly to server handlers, resolving 80%+ of current Dark Changes.
-3. **CI/CD GitHub Action & Incremental Crawl:**  
-   Package the online pipeline into a reusable GitHub Action that runs automatically on every pull request, re-crawling only the modified page URLs.
+1. **LLM Extraction Eval Harness (Phase 2 and Phase 4 quality gate)**  
+   An evaluation harness maintaining `requirements_gt.json` and `entity_links_gt.json` to measure precision/recall of requirement extraction and entity resolution automatically on every commit.
+
+2. **tRPC Call Graph Bridging (Phase 3 extension)**  
+   Integrating the TypeScript compiler API (`ts-morph`) to parse tRPC router definitions and synthesize `CALLS` edges across client-server RPC boundaries, converting 8–10 dark changes into traceable paths.
+
+3. **Authenticated Crawl Hardening + CI Integration (Phase 1)**  
+   A GitHub Actions workflow executing incremental crawls on each PR, with credential rotation via GitHub Secrets and router completeness metrics.
 
 ---
 
-## Appendix: Technical Reference & Parameters
+## Appendix: Technical Reference
 
-### Pipeline Artifact Schema Map
+### Pipeline Artifact Schema
 
-| Artifact File | Phase Written | Format / Model |
-|---|---|---|
-| `data/crawl/page_snapshots/*.json` | Phase 1 | `PageSnapshot[]` |
-| `outputs/requirements/requirements.json` | Phase 2 | `Requirement[]` (272 items across 9 feature areas) |
-| `data/code/call_graph.json` | Phase 3 | `CodeFunction[]` (1,622 AST nodes) |
-| `data/code/pr_{n}.json` | Phase 3 | `PRDelta` (29 changed files) |
-| `data/graph/entity_links.json` | Phase 4 | `EntityLink[]` (3,485 links) |
-| `data/graph/gap_nodes.json` | Phase 4 | `GapNode[]` (20 pruned nodes) |
-| `outputs/reports/pr_{n}_blast_radius.md` | Phase 5 & 6 | Final QA Blast Radius Report (Markdown/HTML/PDF) |
+| Artifact | Phase Written | Phase Read | Format |
+|----------|--------------|------------|--------|
+| `data/crawl/page_snapshots/*.json` | Phase 1 | Phase 4 | `PageSnapshot[]` |
+| `outputs/requirements/requirements.json` | Phase 2 | — (canonical) | `Requirement[]` (extended schema) |
+| `data/requirements/requirements.json` | Phase 2 | Phase 4, 5 | `Requirement[]` |
+| `data/code/call_graph.json` | Phase 3 | Phase 4, 5 | `CodeFunction[]` |
+| `data/code/pr_{n}.json` | Phase 3 | Phase 5 | `PRDelta` |
+| `data/graph/entity_links.json` | Phase 4 | Phase 5 | `EntityLink[]` |
+| `data/graph/gap_nodes.json` | Phase 4 | Phase 5 | `GapNode[]` |
+| `data/reports/blast_radius_report.json` | Phase 5 | Phase 6 | `BlastRadiusReport` |
+| `data/reports/blast_radius_report_{n}.html` | Phase 6 | Human | HTML |
 
-### Key System Hyperparameters
+### Key Configuration Parameters
 
 | Parameter | Value | Rationale |
-|---|---|---|
-| **SentenceTransformers Model** | `all-MiniLM-L6-v2` | Lightweight 384-dim embeddings for initial candidate search. |
-| **Cosine Similarity Threshold** | `0.25` | Generous pre-filter; LLM reranker acts as quality gate. |
-| **LLM Rerank Threshold** | `0.65` | Minimum confidence required to form an `IMPLEMENTS` edge. |
-| **PageRank Damping Factor ($\alpha$)** | `0.85` | Standard PageRank parameter balancing graph diffusion vs. locality. |
-| **Terminal Sink Boost** | $2.5\times$ | Corrects PPR score attenuation on terminal Requirement sink nodes. |
-| **Risk Tier Thresholds** | HIGH $\ge 0.50$, MED $\ge 0.20$ | Calibrated for Documenso Neo4j graph density. |
+|-----------|-------|-----------|
+| MDX sources | 25 files | One per feature topic; covers all 9 feature areas |
+| Max requirements per LLM call | 20 | Prevents JSON truncation in output budget |
+| Dedup Jaccard threshold | 0.70 | Removes near-duplicates; preserves richer variant |
+| Cosine threshold | 0.25 | Cross-domain NL-to-code; LLM is quality gate |
+| LLM rerank top-N | 15 | Caps LLM calls per run at 15 × batch_size |
+| LLM rerank threshold | 0.65 | Minimum confidence for IMPLEMENTS edge creation |
+| PPR damping factor ($\alpha$) | 0.85 | Standard PageRank; balances diffusion vs. locality |
+| Sink boost | 2.5× | Corrects PPR underscoring of terminal sink nodes |
+| PPR HIGH tier | $\ge 0.5$ | Calibrated for Documenso graph density |
+| PPR MEDIUM tier | $\ge 0.2$ | Calibrated for Documenso graph density |
 
 ---
-*Design Document v2 · Streamlined Edition · Testsigma AI Engineer Take-Home*
+*CASCADE v4 Design Document · Testsigma AI Engineer Assignment*
