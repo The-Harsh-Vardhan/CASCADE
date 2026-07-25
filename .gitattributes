@@ -1,0 +1,7 @@
+# Tell GitHub Linguist to ignore generated graph data, HTML reports, and scratch files in repository language statistics
+
+data/graph_data.js linguist-generated=true
+data/*.html linguist-generated=true
+docs/**/*.html linguist-generated=true
+submission/**/*.html linguist-generated=true
+scratch/** linguist-generated=true
