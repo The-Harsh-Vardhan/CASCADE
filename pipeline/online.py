@@ -210,21 +210,43 @@ def run_online_pipeline(repo: str, pr_number: int) -> str:
     from blast_radius.report import render_report
     _html_path, md_path = render_report()
 
-    # -- 6. Copy to outputs/reports/ & submission/ with canonical filename ---
+    # -- 6. Copy all 4 report formats (MD, HTML, PDF, DOCX) to PR subfolder ---
+    pr_folder_name = f"pr_{pr_number}"
+    out_dir = Path("outputs") / "reports" / pr_folder_name
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    sub_dir = Path("submission") / "blast radius report" / pr_folder_name
+    sub_dir.mkdir(parents=True, exist_ok=True)
+
     md_text = md_path.read_text(encoding="utf-8")
 
-    out_dir = Path("outputs") / "reports"
-    out_dir.mkdir(parents=True, exist_ok=True)
+    # Markdown (.md)
     canonical = out_dir / f"pr_{pr_number}_blast_radius.md"
     canonical.write_text(md_text, encoding="utf-8")
-
-    # Update root blast_radius_report.md
     Path("blast_radius_report.md").write_text(md_text, encoding="utf-8")
+    (sub_dir / f"blast_radius_report_pr{pr_number}.md").write_text(md_text, encoding="utf-8")
+    (Path("submission") / "blast radius report" / f"blast_radius_report_pr{pr_number}.md").write_text(md_text, encoding="utf-8")
 
-    # Update submission/blast radius report/ if folder exists
-    sub_dir = Path("submission") / "blast radius report"
-    if sub_dir.exists():
-        (sub_dir / f"blast_radius_report_pr{pr_number}.md").write_text(md_text, encoding="utf-8")
+    # HTML (.html)
+    if _html_path.exists():
+        html_text = _html_path.read_text(encoding="utf-8")
+        (out_dir / f"pr_{pr_number}_blast_radius.html").write_text(html_text, encoding="utf-8")
+        (sub_dir / f"blast_radius_report_pr{pr_number}.html").write_text(html_text, encoding="utf-8")
+        (Path("submission") / "blast radius report" / f"blast_radius_report_pr{pr_number}.html").write_text(html_text, encoding="utf-8")
 
-    print(f"\n[CASCADE] Report live generated -> {canonical}")
+    # Word Doc (.docx)
+    src_docx = Path("data/reports/blast_radius_report.docx")
+    if src_docx.exists():
+        import shutil
+        shutil.copy(src_docx, out_dir / f"pr_{pr_number}_blast_radius.docx")
+        shutil.copy(src_docx, sub_dir / f"blast_radius_report_pr{pr_number}.docx")
+
+    # PDF (.pdf)
+    src_pdf = Path("data/reports/blast_radius_report.pdf")
+    if src_pdf.exists():
+        import shutil
+        shutil.copy(src_pdf, out_dir / f"pr_{pr_number}_blast_radius.pdf")
+        shutil.copy(src_pdf, sub_dir / f"blast_radius_report_pr{pr_number}.pdf")
+
+    print(f"\n[CASCADE] 4 Report Formats (MD, HTML, PDF, DOCX) saved to PR folder -> {out_dir}")
     return str(canonical)

@@ -292,7 +292,31 @@ def render(report: BlastRadiusReport) -> tuple[Path, Path]:
     ]
 
     md_path = REPORTS_DIR / "blast_radius_report.md"
-    md_path.write_text("\n".join(lines), encoding="utf-8")
+    md_text = "\n".join(lines)
+    md_path.write_text(md_text, encoding="utf-8")
+
+    # -- Word Document (.docx) report ---------------------------------------
+    docx_path = REPORTS_DIR / "blast_radius_report.docx"
+    try:
+        from blast_radius.report.docx_exporter import markdown_to_docx
+        markdown_to_docx(md_text, docx_path)
+    except Exception as e:
+        print(f"[report] WARNING: DOCX export failed: {e}")
+
+    # -- PDF (.pdf) report via Playwright -----------------------------------
+    pdf_path = REPORTS_DIR / "blast_radius_report.pdf"
+    try:
+        import subprocess
+        subprocess.run(
+            ["python", "scratch/convert_report_to_pdf.py"],
+            capture_output=True,
+            timeout=30,
+        )
+    except Exception as e:
+        print(f"[report] WARNING: PDF export failed: {e}")
+
     print(f"[report] HTML:     {html_path}")
     print(f"[report] Markdown: {md_path}")
+    print(f"[report] Word Doc: {docx_path}")
+    print(f"[report] PDF:      {pdf_path}")
     return html_path, md_path
