@@ -63,7 +63,13 @@ def main() -> None:
 
     p = Path(report_path)
     if p.exists():
-        print(p.read_text(encoding="utf-8"))
+        text = p.read_text(encoding="utf-8")
+        if hasattr(sys.stdout, "reconfigure"):
+            try:
+                sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+            except Exception:
+                pass
+        print(text)
 
 
 if __name__ == "__main__":

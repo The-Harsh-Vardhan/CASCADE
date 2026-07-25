@@ -36,7 +36,7 @@ def check_graph_ready(driver) -> bool:
             print("Then re-run:")
             print("  python run.py <github_pr_url>")
             sys.exit(1)
-        print(f"Graph ready — {count} nodes loaded.")
+        print(f"Graph ready - {count} nodes loaded.")
         return True
 
 
@@ -57,19 +57,24 @@ def _fetch_and_save_pr_delta(repo: str, pr_number: int) -> Path:
     from blast_radius.models import ChangedFile, PRDelta
 
     headers = {"Accept": "application/vnd.github.v3+json"}
-    if settings.github_token:
-        headers["Authorization"] = f"token {settings.github_token}"
+    auth_headers = dict(headers)
+    if settings.github_token and not settings.github_token.startswith("ghp_your"):
+        auth_headers["Authorization"] = f"token {settings.github_token}"
     else:
         print(
-            "Warning: GITHUB_TOKEN not set — "
-            "unauthenticated rate limit is 60 req/hour."
+            "Note: GITHUB_TOKEN is missing or placeholder — using unauthenticated API request."
         )
 
     base = f"https://api.github.com/repos/{repo}"
 
     # -- Fetch PR metadata -------------------------------------------------
     try:
-        meta_resp = httpx.get(f"{base}/pulls/{pr_number}", headers=headers, timeout=30)
+        meta_resp = httpx.get(f"{base}/pulls/{pr_number}", headers=auth_headers, timeout=30)
+        if meta_resp.status_code == 401 and "Authorization" in auth_headers:
+            print("Notice: GITHUB_TOKEN unauthorized (401). Retrying unauthenticated...")
+            auth_headers.pop("Authorization", None)
+            meta_resp = httpx.get(f"{base}/pulls/{pr_number}", headers=auth_headers, timeout=30)
+
         if meta_resp.status_code == 404:
             print(
                 f"Error: PR #{pr_number} not found in {repo}. "
@@ -91,7 +96,7 @@ def _fetch_and_save_pr_delta(repo: str, pr_number: int) -> Path:
         while True:
             resp = httpx.get(
                 f"{base}/pulls/{pr_number}/files",
-                headers=headers,
+                headers=auth_headers,
                 params={"per_page": 100, "page": page},
                 timeout=30,
             )
@@ -145,7 +150,7 @@ def _fetch_and_save_pr_delta(repo: str, pr_number: int) -> Path:
     code_dir.mkdir(parents=True, exist_ok=True)
     delta_path = code_dir / f"pr_{pr_number}.json"
     delta_path.write_text(delta.model_dump_json(indent=2), encoding="utf-8")
-    print(f"  PR delta saved → {delta_path}")
+    print(f"  PR delta saved -> {delta_path}")
     return delta_path
 
 
@@ -158,10 +163,10 @@ def run_online_pipeline(repo: str, pr_number: int) -> str:
     Run the online (read-only) blast radius pipeline:
 
         1. Connect to Neo4j and verify graph is ready
-        2. Fetch PR diff from GitHub API → save data/code/pr_{pr_number}.json
+        2. Fetch PR diff from GitHub API -> save data/code/pr_{pr_number}.json
         3. Patch settings.pr_number so analyze_pr() reads the correct delta
         4. Run Phase 5 reasoning (analyze_pr)
-        5. Run Phase 6 rendering (render_report → Markdown + HTML)
+        5. Run Phase 6 rendering (render_report -> Markdown + HTML)
         6. Copy Markdown to outputs/reports/pr_{pr_number}_blast_radius.md
 
     Returns the path to the generated Markdown report as a string.
@@ -179,7 +184,7 @@ def run_online_pipeline(repo: str, pr_number: int) -> str:
             print("Start it with:  docker compose up -d")
             print(f"(Details: {exc})")
         else:
-            print(f"Error: Neo4j error — {exc}")
+            print(f"Error: Neo4j error - {exc}")
         sys.exit(1)
 
     check_graph_ready(driver)
@@ -210,6 +215,6 @@ def run_online_pipeline(repo: str, pr_number: int) -> str:
     out_dir.mkdir(parents=True, exist_ok=True)
     canonical = out_dir / f"pr_{pr_number}_blast_radius.md"
     canonical.write_text(md_path.read_text(encoding="utf-8"), encoding="utf-8")
-    print(f"\nReport also saved → {canonical}")
+    print(f"\nReport also saved -> {canonical}")
 
     return str(canonical)
