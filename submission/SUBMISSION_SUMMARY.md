@@ -16,8 +16,7 @@ All four core assignment deliverables specified in Part 3 of the brief (`docs/as
 | **1. Code Repository & README** | Root repo / [`README.md`](../README.md) | ✅ Complete | Fully runnable 6-phase pipeline, entry point `python run.py <url>`, 34 passing unit tests. |
 | **2. Design Document** | [`submission/design_document.pdf`](design_document.pdf)<br>[`submission/design_document.md`](design_document.md)<br>[`submission/design_document.html`](design_document.html) | ✅ Complete | 8–12 pages equivalent (~51KB MD / 442KB PDF), detailing agent decomposition, 3-layer Neo4j schema, GapNode absence modeling, PPR reasoning, and scope decisions. Includes 4 Mermaid diagrams. |
 | **3. Sample Blast Radius Report** | [`submission/blast_radius_report_pr3046.pdf`](blast_radius_report_pr3046.pdf)<br>[`submission/blast_radius_report_pr3046.html`](blast_radius_report_pr3046.html)<br>[`submission/blast_radius_report_pr3046.md`](blast_radius_report_pr3046.md) | ✅ Complete | Real report for Documenso PR #3046 formatted for a non-engineer QA lead. Highlights affected pages, 13 dark changes, and 6 absent requirements. |
-| **4. Technical Audit & Review** | [`submission/complete_audit_report.md`](complete_audit_report.md) | ✅ Complete | Comprehensive compliance matrix, phase-by-phase technical audit, and honest architectural critique. |
-| **5. Loom Walkthrough Video** | *URL to be attached in submission email* | ⚠️ Pending Recording | 5–10 min video recording walking through prototype execution, Neo4j 3D graph visualizer, and Design Doc. |
+| **4. Loom Walkthrough Video** | *URL to be attached in submission email* | ⚠️ Pending Recording | 5–10 min video recording walking through prototype execution, Neo4j 3D graph visualizer, and Design Doc. |
 
 ---
 
