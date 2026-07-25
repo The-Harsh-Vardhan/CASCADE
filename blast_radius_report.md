@@ -1,5 +1,5 @@
-# CASCADE — Blast Radius Analysis & QA Test Guide
-### *Target PR:* [documenso/documenso #3046 — fix: tighten permission and validation checks](https://github.com/documenso/documenso/pull/3046)
+# CASCADE — Blast Radius Analysis & QA Test Guide — PR #3046
+### *Target PR:* [fix: tighten permission and validation checks](https://github.com/documenso/documenso/pull/3046)
 
 > **Analysis Engine:** CASCADE v4 (AI + Graph Intelligence Engine)  
 > **Prepared for:** QA Lead & Testing Team  
@@ -9,9 +9,7 @@
 
 ## 📌 Executive Summary (What QA Needs to Know)
 
-PR #3046 updates security permissions and URL validation logic across **document attachments**, **team profiles**, **document cancellation/deletion**, and **Zapier webhooks**. 
-
-This PR is a **security hardening change** rather than a new feature release. Most modified code handles backend permission gates and validation rules. 
+This update modifies document attachment popovers across the signing flow, main document view, and embedded editor interface. It also includes end-to-end test updates for attachment URL validation and document visibility permissions. QA testing should focus on verifying attachment popover behavior across these workflows, as several underlying code changes currently lack automated coverage.
 
 ### Risk Overview Visual
 
@@ -62,7 +60,7 @@ flowchart LR
 
 ## 📋 Recommended QA Test Checklist (Priority Order)
 
-Please execute the following 6 manual test cases before approving this build for production:
+Please execute the following priority test cases before approving this build for production:
 
 ### 1. 🟢 Team Public Profile Page
 - **URL / Screen:** `https://app.documenso.com/settings/profile`
@@ -109,9 +107,9 @@ Please execute the following 6 manual test cases before approving this build for
 
 ---
 
-## 🔒 Security Utilities & Un-traced Changes (Dark Changes)
+## 🔒 Security Utilities & Un-traced Changes (Dark Changes - 12)
 
-These 12 backend functions were modified in this PR. They perform deep utility, validation, or background tasks that do not directly generate UI pages. All 12 have been reviewed and mapped to their respective feature areas:
+These backend functions were modified in this PR. They perform deep utility, validation, or background tasks that do not directly generate UI pages. All have been reviewed and mapped to their feature areas:
 
 | Modified Function / File | Feature Area | What QA Needs to Know |
 |---|---|---|
@@ -130,16 +128,16 @@ These 12 backend functions were modified in this PR. They perform deep utility, 
 
 ---
 
-## ⚠️ Uncovered Specifications (Absent Features)
+## ⚠️ Uncovered Specifications (Absent Features - 6)
 
-These 6 requirements exist in product specifications but have no active UI or code links impacted by this PR. **No regression testing is required for these items for PR #3046:**
+These requirements exist in product specifications but have no active UI or code links impacted by this PR. **No regression testing is required for these items for PR #3046:**
 
-1. Self-hosted Docker & Kubernetes container deployment setup.
-2. GitHub Security Advisories vulnerability disclosure configuration.
-3. Team webhook integration settings.
-4. Simultaneous multi-document upload limit (5 files max for standard plans).
-5. Automatic `DOCUMENT_CREATED` webhook event trigger.
-6. Automatic `DOCUMENT_OPENED` webhook event trigger.
+1. **The software must be packaged as standard Docker container images allowing users to self-host the platform on Docker, Do**
+1. **The platform must support secure vulnerability disclosures via GitHub Security Advisories to protect self-hosted and clo**
+1. **Allow teams to set up webhooks for integrating document events with external services.**
+1. **Standard plans enforce a limit of uploading a maximum of 5 documents simultaneously.**
+1. **The system must trigger a webhook notification with payload event 'DOCUMENT_CREATED' whenever a new document or template**
+1. **The system must trigger a webhook notification with payload event 'DOCUMENT_OPENED' when a recipient opens the document **
 
 ---
 
@@ -151,10 +149,12 @@ These 6 requirements exist in product specifications but have no active UI or co
 | **Priority QA Test Scenarios** | 6 | Execute 6 manual test cases above |
 | **Security Utility Changes (Dark Changes)** | 12 | Reviewed & mapped to feature areas |
 | **Uncovered Feature Specs (Absent)** | 6 | No action required for this PR |
-| **Files Changed in PR** | 29 | 29 TypeScript files (+776 / −119 lines) |
+| **Files Changed in PR** | 29 | 29 TypeScript files |
 
 <details>
-<summary><b>🔍 Technical Appendix: Full List of Modified Files (Click to Expand)</b></summary>
+<summary><b>🔍 Technical Appendix: Full List of Modified Files & Low-Confidence Graph Nodes (Click to Expand)</b></summary>
+
+### Modified Files
 
 | Modified File Path | Status | Lines Changed |
 |---|---|---|
@@ -188,7 +188,26 @@ These 6 requirements exist in product specifications but have no active UI or co
 | `packages/trpc/server/envelope-router/envelope-recipients/get-envelope-recipient.ts` | modified | +22 / −0 |
 | `packages/trpc/server/organisation-router/update-organisation-group.ts` | modified | +18 / −0 |
 
+### Low Confidence Graph Nodes (101)
+
+- `Ensure each backup recovery code can only be used once to regain account access when losing authenticator app access.` (confidence: 0.31)
+- `The system must trigger a webhook notification with payload event 'DOCUMENT_CANCELLED' when a document owner or team member deletes or cancels a document.` (confidence: 0.38)
+- `Allow users to delete draft/pending documents or hide completed documents with appropriate confirmation and notification side effects.` (confidence: 0.37)
+- `Automatically expire recipient signing links upon completion or deletion of the document.` (confidence: 0.35)
+- `Support team email address configuration to enable team inbox, sending documents on behalf of the team identity, document tracking, and unified recipient branding.` (confidence: 0.67)
+- `Allow teams to customize email notification behavior for team document events.` (confidence: 0.61)
+- `Allow users to update their Full Name field in Settings > Profile, which updates the name shown on documents and recipient email notifications.` (confidence: 0.61)
+- `Restrict document creation via API to a maximum of 5 documents per month for Free account tiers.` (confidence: 0.61)
+- `Enable users to showcase active direct link templates on their public Documenso profile page for visitors to sign.` (confidence: 0.61)
+- `Allow users to upload a custom profile avatar image (PNG or JPG format, maximum 1MB) from Settings > Profile, which appears on sent documents and public profiles.` (confidence: 0.61)
+- `Provide administrative controls in Team Settings to define default preferences for new documents created within the team.` (confidence: 0.61)
+- `Support placeholder emails in templates to be replaced with actual recipient details when generating documents.` (confidence: 0.56)
+- `Allow users to register a device-specific passkey using biometrics, hardware keys, or password managers for login and document signing.` (confidence: 0.56)
+- `Override template-level settings when creating a document, including title, email communications, localized formatting, and signature input modes.` (confidence: 0.56)
+- `Allow teams to set up webhooks for integrating document events with external services.` (confidence: 0.56)
+- *...and 86 additional low-confidence background graph nodes.*
+
 </details>
 
 ---
-*Report generated by Blast Radius Analyzer v4 · Non-Engineer QA Lead Edition · Run ID: `e197c8ef`*
+*Report generated by CASCADE v4 · Non-Engineer QA Lead Edition · Run ID: `a4e7da0f`*

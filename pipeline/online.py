@@ -210,11 +210,21 @@ def run_online_pipeline(repo: str, pr_number: int) -> str:
     from blast_radius.report import render_report
     _html_path, md_path = render_report()
 
-    # -- 6. Copy to outputs/reports/ with canonical filename ----------------
+    # -- 6. Copy to outputs/reports/ & submission/ with canonical filename ---
+    md_text = md_path.read_text(encoding="utf-8")
+
     out_dir = Path("outputs") / "reports"
     out_dir.mkdir(parents=True, exist_ok=True)
     canonical = out_dir / f"pr_{pr_number}_blast_radius.md"
-    canonical.write_text(md_path.read_text(encoding="utf-8"), encoding="utf-8")
-    print(f"\nReport also saved -> {canonical}")
+    canonical.write_text(md_text, encoding="utf-8")
 
+    # Update root blast_radius_report.md
+    Path("blast_radius_report.md").write_text(md_text, encoding="utf-8")
+
+    # Update submission/blast radius report/ if folder exists
+    sub_dir = Path("submission") / "blast radius report"
+    if sub_dir.exists():
+        (sub_dir / f"blast_radius_report_pr{pr_number}.md").write_text(md_text, encoding="utf-8")
+
+    print(f"\n[CASCADE] Report live generated -> {canonical}")
     return str(canonical)
