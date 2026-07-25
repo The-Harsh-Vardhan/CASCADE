@@ -490,12 +490,21 @@
     <button class="btn" id="refresh-data-btn" title="Refresh Neo4j Data Cache">
       🔄 Refresh Cache
     </button>
+    <button class="btn" id="trace-mode-btn" title="Click to trace shortest path between a Start and End node">
+      🗺️ Trace Path
+    </button>
     <button class="btn btn-primary" id="blast-sim-btn" title="Run Blast Radius Shockwave Simulation">
       ⚡ Blast Simulator
     </button>
   </div>
 
+  <!-- Floating Path Trace Breadcrumb Panel -->
+  <div id="trace-breadcrumb-panel" style="display: none; position: absolute; top: 70px; left: 50%; transform: translateX(-50%); z-index: 20; background: var(--panel-bg); backdrop-filter: blur(16px); border: 1px solid var(--panel-border); padding: 10px 18px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); max-width: 85vw; overflow-x: auto; white-space: nowrap; font-size: 13px;">
+    <div id="trace-breadcrumb-content" style="display: flex; align-items: center; gap: 8px;"></div>
+  </div>
+
   <!-- Camera Presets -->
+
   <div class="camera-bar">
     <button class="btn" onclick="setCameraView('iso')" title="Isometric View">🌐 Iso</button>
     <button class="btn" onclick="setCameraView('req')" title="Requirement Layer (Z=+200)">📜 Requirements</button>
@@ -504,8 +513,9 @@
   </div>
 
   <!-- Right Explorer Sidebar -->
-  <div class="sidebar" id="sidebar">
+  <div class="sidebar collapsed" id="sidebar">
     <button class="sidebar-toggle" id="sidebar-toggle-btn" title="Toggle Explorer Sidebar">🔍</button>
+
     <div class="sidebar-header">
       <div style="font-weight: 700; font-size: 14px;">Node Explorer</div>
       <div class="search-box">
@@ -701,9 +711,13 @@
         });
       }
 
+      // 3. Sync visual plane radius with current spacing scale
+      addLayerPlanes();
+
       // Smoothly reheat physics simulation
       Graph.d3ReheatSimulation();
     }
+
 
 
     // Labels Toggle Button
@@ -829,12 +843,39 @@
             <span style="font-size:11px; color:#94a3b8;">Layer: ${node.layer.toUpperCase()}</span>
           </div>`;
         })
+        .nodeThreeObject(node => {
+          if (['AbsentRequirement', 'GapNode'].includes(node.node_type) || ['gap', 'absent'].includes(node.layer)) {
+            const group = new THREE.Group();
+            
+            // Core sphere
+            const coreGeo = new THREE.SphereGeometry(7, 16, 16);
+            const coreMat = new THREE.MeshBasicMaterial({ color: 0xe63946 });
+            const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+            group.add(coreMesh);
+
+            // Outer 3D pulsing aura sphere
+            const auraGeo = new THREE.SphereGeometry(14, 16, 16);
+            const auraMat = new THREE.MeshBasicMaterial({
+              color: 0xe63946,
+              transparent: true,
+              opacity: 0.35,
+              side: THREE.BackSide
+            });
+            const auraMesh = new THREE.Mesh(auraGeo, auraMat);
+            auraMesh.name = 'pulsingAura';
+            group.add(auraMesh);
+
+            return group;
+          }
+          return false;
+        })
         .nodeColor(node => node.color || '#58a6ff')
         .nodeVal(node => {
           if (node.layer === 'req') return 12;
           if (node.layer === 'ui') return 8;
           return 4;
         })
+
         .linkWidth(link => getLinkWidth(link))
         .linkColor(link => {
           const isInter = isInterLayerLink(link);
@@ -885,7 +926,7 @@
       }
     }
 
-    // Add semi-transparent 3D Layer Planes (Fixed 600x600 size)
+    // Add semi-transparent 3D Layer Planes (Dynamic size centered at origin)
     let layerPlanesGroup = null;
 
     function addLayerPlanes() {
@@ -897,36 +938,38 @@
       }
       layerPlanesGroup = new THREE.Group();
 
+      const planeDim = Math.max(500, Math.min(1200, Math.round(600 * (currentSpacingScale || 1.0))));
+
       const layers = [
         { z: currentLayerGap, color: 0x7f77dd, label: `Requirement Layer (Z=+${currentLayerGap})` },
         { z: 0, color: 0x1d9e75, label: "UI Layer (Z=0)" },
         { z: -currentLayerGap, color: 0xba7517, label: `Code Layer (Z=-${currentLayerGap})` }
       ];
 
-
       layers.forEach(l => {
-        const planeGeo = new THREE.PlaneGeometry(600, 600);
+        const planeGeo = new THREE.PlaneGeometry(planeDim, planeDim);
         const planeMat = new THREE.MeshBasicMaterial({
           color: l.color,
           transparent: true,
-          opacity: 0.05,
+          opacity: 0.06,
           side: THREE.DoubleSide
         });
         const planeMesh = new THREE.Mesh(planeGeo, planeMat);
-        planeMesh.position.z = l.z;
+        planeMesh.position.set(0, 0, l.z);
         layerPlanesGroup.add(planeMesh);
 
-        // Grid helper
-        const grid = new THREE.GridHelper(600, 20, l.color, l.color);
+        // Grid helper centered at (0,0)
+        const grid = new THREE.GridHelper(planeDim, 20, l.color, l.color);
         grid.rotation.x = Math.PI / 2;
-        grid.position.z = l.z;
-        grid.material.opacity = 0.15;
+        grid.position.set(0, 0, l.z);
+        grid.material.opacity = 0.18;
         grid.material.transparent = true;
         layerPlanesGroup.add(grid);
       });
 
       scene.add(layerPlanesGroup);
     }
+
 
     // 1. Draw 3D Labels for Edge Relationship Types (IMPLEMENTS, RENDERS, COVERS) and Key Nodes
     function draw3DLabels() {
@@ -1128,7 +1171,13 @@
     // Focus Node in 3D Space
     function focusNode(node) {
       selectedNode = node;
+
+      if (traceModeActive) {
+        handleTraceNodeSelection(node);
+      }
+
       const distance = 120;
+
       const distRatio = 1 + distance/Math.hypot(node.x || 0, node.y || 0, node.z || node.fz || 0);
 
       Graph.cameraPosition(
@@ -1295,6 +1344,44 @@
     }
 
 
+    // Blast Impact Calculator & Inspector Card
+    function calculateBlastImpact(startNodeId) {
+      const component = findFullConnectedComponent(startNodeId);
+      const totalImpacted = Math.max(0, component.nodes.size - 1);
+
+      let layerCounts = { code: 0, ui: 0, req: 0, gap: 0, absent: 0 };
+      component.nodes.forEach(nId => {
+        const node = nodeMap.get(nId);
+        if (node) {
+          const l = node.layer || 'code';
+          layerCounts[l] = (layerCounts[l] || 0) + 1;
+        }
+      });
+
+      let riskLevel = "LOW RISK";
+      let riskColor = "#2da44e";
+      let badgeBg = "rgba(45, 164, 78, 0.15)";
+
+      if (totalImpacted >= 30) {
+        riskLevel = "HIGH RISK";
+        riskColor = "#cf222e";
+        badgeBg = "rgba(207, 34, 46, 0.15)";
+      } else if (totalImpacted >= 10) {
+        riskLevel = "MEDIUM RISK";
+        riskColor = "#d97706";
+        badgeBg = "rgba(217, 119, 6, 0.15)";
+      }
+
+      return {
+        totalImpacted,
+        riskLevel,
+        riskColor,
+        badgeBg,
+        layerCounts,
+        component
+      };
+    }
+
     // Inspector Overlay
     function openInspector(node) {
       const inspector = document.getElementById('inspector');
@@ -1302,14 +1389,35 @@
       const body = document.getElementById('inspector-body');
 
       title.innerText = node.name;
-      
-      let propsHtml = `<div><b>Node ID:</b> ${node.id}</div>`;
+
+      const blastImpact = calculateBlastImpact(node.id);
+
+      let propsHtml = `
+        <div class="blast-score-card" style="margin-bottom: 14px; padding: 12px; border-radius: 10px; border: 1px solid ${blastImpact.riskColor}; background: ${blastImpact.badgeBg};">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 700; font-size: 13px; color: ${blastImpact.riskColor};">${blastImpact.riskLevel}</span>
+            <span style="font-size: 11px; font-weight: 600; background: rgba(0,0,0,0.25); padding: 2px 8px; border-radius: 4px;">${blastImpact.totalImpacted} Dependencies</span>
+          </div>
+          <div style="font-size: 11px; color: var(--text-sub); margin-bottom: 8px;">
+            Impacts ${blastImpact.totalImpacted} total elements across architecture layers.
+          </div>
+          <div style="display: flex; gap: 6px; font-size: 10px; flex-wrap: wrap;">
+            <span style="background: rgba(186,117,23,0.2); color: #ba7517; padding: 2px 6px; border-radius: 4px;">Code: ${blastImpact.layerCounts.code || 0}</span>
+            <span style="background: rgba(29,158,117,0.2); color: #1d9e75; padding: 2px 6px; border-radius: 4px;">UI: ${blastImpact.layerCounts.ui || 0}</span>
+            <span style="background: rgba(127,119,221,0.2); color: #7f77dd; padding: 2px 6px; border-radius: 4px;">Req: ${blastImpact.layerCounts.req || 0}</span>
+          </div>
+        </div>
+      `;
+
+      propsHtml += `<div><b>Node ID:</b> ${node.id}</div>`;
       propsHtml += `<div><b>Type:</b> ${node.node_type} (${node.layer.toUpperCase()})</div>`;
       propsHtml += `<div><b>Z-Plane:</b> ${node.fz}</div>`;
-      
+
       if (node.properties) {
         Object.entries(node.properties).forEach(([k, v]) => {
-          propsHtml += `<div><b>${k}:</b> ${v}</div>`;
+          if (k !== 'id' && k !== 'name') {
+            propsHtml += `<div style="word-break: break-all; margin-top: 2px;"><b>${k}:</b> ${v}</div>`;
+          }
         });
       }
 
@@ -1320,6 +1428,137 @@
     function closeInspector() {
       document.getElementById('inspector').style.display = 'none';
     }
+
+    // Interactive Shortest Path Trace Mode
+    let traceModeActive = false;
+    let traceStartNode = null;
+    let traceEndNode = null;
+
+    function findShortestPath(startId, endId) {
+      const adj = new Map();
+      fullGraphData.nodes.forEach(n => adj.set(n.id, []));
+
+      fullGraphData.links.forEach(l => {
+        const sId = typeof l.source === 'object' ? l.source.id : l.source;
+        const tId = typeof l.target === 'object' ? l.target.id : l.target;
+        if (adj.has(sId) && adj.has(tId)) {
+          adj.get(sId).push({ neighborId: tId, link: l });
+          adj.get(tId).push({ neighborId: sId, link: l });
+        }
+      });
+
+      const queue = [[startId]];
+      const visited = new Set([startId]);
+
+      while (queue.length > 0) {
+        const path = queue.shift();
+        const curr = path[path.length - 1];
+
+        if (curr === endId) {
+          const pathLinks = new Set();
+          for (let i = 0; i < path.length - 1; i++) {
+            const u = path[i];
+            const v = path[i + 1];
+            const edge = (adj.get(u) || []).find(n => n.neighborId === v);
+            if (edge) pathLinks.add(edge.link);
+          }
+          return { pathNodes: new Set(path), pathOrder: path, pathLinks };
+        }
+
+        const neighbors = adj.get(curr) || [];
+        for (const { neighborId } of neighbors) {
+          if (!visited.has(neighborId)) {
+            visited.add(neighborId);
+            queue.push([...path, neighborId]);
+          }
+        }
+      }
+
+      return null;
+    }
+
+    function toggleTraceMode() {
+      const btn = document.getElementById('trace-mode-btn');
+      const panel = document.getElementById('trace-breadcrumb-panel');
+      const content = document.getElementById('trace-breadcrumb-content');
+
+      if (!traceModeActive) {
+        traceModeActive = true;
+        traceStartNode = null;
+        traceEndNode = null;
+        btn.innerText = '🗺️ Exit Trace';
+        btn.style.background = '#38bdf8';
+        btn.style.color = '#0f172a';
+
+        panel.style.display = 'block';
+        content.innerHTML = `<span><b>Trace Mode:</b> Click <b>START Node</b> on graph...</span>`;
+      } else {
+        traceModeActive = false;
+        traceStartNode = null;
+        traceEndNode = null;
+        btn.innerText = '🗺️ Trace Path';
+        btn.style.background = '';
+        btn.style.color = '';
+        panel.style.display = 'none';
+
+        // Reset visual path highlights
+        if (Graph) {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Graph.linkColor(link => {
+            const isInter = isInterLayerLink(link);
+            if (isInter) {
+              if (link.rel_type === 'IMPLEMENTS') return isDark ? 'rgba(127, 119, 221, 0.75)' : 'rgba(102, 92, 215, 0.75)';
+              if (link.rel_type === 'RENDERS') return isDark ? 'rgba(29, 158, 117, 0.75)' : 'rgba(20, 128, 94, 0.75)';
+              if (link.rel_type === 'COVERS') return isDark ? 'rgba(88, 166, 255, 0.75)' : 'rgba(9, 105, 218, 0.75)';
+            }
+            return isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.10)';
+          });
+          Graph.nodeColor(node => node.color || '#58a6ff');
+          Graph.linkDirectionalParticles(link => isInterLayerLink(link) ? 2 : 0);
+        }
+      }
+    }
+
+    document.getElementById('trace-mode-btn').addEventListener('click', toggleTraceMode);
+
+    function handleTraceNodeSelection(node) {
+      const content = document.getElementById('trace-breadcrumb-content');
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+      if (!traceStartNode) {
+        traceStartNode = node;
+        content.innerHTML = `<span><b>Start:</b> <span style="color:#38bdf8;">${node.name}</span> ➔ Click <b>END Node</b>...</span>`;
+      } else if (!traceEndNode && node.id !== traceStartNode.id) {
+        traceEndNode = node;
+        const result = findShortestPath(traceStartNode.id, traceEndNode.id);
+
+        if (result) {
+          let breadcrumbHtml = `<span><b>Path Trace (${result.pathOrder.length} steps):</b></span> `;
+          result.pathOrder.forEach((nId, idx) => {
+            const n = nodeMap.get(nId);
+            const name = n ? n.name : nId;
+            const type = n ? n.node_type : 'Node';
+            breadcrumbHtml += `<span style="background:rgba(56,189,248,0.15); color:#38bdf8; padding:3px 8px; border-radius:6px;">${name} (${type})</span>`;
+            if (idx < result.pathOrder.length - 1) {
+              breadcrumbHtml += `<span style="color:var(--text-sub);">➔</span>`;
+            }
+          });
+          content.innerHTML = breadcrumbHtml;
+
+          // Highlight shortest path edges & nodes in 3D graph
+          if (Graph) {
+            Graph.linkColor(l => result.pathLinks.has(l) ? '#38bdf8' : (isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)'));
+            Graph.nodeColor(n => result.pathNodes.has(n.id) ? (n.color || '#38bdf8') : (isDark ? 'rgba(60,65,75,0.15)' : 'rgba(200,205,215,0.2)'));
+            Graph.linkDirectionalParticles(l => result.pathLinks.has(l) ? 6 : 0)
+                 .linkDirectionalParticleWidth(l => result.pathLinks.has(l) ? 5 : 0)
+                 .linkDirectionalParticleSpeed(l => result.pathLinks.has(l) ? 0.02 : 0);
+          }
+        } else {
+          content.innerHTML = `<span><b>No path found</b> between <b>${traceStartNode.name}</b> and <b>${traceEndNode.name}</b> across graph layers.</span>`;
+        }
+      }
+    }
+
 
     // Blast Simulator Mode (Traces connected impact paths across all layers, fades rest)
     let activeBlastComponent = { nodes: new Set(), links: new Set() };
