@@ -296,11 +296,11 @@ def render(report: BlastRadiusReport) -> tuple[Path, Path]:
 <head>
     <meta charset="UTF-8">
     <title>CASCADE — Blast Radius Analysis & QA Test Guide — PR #{report.pr_number}</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.0/github-markdown.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.0/github-markdown-light.min.css">
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <style>
         html {{
-            background-color: #080c14;
+            background-color: #f6f8fa;
             display: flex;
             justify-content: center;
         }}
@@ -310,19 +310,20 @@ def render(report: BlastRadiusReport) -> tuple[Path, Path]:
             max-width: 960px;
             margin: 40px auto;
             padding: 45px 55px;
-            background-color: #0d1117;
-            color: #c9d1d9;
-            border: 1px solid #30363d;
+            background-color: #ffffff;
+            color: #1f2328;
+            border: 1px solid #d0d7de;
             border-radius: 12px;
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 8px 24px rgba(140, 149, 159, 0.2);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }}
         .markdown-body {{
-            background-color: #0d1117;
-            color: #c9d1d9;
+            background-color: #ffffff;
+            color: #1f2328;
         }}
         .markdown-body h1, .markdown-body h2, .markdown-body h3 {{
             text-align: center;
+            color: #0f172a;
         }}
         .markdown-body p, .markdown-body ul, .markdown-body ol, .markdown-body blockquote {{
             margin-left: auto;
@@ -369,7 +370,7 @@ def render(report: BlastRadiusReport) -> tuple[Path, Path]:
                 div.textContent = block.textContent;
                 pre.parentElement.replaceChild(div, pre);
             }});
-            mermaid.initialize({{ startOnLoad: true, theme: "dark" }});
+            mermaid.initialize({{ startOnLoad: true, theme: "default" }});
         }});
     </script>
 </body>
