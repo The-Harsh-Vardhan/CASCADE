@@ -89,3 +89,7 @@ outputs/crawl/
 !outputs/crawl/.gitkeep
 outputs/requirements/
 !outputs/requirements/.gitkeep
+
+# AI coding assistant config (internal dev tooling — not for evaluators)
+AGENTS.md
+.agents/

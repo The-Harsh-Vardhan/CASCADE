@@ -282,8 +282,13 @@ blast_radius/
 ├── graph/                     # Phase 4 — Neo4j schema + entity resolution
 ├── reason/                    # Phase 5 — PPR + DFS blast radius engine
 ├── report/                    # Phase 6 — Jinja2 report renderer
+├── flows/                     # UserFlow seed definitions (10 canonical flows)
 ├── llm.py                     # Gemini client with key rotation
 └── config.py                  # Pydantic-settings config
+
+api/                           # GitHub API extraction helpers (Phase 3)
+flows/                         # Root alias for blast_radius.flows (smoke test import)
+rules/                         # ast-grep YAML extraction rules (Phase 3)
 
 data/                          # All gitignored except fixtures
 ├── crawl/fixtures/            # Pre-committed page snapshots (fixture mode)
@@ -292,23 +297,28 @@ data/                          # All gitignored except fixtures
 ├── reports/                   # Phase 5/6 intermediate reports
 └── repos/documenso/           # Cloned Documenso source (for ast-grep)
 
-outputs/reports/               # run.py final output — pr_{N}_blast_radius.md
+outputs/reports/               # run.py final output — pr_{N}/pr_{N}_blast_radius.{md,html,pdf,docx}
 
 docs/
-├── design_document.md         # 8–12 page design document (deliverable)
-└── blast_radius_report_final.md
+└── design_document.md         # 8–12 page design document (deliverable)
 
 scripts/
 ├── validate_env.py            # Pre-flight checks (run before pipeline)
 ├── run_pipeline.py            # Phase-by-phase runner
+├── crawler.py                 # Phase 1 smoke test wrapper
+├── ingestor.py                # Phase 2 smoke test wrapper
 ├── fix_absent_requirements.py # Neo4j AbsentRequirement cleanup utility
-└── debug/                     # Internal diagnostic scripts (not for end users)
+└── debug/                     # Internal diagnostic scripts
+
+submission/                    # All deliverables package-ready
+├── SUBMISSION_SUMMARY.md      # Deliverables index + Loom link
+├── blast radius report/       # PR #3046 report in 4 formats
+└── design document/           # Design doc (Streamlined + Expanded 21-page)
 
 templates/                     # Jinja2 report templates
 tests/
 ├── unit/                      # 34 fast tests — no external dependencies
 └── integration/               # Requires live Neo4j
-rules/                         # ast-grep YAML extraction rules
 ```
 
 ---
@@ -327,7 +337,7 @@ All 34 unit tests cover `parse_pr_url`, the `classify` rule engine,
 
 ## Design Document
 
-[`docs/design_document.md`](docs/design_document.md) — 8–12 pages covering:
+[`submission/design document/design_document_expanded.md`](submission/design%20document/design_document_expanded.md) — 21-page expanded edition covering:
 
 - **Agent decomposition** — deterministic vs. LLM-driven phase boundaries and justification
 - **Graph schema** — 5 node types, 6 edge types, anchor Cypher query
@@ -336,6 +346,8 @@ All 34 unit tests cover `parse_pr_url`, the `classify` rule engine,
 - **GapNode design** — modeling absent requirements as first-class graph nodes
 - **Eval approach** — two-run stability check, manual recall bounds
 - **Scope decisions** — tRPC abstraction gap, crawler depth limits, what comes next
+
+A streamlined 10-page edition is also available at [`submission/design document/design_document.md`](submission/design%20document/design_document.md).
 
 ---
 
