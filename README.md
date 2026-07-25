@@ -1,4 +1,4 @@
-![CASCADE Logo](docs/images/cascade_logo.png)
+<img src="docs/images/cascade_logo.png" alt="CASCADE Logo" width="380" />
 
 # CASCADE — Change Analysis for Software Cascade using Dependency Evidence
 
