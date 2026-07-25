@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -459,18 +459,18 @@
     </button>
     <div class="control-group" title="Adjust thickness of inter-layer edges (IMPLEMENTS, RENDERS, COVERS)">
       <label for="edge-width-slider">Edge Width:</label>
-      <input type="range" id="edge-width-slider" min="1" max="10" value="3" step="0.5">
-      <span id="edge-width-val" style="min-width: 28px; text-align: right;">3px</span>
+      <input type="range" id="edge-width-slider" min="1" max="10" value="1.5" step="0.5">
+      <span id="edge-width-val" style="min-width: 28px; text-align: right;">1.5px</span>
     </div>
     <div class="control-group" title="Expand or compress 3D node spacing across the graph layout">
       <label for="spacing-slider">Expand/Compress:</label>
-      <input type="range" id="spacing-slider" min="0.5" max="3.0" value="1.0" step="0.1">
-      <span id="spacing-val" style="min-width: 32px; text-align: right;">1.0x</span>
+      <input type="range" id="spacing-slider" min="0.5" max="3.0" value="1.5" step="0.1">
+      <span id="spacing-val" style="min-width: 32px; text-align: right;">1.5x</span>
     </div>
     <div class="control-group" title="Adjust 3D distance between Requirement, UI, and Code layer planes">
       <label for="layer-gap-slider">Layer Gap:</label>
-      <input type="range" id="layer-gap-slider" min="50" max="600" value="200" step="10">
-      <span id="layer-gap-val" style="min-width: 42px; text-align: right;">200px</span>
+      <input type="range" id="layer-gap-slider" min="50" max="600" value="300" step="10">
+      <span id="layer-gap-val" style="min-width: 42px; text-align: right;">300px</span>
     </div>
     <div class="control-group" title="Limit maximum number of visible nodes in 3D graph">
       <label for="node-limit-slider">Node Limit:</label>
@@ -577,7 +577,7 @@
     let Graph = null;
     let selectedNode = null;
     let blastSimulationActive = false;
-    let interLayerEdgeWidth = 3;
+    let interLayerEdgeWidth = 1.5;
     let labelsGroup = null;
     let clustersGroup = null;
     let labelsVisible = false;
@@ -605,7 +605,7 @@
 
     // Theme Management
     function initTheme() {
-      const savedTheme = localStorage.getItem('theme') || 'dark';
+      const savedTheme = localStorage.getItem('theme') || 'light';
       document.documentElement.setAttribute('data-theme', savedTheme);
       updateThemeButtonText(savedTheme);
     }
@@ -638,7 +638,7 @@
     });
 
     // Expand / Compress Node Spacing Slider Control
-    let currentSpacingScale = 1.0;
+    let currentSpacingScale = 1.5;
     document.getElementById('spacing-slider').addEventListener('input', (e) => {
       currentSpacingScale = parseFloat(e.target.value);
       document.getElementById('spacing-val').innerText = currentSpacingScale.toFixed(1) + 'x';
@@ -646,22 +646,7 @@
     });
 
     function resolveInitialNodeLimit(totalNodes = 0) {
-      const coreCount = navigator.hardwareConcurrency || 4;
-      const viewportWidth = window.innerWidth || 1280;
-      let limit = 360;
-
-      if (coreCount <= 4) limit = 180;
-      else if (coreCount <= 8) limit = 260;
-
-      if (viewportWidth < 1200) {
-        limit = Math.min(limit, 220);
-      }
-
-      if (totalNodes > 0) {
-        limit = Math.min(limit, totalNodes);
-      }
-
-      return Math.max(100, Math.round(limit / 10) * 10);
+      return 500;
     }
 
     function syncNodeLimitControl() {
@@ -680,7 +665,7 @@
     }
 
     // Node Limit Slider Control
-    let maxVisibleNodes = resolveInitialNodeLimit();
+    let maxVisibleNodes = 500;
     document.getElementById('node-limit-slider').addEventListener('input', (e) => {
       manualNodeLimitOverride = true;
       maxVisibleNodes = parseInt(e.target.value);
@@ -690,7 +675,7 @@
 
 
     // Layer Gap Slider Control (Adjusts distance between Requirement, UI, and Code layers)
-    let currentLayerGap = 200;
+    let currentLayerGap = 300;
     document.getElementById('layer-gap-slider').addEventListener('input', (e) => {
       currentLayerGap = parseInt(e.target.value);
       document.getElementById('layer-gap-val').innerText = currentLayerGap + 'px';
@@ -978,15 +963,8 @@
       } catch (e) {}
 
 
-      // Add 3D Layer Planes (Glassmorphism Tier Visualizers at Z = +200, 0, -200)
-      addLayerPlanes();
-
-      // Configure degree-aware repulsive forces & link distances
-      updatePhysicsForces();
-
       requestAnimationFrame(() => {
         updateNodeListCards();
-        scheduleCtrlFOverlayBuild();
 
         const loadingScreen = document.getElementById('loading-screen');
         if (loadingScreen) {
@@ -1770,13 +1748,6 @@
     window.addEventListener('DOMContentLoaded', () => {
       initTheme();
       syncNodeLimitControl();
-      document.getElementById('ctrl-f-overlay')?.addEventListener('click', (event) => {
-        const target = event.target.closest('.searchable-item');
-        const nodeId = target?.dataset?.nodeId;
-        if (nodeId) {
-          focusNodeById(nodeId);
-        }
-      });
       loadGraphData();
     });
   </script>
