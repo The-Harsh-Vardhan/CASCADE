@@ -55,30 +55,34 @@ ONLINE PIPELINE (Per-PR Reasoning):
 
 ---
 
-## 🎥 Loom Walkthrough
+## 🎥 Loom Recording Overview & Timestamp Breakdown
 
-**Recording:** [https://www.loom.com/share/cdab254822bd4cbfbc5ebf0c9c79874e](https://www.loom.com/share/cdab254822bd4cbfbc5ebf0c9c79874e)
+**Recording:** [Watch Video on Loom](https://www.loom.com/share/cdab254822bd4cbfbc5ebf0c9c79874e) *(Duration: 9:53)*
 
-**What the recording covers:**
+1. **0:00 – 1:35 | Introduction & Problem Statement:**
+   - Candidate introduction (Harsh Vardhan) and Cascade overview: AI-powered blast radius analyzer for PRs.
+   - The core problem: software complexity makes manual dependency tracing across docs, code, and live apps slow and error-prone.
+   - The solution: an evidence-backed product knowledge graph linking documentation, live app crawl, and source code.
 
-1. **0:00 – 1:00 | Intro & Executive Overview:**
-   - Candidate introduction and assignment objective (Blast Radius Analyzer for Documenso PRs).
-   - Overview of the 3-layer Knowledge Graph (Requirements, UI/UserFlows, Code).
+2. **1:35 – 2:37 | System Workflow & Architecture:**
+   - Multi-source ingestion (Docling specification parsing, Playwright app crawling, ast-grep static analysis).
+   - Unified graph assembly and per-PR execution workflow: changed entity mapping → multi-hop graph traversal → explainable report generation.
 
-2. **1:00 – 2:30 | Live Prototype Demo:**
-   - Neo4j running (`docker compose up -d`).
-   - `python run.py https://github.com/documenso/documenso/pull/3046` executed live.
-   - Report findings: 1 affected page (`/settings/profile`), 12 dark changes (security utilities), non-engineer QA test checklist.
+3. **2:37 – 4:55 | Interactive 3D Knowledge Graph Explorer Demo:**
+   - Demonstrating the live 3D Crystal Lattice visualization ([cascade-graph-explorer.vercel.app](https://cascade-graph-explorer.vercel.app)).
+   - Explaining the 3 tiers: Code (Amber), UI & UserFlows (Green), and Business Requirements (Purple).
+   - Live **Path Trace Demo**: Selecting `signing token` code node → tracing cross-layer path through UI page → to the satisfied Requirement node.
 
-3. **2:30 – 3:45 | Interactive 3D Graph Explorer:**
-   - Live demo via [https://cascade-graph-explorer.vercel.app](https://cascade-graph-explorer.vercel.app) (or `data/graph_explorer.html`).
-   - 2,300+ nodes and 7,400+ cross-layer edges explored.
-   - Color-coded nodes (Purple = Requirements, Green = UIElements, Amber = CodeFunctions, Red = GapNodes/AbsentRequirements).
+4. **4:55 – 6:53 | Live Prototype Execution (PR #3046):**
+   - Starting Neo4j container (`docker compose up -d`).
+   - Running `python run.py https://github.com/documenso/documenso/pull/3046` live in terminal.
+   - Explaining online reasoning pipeline: GitHub API diff fetching, entity seeding, multi-hop graph traversal, and confidence scoring.
 
-4. **3:45 – 5:00 | Design Document & Scope Defense:**
-   - `submission/design document/design_document_expanded.md` walkthrough.
-   - Agent decomposition (why graph reasoning is deterministic linear algebra, not prompt chaining).
-   - Scope cuts defended (tRPC abstraction boundary, depth-1 AST parsing) and 1-week roadmap.
+5. **6:53 – 9:53 | Blast Radius Report Walkthrough (QA Lead Edition):**
+   - Opening generated HTML report (`pr_3046_blast_radius.html`) in browser.
+   - Reviewing executive summary, risk breakdown pie chart, and impact traversal flowchart.
+   - Actionable QA test scenarios (Team Public Profile Page, Attachment URL HTTP/HTTPS validation, Popovers).
+   - Dark changes table (security utilities mapping), absent specs (uncovered requirements), and final summary metrics.
 
 ---
 
