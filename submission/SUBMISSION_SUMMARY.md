@@ -71,7 +71,7 @@ ONLINE PIPELINE (Per-PR Reasoning):
    - Report findings: 1 affected page (`/settings/profile`), 12 dark changes (security utilities), non-engineer QA test checklist.
 
 3. **2:30 – 3:45 | Interactive 3D Graph Explorer:**
-   - `data/graph_explorer.html` opened in browser.
+   - Live demo via [https://deployvercelexplorer.vercel.app](https://deployvercelexplorer.vercel.app) (or `data/graph_explorer.html`).
    - 2,300+ nodes and 7,400+ cross-layer edges explored.
    - Color-coded nodes (Purple = Requirements, Green = UIElements, Amber = CodeFunctions, Red = GapNodes/AbsentRequirements).
 
@@ -101,6 +101,7 @@ Key Deliverables:
 2. Design Document (Expanded 21-page): /submission/design document/design_document_expanded.pdf
 3. Sample Blast Radius Report: /submission/blast radius report/pr_3046_blast_radius.pdf (4 formats: PDF, DOCX, HTML, MD)
 4. Loom Walkthrough: https://www.loom.com/share/cdab254822bd4cbfbc5ebf0c9c79874e
+5. Interactive 3D Graph Explorer (Live Web App): https://deployvercelexplorer.vercel.app
 
 Thank you for the opportunity to work on this assignment. I look forward to discussing the design and code with the team!
 
