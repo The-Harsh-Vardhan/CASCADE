@@ -812,6 +812,7 @@
     });
 
     // Render 3D Force Graph
+    // Render 3D Force Graph (Performance Optimized for 60fps)
     function renderGraph() {
       const container = document.getElementById('3d-graph');
       container.innerHTML = '';
@@ -824,19 +825,31 @@
       // Populate DOM text layer for Ctrl+F native searchability
       updateCtrlFOverlay();
 
+      // Compute degree-based baseline for initial render to prevent UI thread lockup
+      const degrees = computeNodeDegrees();
+      let candidateNodes = [...fullGraphData.nodes];
+      candidateNodes.sort((a, b) => (degrees.get(b.id)?.total || 0) - (degrees.get(a.id)?.total || 0));
+
+      const initialNodes = candidateNodes.slice(0, maxVisibleNodes);
+      const initialNodeIds = new Set(initialNodes.map(n => n.id));
+      const initialLinks = fullGraphData.links.filter(l => {
+        const sId = typeof l.source === 'object' ? l.source.id : l.source;
+        const tId = typeof l.target === 'object' ? l.target.id : l.target;
+        return initialNodeIds.has(sId) && initialNodeIds.has(tId);
+      });
+
+      filteredNodes = initialNodes;
+
       // Update Stats
       document.getElementById('stats-counter').innerText = 
-        `${fullGraphData.nodes.length} Nodes | ${fullGraphData.links.length} Links`;
-
-      // Filtered nodes baseline
-      filteredNodes = fullGraphData.nodes;
+        `${initialNodes.length} / ${fullGraphData.nodes.length} Nodes | ${initialLinks.length} / ${fullGraphData.links.length} Links`;
 
       Graph = ForceGraph3D()(container)
-        .graphData(fullGraphData)
+        .graphData({ nodes: initialNodes, links: initialLinks })
         .backgroundColor(isDark ? '#0b0c10' : '#f8f9fa')
         .nodeId('id')
-        .warmupTicks(30)
-        .cooldownTicks(60)
+        .warmupTicks(5)
+        .cooldownTicks(25)
         .nodeLabel(node => {
           return `<div style="color:#fff; background:rgba(15,23,42,0.9); padding:6px 10px; border-radius:6px; border:1px solid #30363d;">
             <b>${node.name}</b> (${node.node_type})<br/>
@@ -848,13 +861,13 @@
             const group = new THREE.Group();
             
             // Core sphere
-            const coreGeo = new THREE.SphereGeometry(7, 16, 16);
+            const coreGeo = new THREE.SphereGeometry(7, 12, 12);
             const coreMat = new THREE.MeshBasicMaterial({ color: 0xe63946 });
             const coreMesh = new THREE.Mesh(coreGeo, coreMat);
             group.add(coreMesh);
 
             // Outer 3D pulsing aura sphere
-            const auraGeo = new THREE.SphereGeometry(14, 16, 16);
+            const auraGeo = new THREE.SphereGeometry(13, 12, 12);
             const auraMat = new THREE.MeshBasicMaterial({
               color: 0xe63946,
               transparent: true,
@@ -886,13 +899,7 @@
           }
           return isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.10)';
         })
-        .linkDirectionalParticles(link => isInterLayerLink(link) ? 2 : 0)
-        .linkDirectionalParticleWidth(link => isInterLayerLink(link) ? 3 : 0)
-        .linkDirectionalParticleSpeed(0.005)
-        .onEngineStop(() => {
-          draw3DLabels();
-          drawClusterLabels();
-        })
+        .linkDirectionalParticles(0)
         .onNodeHover(node => {
           if (container) container.style.cursor = node ? 'pointer' : 'default';
         })
@@ -907,15 +914,8 @@
       // Configure degree-aware repulsive forces & link distances
       updatePhysicsForces();
 
-
-      // Schedule 3D Labels & Connected Component Cluster Labels
-      setTimeout(() => {
-        draw3DLabels();
-        drawClusterLabels();
-      }, 2000);
-
       // Initial Sidebar Populate
-      updateNodeList();
+      updateNodeListCards();
 
       // Hide Loading Screen
       const loadingScreen = document.getElementById('loading-screen');
@@ -971,17 +971,18 @@
     }
 
 
-    // 1. Draw 3D Labels for Edge Relationship Types (IMPLEMENTS, RENDERS, COVERS) and Key Nodes
+    // 1. Draw 3D Labels for Edge Relationship Types (Capped for performance)
     function draw3DLabels() {
-      if (!Graph) return;
+      if (!Graph || !labelsVisible) return;
       const scene = Graph.scene();
 
       if (labelsGroup) scene.remove(labelsGroup);
       labelsGroup = new THREE.Group();
       labelsGroup.visible = labelsVisible;
 
-      // Inter-layer Edge Labels (midpoint)
-      fullGraphData.links.forEach(link => {
+      // Inter-layer Edge Labels (capped at top 60 for performance)
+      const currentLinks = (Graph.graphData().links || []).slice(0, 60);
+      currentLinks.forEach(link => {
         if (['IMPLEMENTS', 'RENDERS', 'COVERS'].includes(link.rel_type)) {
           const srcId = typeof link.source === 'object' ? link.source.id : link.source;
           const tgtId = typeof link.target === 'object' ? link.target.id : link.target;
