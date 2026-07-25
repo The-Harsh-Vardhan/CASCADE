@@ -58,21 +58,29 @@ Expected final line: `Graph ready — N nodes loaded.` (N ≥ 1000)
 python run.py https://github.com/documenso/documenso/pull/3046
 ```
 
-Output (written to `outputs/reports/pr_3046_blast_radius.md` and printed to terminal):
+Output (written to `outputs/reports/pr_3046/pr_3046_blast_radius.md` in 4 formats):
 
 ```
 Analyzing PR #3046 in documenso/documenso
 --------------------------------------------------
-[online] Fetching PR diff from GitHub API...
-[online] Saved PR delta → data/code/pr_3046.json (29 files)
-[reason] Seeds: 32 changed functions
-[reason] Affected UI: 1 page | Requirements: 0 | Dark changes: 13
-[report] Report written → outputs/reports/pr_3046_blast_radius.md
---------------------------------------------------
-Report saved to: outputs/reports/pr_3046_blast_radius.md
+Graph ready - 2341 nodes loaded.
 
-# Blast Radius Report — PR #3046
-...
+Fetching PR #3046 from documenso/documenso ...
+  29 files changed, 23 TypeScript
+  PR delta saved -> data/code/pr_3046.json
+
+Running Phase 5: Blast Radius Reasoning ...
+Running Phase 6: Report Rendering ...
+
+[CASCADE] 4 Report Formats (MD, HTML, PDF, DOCX) saved to PR folder -> outputs/reports/pr_3046
+--------------------------------------------------
+[OK] Blast Radius Analysis complete for PR #3046!
+[Output] Deliverables saved to: outputs/reports/pr_3046
+   - Markdown: outputs/reports/pr_3046/pr_3046_blast_radius.md
+   - HTML:     outputs/reports/pr_3046/pr_3046_blast_radius.html
+   - PDF:      outputs/reports/pr_3046/pr_3046_blast_radius.pdf
+   - DOCX:     outputs/reports/pr_3046/pr_3046_blast_radius.docx
+--------------------------------------------------
 ```
 
 ---

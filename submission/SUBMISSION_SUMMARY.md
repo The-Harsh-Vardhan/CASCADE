@@ -1,11 +1,12 @@
 <p align="center">
-  <img src="cascade_logo.png" alt="CASCADE Logo" width="220" />
+  <img src="../docs/images/cascade_logo.png" alt="CASCADE Logo" width="220" />
 </p>
 
 # CASCADE — Change Analysis for Software Cascade using Dependency Evidence
+
 ### *Testsigma AI Engineer Assignment — Submission Package*
 
-> *“Understand every consequence before every merge.”*
+> *"Understand every consequence before every merge."*
 
 **Candidate:** Harsh Vardhan (*B.Tech CSE - Data Science & Analytics, IIIT Nagpur*)  
 **Role:** AI Engineer — Testsigma  
@@ -21,9 +22,9 @@ All four core assignment deliverables specified in Part 3 of the brief (`docs/as
 | Deliverable | Package Location | Status | Summary |
 |---|---|---|---|
 | **1. Code Repository & README** | Root repo / [`README.md`](../README.md) | ✅ Complete | Fully runnable 6-phase pipeline, entry point `python run.py <url>`, 34 passing unit tests. |
-| **2. Design Document (Expanded & Streamlined)** | **Expanded (21 pages):**<br>[`submission/design document/design_document_expanded.pdf`](design%20document/design_document_expanded.pdf)<br>[`submission/design document/design_document_expanded.md`](design%20document/design_document_expanded.md)<br>**Streamlined (~10 pages):**<br>[`submission/design document/design_document.pdf`](design%20document/design_document.pdf)<br>[`submission/design document/design_document.md`](design%20document/design_document.md) | ✅ Complete | Both 21-page Expanded Edition (with complete sequence diagrams, full schema descriptions, formulas, and Cypher queries) and Streamlined edition available in PDF, MD, and HTML. |
-| **3. Sample Blast Radius Report (All 4 Formats)** | [`submission/blast radius report/pr_3046/pr_3046_blast_radius.pdf`](blast%20radius%20report/pr_3046/pr_3046_blast_radius.pdf)<br>[`submission/blast radius report/pr_3046/pr_3046_blast_radius.docx`](blast%20radius%20report/pr_3046/pr_3046_blast_radius.docx)<br>[`submission/blast radius report/pr_3046/pr_3046_blast_radius.html`](blast%20radius%20report/pr_3046/pr_3046_blast_radius.html)<br>[`submission/blast radius report/pr_3046/pr_3046_blast_radius.md`](blast%20radius%20report/pr_3046/pr_3046_blast_radius.md) | ✅ Complete | Real report for Documenso PR #3046 formatted for a non-engineer QA lead in 4 formats (PDF, DOCX, HTML, MD) inside dedicated `/pr_3046/` subfolder. |
-| **4. Loom Walkthrough Video** | *URL to be attached in submission email* | ⚠️ Pending Recording | 5–10 min video recording walking through prototype execution, Neo4j 3D graph visualizer, and Design Doc. |
+| **2. Design Document (Expanded & Streamlined)** | **Expanded (21 pages):**<br>[`design_document_expanded.pdf`](design%20document/design_document_expanded.pdf)<br>[`design_document_expanded.md`](design%20document/design_document_expanded.md)<br>**Streamlined (~10 pages):**<br>[`design_document.pdf`](design%20document/design_document.pdf)<br>[`design_document.md`](design%20document/design_document.md) | ✅ Complete | Both 21-page Expanded Edition (with complete sequence diagrams, full schema descriptions, formulas, and Cypher queries) and Streamlined edition available in PDF, MD, and HTML. |
+| **3. Sample Blast Radius Report (All 4 Formats)** | [`pr_3046_blast_radius.pdf`](blast%20radius%20report/pr_3046_blast_radius.pdf)<br>[`pr_3046_blast_radius.docx`](blast%20radius%20report/pr_3046_blast_radius.docx)<br>[`pr_3046_blast_radius.html`](blast%20radius%20report/pr_3046_blast_radius.html)<br>[`pr_3046_blast_radius.md`](blast%20radius%20report/pr_3046_blast_radius.md) | ✅ Complete | Real report for Documenso PR #3046 formatted for a non-engineer QA lead in 4 formats (PDF, DOCX, HTML, MD). |
+| **4. Loom Walkthrough Video** | [Watch on Loom](https://www.loom.com/share/cdab254822bd4cbfbc5ebf0c9c79874e) | ✅ Complete | 5–10 min video walking through prototype execution, Neo4j 3D graph visualizer, and Design Document. |
 
 ---
 
@@ -54,29 +55,30 @@ ONLINE PIPELINE (Per-PR Reasoning):
 
 ---
 
-## 🎥 Loom Recording Script & Walkthrough Outline
+## 🎥 Loom Walkthrough
 
-*(Use this 5-minute script when recording the Loom walkthrough video)*
+**Recording:** [https://www.loom.com/share/cdab254822bd4cbfbc5ebf0c9c79874e](https://www.loom.com/share/cdab254822bd4cbfbc5ebf0c9c79874e)
+
+**What the recording covers:**
 
 1. **0:00 – 1:00 | Intro & Executive Overview:**
-   - Introduce candidate name and the assignment objective (Blast Radius Analyzer for Documenso PRs).
-   - Briefly explain the 3-layer Knowledge Graph (Requirements, UI/UserFlows, Code).
+   - Candidate introduction and assignment objective (Blast Radius Analyzer for Documenso PRs).
+   - Overview of the 3-layer Knowledge Graph (Requirements, UI/UserFlows, Code).
 
 2. **1:00 – 2:30 | Live Prototype Demo:**
-   - Show Neo4j running (`docker compose up -d`).
-   - Run `python run.py https://github.com/documenso/documenso/pull/3046` in the terminal.
-   - Show output generated in `outputs/reports/pr_3046_blast_radius.md`.
-   - Highlight key report findings: 1 affected page (`/settings/profile`), 13 dark changes (security utilities), non-engineer QA test checklist.
+   - Neo4j running (`docker compose up -d`).
+   - `python run.py https://github.com/documenso/documenso/pull/3046` executed live.
+   - Report findings: 1 affected page (`/settings/profile`), 12 dark changes (security utilities), non-engineer QA test checklist.
 
 3. **2:30 – 3:45 | Interactive 3D Graph Explorer:**
-   - Open `data/graph_explorer.html` in browser.
-   - Pan/zoom through the 2,300+ nodes and 7,400+ cross-layer edges.
-   - Show color-coded nodes (Purple = Requirements, Green = UIElements, Amber = CodeFunctions, Red = GapNodes/AbsentRequirements).
+   - `data/graph_explorer.html` opened in browser.
+   - 2,300+ nodes and 7,400+ cross-layer edges explored.
+   - Color-coded nodes (Purple = Requirements, Green = UIElements, Amber = CodeFunctions, Red = GapNodes/AbsentRequirements).
 
 4. **3:45 – 5:00 | Design Document & Scope Defense:**
-   - Open `submission/design_document.md`.
-   - Explain agent decomposition (why graph reasoning is deterministic linear algebra, not prompt chaining).
-   - Defend scope cuts (tRPC abstraction boundary, depth-1 AST parsing) and describe the 1-week roadmap.
+   - `submission/design document/design_document_expanded.md` walkthrough.
+   - Agent decomposition (why graph reasoning is deterministic linear algebra, not prompt chaining).
+   - Scope cuts defended (tRPC abstraction boundary, depth-1 AST parsing) and 1-week roadmap.
 
 ---
 
@@ -91,14 +93,14 @@ Dear Testsigma Engineering Team,
 Please find my submission for the AI Engineer Take-Home Assignment below.
 
 - GitHub Repository: https://github.com/The-Harsh-Vardhan/Testsigma
-- Loom Walkthrough Video: [INSERT LOOM URL HERE]
+- Loom Walkthrough Video: https://www.loom.com/share/cdab254822bd4cbfbc5ebf0c9c79874e
 - Submission Package Directory: /submission
 
 Key Deliverables:
-1. Runnable Code & README: Complete 6-phase pipeline with single entry point `python run.py <pr_url>`.
-2. Design Document: /submission/design_document.md (8–12 pages equivalent with architecture diagrams).
-3. Sample Blast Radius Report: /submission/blast_radius_report_pr3046.md (Formatted for QA leads).
-4. Technical Audit & Roast: /submission/complete_audit_report.md (Detailed architectural evaluation).
+1. Runnable Code & README: Complete 6-phase pipeline, single entry point `python run.py <pr_url>`, 34 passing unit tests.
+2. Design Document (Expanded 21-page): /submission/design document/design_document_expanded.pdf
+3. Sample Blast Radius Report: /submission/blast radius report/pr_3046_blast_radius.pdf (4 formats: PDF, DOCX, HTML, MD)
+4. Loom Walkthrough: https://www.loom.com/share/cdab254822bd4cbfbc5ebf0c9c79874e
 
 Thank you for the opportunity to work on this assignment. I look forward to discussing the design and code with the team!
 

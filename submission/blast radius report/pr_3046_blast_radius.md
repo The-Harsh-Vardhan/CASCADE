@@ -132,12 +132,12 @@ These backend functions were modified in this PR. They perform deep utility, val
 
 These requirements exist in product specifications but have no active UI or code links impacted by this PR. **No regression testing is required for these items for PR #3046:**
 
-1. **The software must be packaged as standard Docker container images allowing users to self-host the platform on Docker, Do**
-1. **The platform must support secure vulnerability disclosures via GitHub Security Advisories to protect self-hosted and clo**
+1. **The software must be packaged as standard Docker container images allowing users to self-host the platform on Docker, Docker Compose, Kubernetes, or cloud platforms.**
+1. **The platform must support secure vulnerability disclosures via GitHub Security Advisories to protect self-hosted and cloud installations.**
 1. **Allow teams to set up webhooks for integrating document events with external services.**
 1. **Standard plans enforce a limit of uploading a maximum of 5 documents simultaneously.**
-1. **The system must trigger a webhook notification with payload event 'DOCUMENT_CREATED' whenever a new document or template**
-1. **The system must trigger a webhook notification with payload event 'DOCUMENT_OPENED' when a recipient opens the document **
+1. **The system must trigger a webhook notification with payload event 'DOCUMENT_CREATED' whenever a new document or template draft is created.**
+1. **The system must trigger a webhook notification with payload event 'DOCUMENT_OPENED' when a recipient opens the document link for the first time.**
 
 ---
 
