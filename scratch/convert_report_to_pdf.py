@@ -110,27 +110,50 @@ def convert():
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.0/github-markdown.min.css">
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <style>
+        html {{
+            background-color: #080c14;
+            display: flex;
+            justify-content: center;
+        }}
         body {{
             box-sizing: border-box;
-            min-width: 200px;
-            max-width: 980px;
-            margin: 0 auto;
-            padding: 45px;
+            width: 100%;
+            max-width: 960px;
+            margin: 40px auto;
+            padding: 45px 55px;
             background-color: #0d1117;
             color: #c9d1d9;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }}
         .markdown-body {{
             background-color: #0d1117;
             color: #c9d1d9;
         }}
+        .markdown-body h1, .markdown-body h2, .markdown-body h3 {{
+            text-align: center;
+        }}
         .markdown-body table {{
             display: table;
             width: 100%;
+            margin: 20px auto;
+        }}
+        .mermaid {{
+            display: flex;
+            justify-content: center;
+            margin: 25px 0;
+        }}
+        pre code {{
+            background: transparent !important;
         }}
         @media print {{
+            html {{ background-color: #ffffff !important; }}
             body {{
                 padding: 15px;
+                border: none;
+                box-shadow: none;
                 background-color: #ffffff !important;
                 color: #000000 !important;
                 font-size: 13px !important;
@@ -186,27 +209,50 @@ def convert():
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.0/github-markdown.min.css">
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <style>
+        html {{
+            background-color: #080c14;
+            display: flex;
+            justify-content: center;
+        }}
         body {{
             box-sizing: border-box;
-            min-width: 200px;
-            max-width: 980px;
-            margin: 0 auto;
-            padding: 45px;
+            width: 100%;
+            max-width: 960px;
+            margin: 40px auto;
+            padding: 45px 55px;
             background-color: #0d1117;
             color: #c9d1d9;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }}
         .markdown-body {{
             background-color: #0d1117;
             color: #c9d1d9;
         }}
+        .markdown-body h1, .markdown-body h2, .markdown-body h3 {{
+            text-align: center;
+        }}
         .markdown-body table {{
             display: table;
             width: 100%;
+            margin: 20px auto;
+        }}
+        .mermaid {{
+            display: flex;
+            justify-content: center;
+            margin: 25px 0;
+        }}
+        pre code {{
+            background: transparent !important;
         }}
         @media print {{
+            html {{ background-color: #ffffff !important; }}
             body {{
                 padding: 15px;
+                border: none;
+                box-shadow: none;
                 background-color: #ffffff !important;
                 color: #000000 !important;
                 font-size: 13px !important;
@@ -262,27 +308,50 @@ def convert():
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.0/github-markdown.min.css">
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <style>
+        html {{
+            background-color: #080c14;
+            display: flex;
+            justify-content: center;
+        }}
         body {{
             box-sizing: border-box;
-            min-width: 200px;
-            max-width: 980px;
-            margin: 0 auto;
-            padding: 45px;
+            width: 100%;
+            max-width: 960px;
+            margin: 40px auto;
+            padding: 45px 55px;
             background-color: #0d1117;
             color: #c9d1d9;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }}
         .markdown-body {{
             background-color: #0d1117;
             color: #c9d1d9;
         }}
+        .markdown-body h1, .markdown-body h2, .markdown-body h3 {{
+            text-align: center;
+        }}
         .markdown-body table {{
             display: table;
             width: 100%;
+            margin: 20px auto;
+        }}
+        .mermaid {{
+            display: flex;
+            justify-content: center;
+            margin: 25px 0;
+        }}
+        pre code {{
+            background: transparent !important;
         }}
         @media print {{
+            html {{ background-color: #ffffff !important; }}
             body {{
                 padding: 15px;
+                border: none;
+                box-shadow: none;
                 background-color: #ffffff !important;
                 color: #000000 !important;
                 font-size: 13px !important;
