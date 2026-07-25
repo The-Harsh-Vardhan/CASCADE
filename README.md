@@ -200,7 +200,7 @@ graph LR
 
 ### Interactive 3D Graph Explorer
 
-An interactive 3D Force Graph visualization is live at [**deployvercelexplorer.vercel.app**](https://deployvercelexplorer.vercel.app) (or locally at [`data/graph_explorer.html`](data/graph_explorer.html)). Open the live web app directly in any modern browser to inspect, search, filter, and interactively explore the 2,300+ nodes and 7,400+ cross-layer edges.
+An interactive 3D Force Graph visualization is live at [**cascade-graph-explorer.vercel.app**](https://cascade-graph-explorer.vercel.app) (or locally at [`data/graph_explorer.html`](data/graph_explorer.html)). Open the live web app directly in any modern browser to inspect, search, filter, and interactively explore the 2,300+ nodes and 7,400+ cross-layer edges.
 
 ---
 
