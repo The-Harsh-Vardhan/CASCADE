@@ -1,10 +1,13 @@
-# Blast Radius Analyzer
+![CASCADE Banner](docs/images/cascade_banner.png)
 
-> **Testsigma AI Engineer Assignment** — AI-powered change impact analysis for Documenso pull requests.
+# CASCADE — Change Analysis for Software Cascade using Dependency Evidence
 
-Given a GitHub PR URL, this system tells a QA team **exactly what to test**: which UI pages are at risk, which product requirements lose coverage, and which changed functions have no traceable path back to any product feature.
+> *“Understand every consequence before every merge.”*
 
-**Target app:** [app.documenso.com](https://app.documenso.com) · **Target repo:** [documenso/documenso](https://github.com/documenso/documenso)
+**CASCADE** is an AI-powered Blast Radius Analyzer & Evidence-backed Product Knowledge Graph for explainable Pull Request impact analysis. Given a GitHub PR URL, CASCADE tells QA leads and engineering teams **exactly what to test**: which UI pages are at risk, which product requirements lose coverage, and which changed functions have no traceable path back to any product feature.
+
+**Target app:** [app.documenso.com](https://app.documenso.com) · **Target repo:** [documenso/documenso](https://github.com/documenso/documenso)  
+**Presented by:** Harsh Vardhan (*IIIT Nagpur*) · **AI Engineer Assignment:** Testsigma (*July 2026*)
 
 ---
 

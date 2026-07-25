@@ -1,9 +1,11 @@
-# 🎯 Blast Radius Analysis & QA Test Guide — PR #3046
+![CASCADE Banner](cascade_banner.png)
+
+# CASCADE — Blast Radius Analysis & QA Test Guide
 ### *Target PR:* [documenso/documenso #3046 — fix: tighten permission and validation checks](https://github.com/documenso/documenso/pull/3046)
 
+> **Analysis Engine:** CASCADE v4 (AI + Graph Intelligence Engine)  
 > **Prepared for:** QA Lead & Testing Team  
 > **PR Type:** Security & Permission Hardening  
-> **Analysis Engine:** Blast Radius Analyzer v4 (AI + Graph Intelligence)  
 
 ---
 

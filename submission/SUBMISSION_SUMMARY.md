@@ -1,6 +1,11 @@
-# Testsigma AI Engineer Take-Home Assignment — Submission Package
+![CASCADE Banner](cascade_banner.png)
 
-**Candidate:** Harsh Vardhan  
+# CASCADE — Change Analysis for Software Cascade using Dependency Evidence
+### *Testsigma AI Engineer Assignment — Submission Package*
+
+> *“Understand every consequence before every merge.”*
+
+**Candidate:** Harsh Vardhan (*B.Tech CSE - Data Science & Analytics, IIIT Nagpur*)  
 **Role:** AI Engineer — Testsigma  
 **Target Application:** [app.documenso.com](https://app.documenso.com) / [github.com/documenso/documenso](https://github.com/documenso/documenso)  
 **Evaluated PR:** [Documenso PR #3046](https://github.com/documenso/documenso/pull/3046) (*fix: tighten permission and validation checks*)  

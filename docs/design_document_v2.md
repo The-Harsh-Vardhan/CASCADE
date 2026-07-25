@@ -1,9 +1,15 @@
-# Blast Radius Analyzer — Technical Design Document (v2)
+![CASCADE Banner](images/cascade_banner.png)
 
-**Assignment:** AI Engineer — Testsigma  
+# CASCADE — Technical Design Document
+### *Change Analysis for Software Cascade using Dependency Evidence*
+
+> *“Understand every consequence before every merge.”*
+
+**Candidate:** Harsh Vardhan (*B.Tech CSE - Data Science & Analytics, IIIT Nagpur*)  
+**Role:** AI Engineer — Testsigma  
 **Target Application:** [app.documenso.com](https://app.documenso.com) / [github.com/documenso/documenso](https://github.com/documenso/documenso)  
 **PR Analyzed:** [#3046](https://github.com/documenso/documenso/pull/3046) (*merge SHA `8f683932`*)  
-**Pipeline Version:** v4 (6-Phase Hybrid Architecture)  
+**Pipeline Version:** CASCADE v4 (6-Phase Hybrid Architecture)  
 
 ---
 

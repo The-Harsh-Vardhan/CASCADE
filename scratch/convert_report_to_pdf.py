@@ -95,13 +95,16 @@ def convert():
             print("[OK] Saved Report PDF to:", pdf_file)
 
             # Print Design Document PDF
-            doc_md = Path("submission/design_document.md").read_text(encoding="utf-8")
+            doc_md_path = Path("submission/design document/design_document.md")
+            if not doc_md_path.exists():
+                doc_md_path = Path("docs/design_document_v2.md")
+            doc_md = doc_md_path.read_text(encoding="utf-8")
             doc_html_body = markdown.markdown(doc_md, extensions=["tables", "fenced_code"])
             doc_full_html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Blast Radius Analyzer — Design Document</title>
+    <title>CASCADE — Design Document</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.0/github-markdown.min.css">
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <style>
@@ -125,9 +128,11 @@ def convert():
         }}
         @media print {{
             body {{
-                padding: 20px;
+                padding: 15px;
                 background-color: #ffffff !important;
                 color: #000000 !important;
+                font-size: 13px !important;
+                line-height: 1.4 !important;
             }}
             .markdown-body {{
                 background-color: #ffffff !important;
@@ -152,30 +157,30 @@ def convert():
     </script>
 </body>
 </html>"""
-            doc_html_file = Path("submission/design_document.html")
+            doc_html_file = Path("submission/design document/design_document.html")
             doc_html_file.write_text(doc_full_html, encoding="utf-8")
             
             doc_url = doc_html_file.resolve().as_uri()
             print("Loading Design Doc in Playwright:", doc_url)
             await page.goto(doc_url, wait_until="networkidle")
             await page.wait_for_timeout(4000)
-            doc_pdf_file = Path("submission/design_document.pdf")
+            doc_pdf_file = Path("submission/design document/design_document.pdf")
             await page.pdf(
                 path=str(doc_pdf_file),
                 format="A4",
                 print_background=True,
-                margin={"top": "15mm", "bottom": "15mm", "left": "15mm", "right": "15mm"}
+                margin={"top": "12mm", "bottom": "12mm", "left": "12mm", "right": "12mm"}
             )
             print("[OK] Saved Design Doc PDF to:", doc_pdf_file)
 
             # Print Design Document v2 PDF
-            v2_md = Path("submission/design_document_v2.md").read_text(encoding="utf-8")
+            v2_md = Path("docs/design_document_v2.md").read_text(encoding="utf-8")
             v2_html_body = markdown.markdown(v2_md, extensions=["tables", "fenced_code"])
             v2_full_html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Blast Radius Analyzer — Design Document v2</title>
+    <title>CASCADE — Design Document v2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.0/github-markdown.min.css">
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <style>
@@ -228,14 +233,14 @@ def convert():
     </script>
 </body>
 </html>"""
-            v2_html_file = Path("submission/design_document_v2.html")
+            v2_html_file = Path("docs/design_document_v2.html")
             v2_html_file.write_text(v2_full_html, encoding="utf-8")
             
             v2_url = v2_html_file.resolve().as_uri()
             print("Loading Design Doc v2 in Playwright:", v2_url)
             await page.goto(v2_url, wait_until="networkidle")
             await page.wait_for_timeout(4000)
-            v2_pdf_file = Path("submission/design_document_v2.pdf")
+            v2_pdf_file = Path("docs/design_document_v2.pdf")
             await page.pdf(
                 path=str(v2_pdf_file),
                 format="A4",

@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-Blast Radius Analyzer
+CASCADE — Change Analysis for Software Cascade using Dependency Evidence
 Usage:   python run.py <github_pr_url>
-Example: python run.py https://github.com/documenso/documenso/pull/1234
+Example: python run.py https://github.com/documenso/documenso/pull/3046
 
 Assumes the offline pipeline has already been run:
     python pipeline/offline.py
 
 This script ONLY runs the online pipeline:
-    parse PR URL → fetch PR diff → retrieve subgraph → reason → generate report
+    parse PR URL -> fetch PR diff -> retrieve subgraph -> reason -> generate report
 
 It does NOT crawl, ingest, or rebuild the knowledge graph.
 """

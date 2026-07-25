@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Blast Radius Analyzer — Design Document v2</title>
+    <title>CASCADE — Design Document v2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.0/github-markdown.min.css">
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <style>
@@ -40,11 +40,17 @@
     </style>
 </head>
 <body class="markdown-body">
-<h1>Blast Radius Analyzer — Technical Design Document (v2)</h1>
-<p><strong>Assignment:</strong> AI Engineer — Testsigma<br />
+<p><img alt="CASCADE Banner" src="images/cascade_banner.png" /></p>
+<h1>CASCADE — Technical Design Document</h1>
+<h3><em>Change Analysis for Software Cascade using Dependency Evidence</em></h3>
+<blockquote>
+<p><em>“Understand every consequence before every merge.”</em></p>
+</blockquote>
+<p><strong>Candidate:</strong> Harsh Vardhan (<em>B.Tech CSE - Data Science &amp; Analytics, IIIT Nagpur</em>)<br />
+<strong>Role:</strong> AI Engineer — Testsigma<br />
 <strong>Target Application:</strong> <a href="https://app.documenso.com">app.documenso.com</a> / <a href="https://github.com/documenso/documenso">github.com/documenso/documenso</a><br />
 <strong>PR Analyzed:</strong> <a href="https://github.com/documenso/documenso/pull/3046">#3046</a> (<em>merge SHA <code>8f683932</code></em>)<br />
-<strong>Pipeline Version:</strong> v4 (6-Phase Hybrid Architecture)  </p>
+<strong>Pipeline Version:</strong> CASCADE v4 (6-Phase Hybrid Architecture)  </p>
 <hr />
 <h2>1. Agent Decomposition</h2>
 <h3>Stages of Reasoning, Boundaries &amp; Determinism vs. LLM Trade-Offs</h3>
