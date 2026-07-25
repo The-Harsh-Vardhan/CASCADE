@@ -21,8 +21,8 @@
 
 ```bash
 # 1. Clone + install
-git clone https://github.com/The-Harsh-Vardhan/blast-radius-analyzer
-cd blast-radius-analyzer
+git clone https://github.com/The-Harsh-Vardhan/CASCADE
+cd CASCADE
 pip install -e ".[dev]"
 playwright install chromium
 

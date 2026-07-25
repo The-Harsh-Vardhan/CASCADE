@@ -92,7 +92,7 @@ Dear Testsigma Engineering Team,
 
 Please find my submission for the AI Engineer Take-Home Assignment below.
 
-- GitHub Repository: https://github.com/The-Harsh-Vardhan/Testsigma
+- GitHub Repository: https://github.com/The-Harsh-Vardhan/CASCADE
 - Loom Walkthrough Video: https://www.loom.com/share/cdab254822bd4cbfbc5ebf0c9c79874e
 - Submission Package Directory: /submission
 
