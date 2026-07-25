@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blast Radius 3D Crystal Lattice Graph Explorer</title>
+  
+  <!-- CDN Scripts for 3D Force Graph and Three.js -->
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/3d-force-graph@1.73.0/dist/3d-force-graph.min.js"></script>
+  <!-- Local Graph Data JS (Immune to file:// CORS restrictions) -->
+  <script src="graph_data.js"></script>
+
+
+  <style>
+    :root[data-theme="dark"] {
+      --bg-color: #0b0c10;
+      --bg-canvas: #0b0c10;
+      --panel-bg: rgba(22, 27, 34, 0.85);
+      --panel-border: #30363d;
+      --text-main: #f0f6fc;
+      --text-sub: #8b949e;
+      --accent-color: #58a6ff;
+      --accent-hover: #1f6feb;
+      --card-bg: rgba(33, 38, 45, 0.8);
+      --card-hover: rgba(48, 54, 61, 0.9);
+      --badge-req: #7f77dd;
+      --badge-ui: #1d9e75;
+      --badge-code: #ba7517;
+      --badge-gap: #a32d2d;
+    }
+
+    :root[data-theme="light"] {
+      --bg-color: #f8f9fa;
+      --bg-canvas: #f8f9fa;
+      --panel-bg: rgba(255, 255, 255, 0.9);
+      --panel-border: #d0d7de;
+      --text-main: #1f2328;
+      --text-sub: #656d76;
+      --accent-color: #0969da;
+      --accent-hover: #0550ae;
+      --card-bg: rgba(246, 248, 250, 0.9);
+      --card-hover: rgba(234, 238, 242, 0.95);
+      --badge-req: #665cd7;
+      --badge-ui: #14805e;
+      --badge-code: #9e600f;
+      --badge-gap: #c93b3b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      transition: background-color 0.3s ease;
+    }
+
+    #3d-graph {
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    /* Top Control Bar */
+    .top-bar {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      z-index: 10;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      background: var(--panel-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--panel-border);
+      padding: 10px 16px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+
+    .brand-title {
+      font-weight: 700;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-title span {
+      background: linear-gradient(135deg, #58a6ff, #bc8cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stats-badge {
+      font-size: 12px;
+      color: var(--text-sub);
+      background: rgba(255,255,255,0.06);
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--panel-border);
+    }
+
+    .btn {
+      background: var(--card-bg);
+      color: var(--text-main);
+      border: 1px solid var(--panel-border);
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      background: var(--card-hover);
+      border-color: var(--accent-color);
+      color: var(--accent-color);
+    }
+
+    .btn-primary {
+      background: var(--accent-color);
+      color: #ffffff;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      color: #ffffff;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-main);
+      background: var(--card-bg);
+      padding: 4px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--panel-border);
+    }
+
+    .control-group input[type="range"] {
+      width: 80px;
+      accent-color: var(--accent-color);
+      cursor: pointer;
+    }
+
+    /* Camera Preset Controls */
+    .camera-bar {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      z-index: 10;
+      display: flex;
+      gap: 8px;
+      background: var(--panel-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--panel-border);
+      padding: 8px;
+      border-radius: 10px;
+    }
+
+    /* Right Search & Explorer Sidebar */
+    .sidebar {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      bottom: 16px;
+      width: 360px;
+      z-index: 10;
+      background: var(--panel-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      box-shadow: -8px 0 32px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar.collapsed {
+      transform: translateX(calc(100% + 20px));
+    }
+
+    .sidebar-toggle {
+      position: absolute;
+      left: -40px;
+      top: 16px;
+      width: 36px;
+      height: 36px;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 10px 0 0 10px;
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .sidebar-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--panel-border);
+    }
+
+    .search-box {
+      position: relative;
+      margin-top: 10px;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid var(--panel-border);
+      color: var(--text-main);
+      padding: 8px 12px 8px 32px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent-color);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      color: var(--text-sub);
+    }
+
+    /* Layer Tabs */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--panel-border);
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+    }
+
+    .tab-btn.active {
+      background: var(--card-bg);
+      color: var(--accent-color);
+      border: 1px solid var(--panel-border);
+    }
+
+    /* Node List Scroll Area */
+    .node-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .node-card {
+      background: var(--card-bg);
+      border: 1px solid var(--panel-border);
+      padding: 10px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .node-card:hover {
+      background: var(--card-hover);
+      border-color: var(--accent-color);
+      transform: translateY(-1px);
+    }
+
+    .node-card-title {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .node-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+
+    .badge-req { background-color: var(--badge-req); }
+    .badge-ui { background-color: var(--badge-ui); }
+    .badge-code { background-color: var(--badge-code); }
+    .badge-gap { background-color: var(--badge-gap); }
+
+    .node-card-desc {
+      font-size: 11px;
+      color: var(--text-sub);
+      word-break: break-all;
+    }
+
+    /* Node Detail Inspector Modal / Overlay */
+    .inspector-panel {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      background: var(--panel-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--panel-border);
+      padding: 14px 20px;
+      border-radius: 14px;
+      max-width: 480px;
+      width: 90%;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+      display: none;
+    }
+
+    .inspector-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .inspector-title {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .inspector-body {
+      font-size: 12px;
+      color: var(--text-sub);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    /* Loading Overlay */
+    #loading-screen {
+      position: absolute;
+      inset: 0;
+      background: var(--bg-color);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: opacity 0.5s ease;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--panel-border);
+      border-top-color: var(--accent-color);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    /* Searchable text overlay for browser Ctrl+F */
+    #ctrl-f-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1px;
+      height: 1px;
+      opacity: 0.01;
+      overflow: hidden;
+      z-index: 0;
+      user-select: text;
+      pointer-events: auto;
+    }
+    .searchable-item {
+      display: block;
+      margin: 2px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hidden DOM text layer for Ctrl+F native browser search -->
+  <div id="ctrl-f-overlay"></div>
+
+  <!-- Loading Overlay -->
+  <div id="loading-screen">
+    <div class="spinner"></div>
+    <div style="font-weight: 600; font-size: 14px;" id="loading-text">Loading 3D Crystal Lattice Graph...</div>
+  </div>
+
+  <!-- 3D Canvas -->
+  <div id="3d-graph"></div>
+
+  <!-- Top Header Controls -->
+  <div class="top-bar">
+    <div class="brand-title">
+      💎 <span>Blast Radius Explorer</span>
+    </div>
+    <div class="stats-badge" id="stats-counter">
+      0 Nodes | 0 Links
+    </div>
+    <button class="btn" id="theme-toggle-btn" title="Toggle Light/Dark Theme">
+      🌙 Theme
+    </button>
+    <div class="control-group" title="Adjust thickness of inter-layer edges (IMPLEMENTS, RENDERS, COVERS)">
+      <label for="edge-width-slider">Edge Width:</label>
+      <input type="range" id="edge-width-slider" min="1" max="10" value="3" step="0.5">
+      <span id="edge-width-val" style="min-width: 28px; text-align: right;">3px</span>
+    </div>
+    <div class="control-group" title="Expand or compress 3D node spacing across the graph layout">
+      <label for="spacing-slider">Expand/Compress:</label>
+      <input type="range" id="spacing-slider" min="0.5" max="3.0" value="1.0" step="0.1">
+      <span id="spacing-val" style="min-width: 32px; text-align: right;">1.0x</span>
+    </div>
+    <div class="control-group" title="Adjust 3D distance between Requirement, UI, and Code layer planes">
+      <label for="layer-gap-slider">Layer Gap:</label>
+      <input type="range" id="layer-gap-slider" min="50" max="600" value="200" step="10">
+      <span id="layer-gap-val" style="min-width: 42px; text-align: right;">200px</span>
+    </div>
+    <div class="control-group" title="Limit maximum number of visible nodes in 3D graph">
+      <label for="node-limit-slider">Node Limit:</label>
+      <input type="range" id="node-limit-slider" min="50" max="2400" value="500" step="50">
+      <span id="node-limit-val" style="min-width: 40px; text-align: right;">500</span>
+    </div>
+
+
+
+
+    <button class="btn" id="toggle-labels-btn" title="Toggle 3D Labels for Nodes & Edges">
+      🏷️ Labels: OFF
+    </button>
+    <button class="btn" id="toggle-clusters-btn" title="Toggle Interconnected Group Cluster Labels">
+      🧩 Clusters: OFF
+    </button>
+    <button class="btn" id="refresh-data-btn" title="Refresh Neo4j Data Cache">
+      🔄 Refresh Cache
+    </button>
+    <button class="btn" id="trace-mode-btn" title="Click to trace shortest path between a Start and End node">
+      🗺️ Trace Path
+    </button>
+    <button class="btn btn-primary" id="blast-sim-btn" title="Run Blast Radius Shockwave Simulation">
+      ⚡ Blast Simulator
+    </button>
+  </div>
+
+  <!-- Floating Path Trace Breadcrumb Panel -->
+  <div id="trace-breadcrumb-panel" style="display: none; position: absolute; top: 70px; left: 50%; transform: translateX(-50%); z-index: 20; background: var(--panel-bg); backdrop-filter: blur(16px); border: 1px solid var(--panel-border); padding: 10px 18px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); max-width: 85vw; overflow-x: auto; white-space: nowrap; font-size: 13px;">
+    <div id="trace-breadcrumb-content" style="display: flex; align-items: center; gap: 8px;"></div>
+  </div>
+
+  <!-- Camera Presets -->
+
+  <div class="camera-bar">
+    <button class="btn" onclick="setCameraView('iso')" title="Isometric View">🌐 Iso</button>
+    <button class="btn" onclick="setCameraView('req')" title="Requirement Layer (Z=+200)">📜 Requirements</button>
+    <button class="btn" onclick="setCameraView('ui')" title="UI Layer (Z=0)">🖥️ UI Layer</button>
+    <button class="btn" onclick="setCameraView('code')" title="Code Layer (Z=-200)">⚙️ Code Layer</button>
+  </div>
+
+  <!-- Right Explorer Sidebar -->
+  <div class="sidebar collapsed" id="sidebar">
+    <button class="sidebar-toggle" id="sidebar-toggle-btn" title="Toggle Explorer Sidebar">🔍</button>
+
+    <div class="sidebar-header">
+      <div style="font-weight: 700; font-size: 14px;">Node Explorer</div>
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="search-input" placeholder="Search by name, file, ID...">
+      </div>
+    </div>
+
+    <!-- Layer Filter Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="filterLayer('all', this)">All</button>
+      <button class="tab-btn" onclick="filterLayer('req', this)">Req</button>
+      <button class="tab-btn" onclick="filterLayer('ui', this)">UI</button>
+      <button class="tab-btn" onclick="filterLayer('code', this)">Code</button>
+      <button class="tab-btn" onclick="filterLayer('gap', this)">Gap</button>
+    </div>
+
+    <!-- Disconnected Filter Options Panel -->
+    <div class="filter-panel" style="padding: 10px 14px; border-bottom: 1px solid var(--panel-border); font-size: 12px; display: flex; flex-direction: column; gap: 6px; background: rgba(0,0,0,0.15);">
+      <div style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--text-sub); letter-spacing: 0.5px; margin-bottom: 2px;">
+        🔌 Disconnected Node Filters
+      </div>
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+        <input type="checkbox" id="hide-disconnected-overall" onchange="applyActiveFilters()">
+        <span>🚫 Hide Unconnected (0 total edges)</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+        <input type="checkbox" id="hide-disconnected-intra" onchange="applyActiveFilters()">
+        <span>↔️ Hide Same-Layer Isolated (0 intra-layer)</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+        <input type="checkbox" id="hide-disconnected-inter" onchange="applyActiveFilters()">
+        <span>↕️ Hide Cross-Layer Isolated (0 inter-layer)</span>
+      </label>
+    </div>
+
+    <!-- Scrollable Node List -->
+    <div class="node-list" id="node-list"></div>
+  </div>
+
+  <!-- Node Inspector Box -->
+  <div class="inspector-panel" id="inspector">
+    <div class="inspector-header">
+      <div class="inspector-title" id="inspector-name">Node Inspector</div>
+      <button class="close-btn" onclick="closeInspector()">✕</button>
+    </div>
+    <div class="inspector-body" id="inspector-body"></div>
+  </div>
+
+  <script>
+    const CACHE_KEY = 'blast_radius_3d_graph_cache_v2';
+    let fullGraphData = { nodes: [], links: [] };
+    let nodeMap = new Map();
+    let filteredNodes = [];
+    let currentLayerFilter = 'all';
+    let activeSearchQuery = '';
+    let Graph = null;
+    let selectedNode = null;
+    let blastSimulationActive = false;
+    let interLayerEdgeWidth = 3;
+    let labelsGroup = null;
+    let clustersGroup = null;
+    let labelsVisible = false;
+    let clustersVisible = false;
+
+
+    function isInterLayerLink(link) {
+      const srcId = typeof link.source === 'object' ? link.source.id : link.source;
+      const tgtId = typeof link.target === 'object' ? link.target.id : link.target;
+      const srcNode = nodeMap.get(srcId);
+      const tgtNode = nodeMap.get(tgtId);
+      return (srcNode && tgtNode && srcNode.layer !== tgtNode.layer) ||
+             ['IMPLEMENTS', 'RENDERS', 'COVERS'].includes(link.rel_type);
+    }
+
+    function getLinkWidth(link) {
+      return isInterLayerLink(link) ? parseFloat(interLayerEdgeWidth) : 1;
+    }
+
+    // Theme Management
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      updateThemeButtonText(savedTheme);
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      updateThemeButtonText(next);
+      
+      if (Graph) {
+        Graph.backgroundColor(next === 'dark' ? '#0b0c10' : '#f8f9fa');
+      }
+    }
+
+    function updateThemeButtonText(theme) {
+      document.getElementById('theme-toggle-btn').innerText = theme === 'dark' ? '☀️ Light' : '🌙 Dark';
+    }
+
+    document.getElementById('theme-toggle-btn').addEventListener('click', toggleTheme);
+
+    // Edge Width Slider Control
+    document.getElementById('edge-width-slider').addEventListener('input', (e) => {
+      interLayerEdgeWidth = e.target.value;
+      document.getElementById('edge-width-val').innerText = interLayerEdgeWidth + 'px';
+      if (Graph) {
+        Graph.linkWidth(link => getLinkWidth(link));
+      }
+    });
+
+    // Expand / Compress Node Spacing Slider Control
+    let currentSpacingScale = 1.0;
+    document.getElementById('spacing-slider').addEventListener('input', (e) => {
+      currentSpacingScale = parseFloat(e.target.value);
+      document.getElementById('spacing-val').innerText = currentSpacingScale.toFixed(1) + 'x';
+      updatePhysicsForces();
+    });
+
+    // Node Limit Slider Control
+    let maxVisibleNodes = 500;
+    document.getElementById('node-limit-slider').addEventListener('input', (e) => {
+      maxVisibleNodes = parseInt(e.target.value);
+      document.getElementById('node-limit-val').innerText = maxVisibleNodes >= 2400 ? 'ALL' : maxVisibleNodes;
+      applyActiveFilters();
+    });
+
+
+    // Layer Gap Slider Control (Adjusts distance between Requirement, UI, and Code layers)
+    let currentLayerGap = 200;
+    document.getElementById('layer-gap-slider').addEventListener('input', (e) => {
+      currentLayerGap = parseInt(e.target.value);
+      document.getElementById('layer-gap-val').innerText = currentLayerGap + 'px';
+      updateLayerPositions();
+    });
+
+    function updateLayerPositions() {
+      if (!fullGraphData || !fullGraphData.nodes) return;
+
+      fullGraphData.nodes.forEach(node => {
+        if (node.layer === 'req') node.fz = currentLayerGap;
+        else if (node.layer === 'ui') node.fz = 0;
+        else if (node.layer === 'code') node.fz = -currentLayerGap;
+        else if (node.layer === 'gap') node.fz = currentLayerGap * 1.1;
+        else if (node.layer === 'absent') node.fz = currentLayerGap * 1.25;
+        else node.fz = currentLayerGap;
+      });
+
+      // Update 3D Visual Planes
+      addLayerPlanes();
+
+      if (labelsVisible) draw3DLabels();
+      if (clustersVisible) drawClusterLabels();
+
+      if (Graph) {
+        Graph.d3ReheatSimulation();
+      }
+    }
+
+
+
+    function updatePhysicsForces() {
+      if (!Graph) return;
+
+      const degrees = computeNodeDegrees();
+
+      // 1. Charge force (repulsion) — highly connected hub nodes get stronger repulsion
+      const chargeForce = Graph.d3Force('charge');
+      if (chargeForce) {
+        chargeForce.strength(node => {
+          const deg = degrees.get(node.id)?.total || 1;
+          const degreeFactor = Math.min(1 + Math.log2(deg + 1), 4.5);
+          return -140 * degreeFactor * currentSpacingScale;
+        });
+      }
+
+      // 2. Link force (distance) — scaled by spacing scale and hub degree
+      const linkForce = Graph.d3Force('link');
+      if (linkForce) {
+        linkForce.distance(link => {
+          const sId = typeof link.source === 'object' ? link.source.id : link.source;
+          const tId = typeof link.target === 'object' ? link.target.id : link.target;
+          const sDeg = degrees.get(sId)?.total || 1;
+          const tDeg = degrees.get(tId)?.total || 1;
+          const maxDeg = Math.max(sDeg, tDeg);
+          const hubBonus = maxDeg > 5 ? Math.min(maxDeg * 2.5, 80) : 0;
+
+          const isInter = isInterLayerLink(link);
+          const baseDist = isInter ? (90 + hubBonus) : (40 + hubBonus * 0.5);
+          return baseDist * currentSpacingScale;
+        });
+      }
+
+      // 3. Sync visual plane radius with current spacing scale
+      addLayerPlanes();
+
+      // Smoothly reheat physics simulation
+      Graph.d3ReheatSimulation();
+    }
+
+
+
+    // Labels Toggle Button
+    document.getElementById('toggle-labels-btn').addEventListener('click', () => {
+      labelsVisible = !labelsVisible;
+      document.getElementById('toggle-labels-btn').innerText = labelsVisible ? '🏷️ Labels: ON' : '🏷️ Labels: OFF';
+      if (labelsGroup) labelsGroup.visible = labelsVisible;
+      else if (labelsVisible) draw3DLabels();
+    });
+
+    // Clusters Toggle Button
+    document.getElementById('toggle-clusters-btn').addEventListener('click', () => {
+      clustersVisible = !clustersVisible;
+      document.getElementById('toggle-clusters-btn').innerText = clustersVisible ? '🧩 Clusters: ON' : '🧩 Clusters: OFF';
+      if (clustersGroup) clustersGroup.visible = clustersVisible;
+      else if (clustersVisible) drawClusterLabels();
+    });
+
+    function saveToCache(data) {
+      try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      } catch (e) {
+        console.warn('[Cache] localStorage quota skipped:', e);
+      }
+    }
+
+    // Dynamic Data Fetcher with Local Caching and file:// fallback
+    async function loadGraphData(forceRefresh = false) {
+      const loadingScreen = document.getElementById('loading-screen');
+      const loadingText = document.getElementById('loading-text');
+      if (loadingScreen) {
+        loadingScreen.style.display = 'flex';
+        loadingScreen.style.opacity = '1';
+        loadingScreen.style.pointerEvents = 'all';
+      }
+
+      if (!forceRefresh) {
+        // 1. Check window.GRAPH_DATA from local script tag first
+        if (window.GRAPH_DATA && window.GRAPH_DATA.nodes && window.GRAPH_DATA.nodes.length > 0) {
+          console.log('[Script Tag] Loaded graph data from window.GRAPH_DATA');
+          fullGraphData = window.GRAPH_DATA;
+          saveToCache(fullGraphData);
+          renderGraph();
+          return;
+        }
+
+        // 2. Check localStorage cache
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+          try {
+            const parsed = JSON.parse(cached);
+            if (parsed.nodes && parsed.nodes.length > 0) {
+              console.log('[Cache] Loaded graph data from localStorage');
+              fullGraphData = parsed;
+              renderGraph();
+              return;
+            }
+          } catch(e) {
+            console.warn('[Cache] Corrupted cache, fetching fresh dataset', e);
+          }
+        }
+      }
+
+      if (loadingText) loadingText.innerText = 'Loading graph data...';
+      try {
+        const resp = await fetch('./graph_data.json');
+        if (!resp.ok) throw new Error(`HTTP error! status: ${resp.status}`);
+        fullGraphData = await resp.json();
+        
+        // Save to cache
+        saveToCache(fullGraphData);
+        console.log(`[Fetch] Loaded ${fullGraphData.nodes.length} nodes from graph_data.json`);
+      } catch (err) {
+        console.warn('[Fetch Warning] Local fetch failed/blocked by CORS. Falling back to window.GRAPH_DATA:', err);
+        if (window.GRAPH_DATA && window.GRAPH_DATA.nodes) {
+          fullGraphData = window.GRAPH_DATA;
+          saveToCache(fullGraphData);
+        }
+      }
+
+      renderGraph();
+    }
+
+    document.getElementById('refresh-data-btn').addEventListener('click', () => {
+      loadGraphData(true);
+    });
+
+    // Sidebar Controls
+    const sidebar = document.getElementById('sidebar');
+    document.getElementById('sidebar-toggle-btn').addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+    });
+
+    // Render 3D Force Graph
+    // Render 3D Force Graph (Performance Optimized for 60fps)
+    function renderGraph() {
+      const container = document.getElementById('3d-graph');
+      container.innerHTML = '';
+
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+      // Build quick lookup map for nodes
+      nodeMap = new Map(fullGraphData.nodes.map(n => [n.id, n]));
+
+      // Populate DOM text layer for Ctrl+F native searchability
+      updateCtrlFOverlay();
+
+      // Compute degree-based baseline for initial render to prevent UI thread lockup
+      const degrees = computeNodeDegrees();
+      let candidateNodes = [...fullGraphData.nodes];
+      candidateNodes.sort((a, b) => (degrees.get(b.id)?.total || 0) - (degrees.get(a.id)?.total || 0));
+
+      const initialNodes = candidateNodes.slice(0, maxVisibleNodes);
+      const initialNodeIds = new Set(initialNodes.map(n => n.id));
+      const initialLinks = fullGraphData.links.filter(l => {
+        const sId = typeof l.source === 'object' ? l.source.id : l.source;
+        const tId = typeof l.target === 'object' ? l.target.id : l.target;
+        return initialNodeIds.has(sId) && initialNodeIds.has(tId);
+      });
+
+      filteredNodes = initialNodes;
+
+      // Update Stats
+      document.getElementById('stats-counter').innerText = 
+        `${initialNodes.length} / ${fullGraphData.nodes.length} Nodes | ${initialLinks.length} / ${fullGraphData.links.length} Links`;
+
+      Graph = ForceGraph3D()(container)
+        .graphData({ nodes: initialNodes, links: initialLinks })
+        .backgroundColor(isDark ? '#0b0c10' : '#f8f9fa')
+        .nodeId('id')
+        .warmupTicks(5)
+        .cooldownTicks(25)
+        .nodeLabel(node => {
+          return `<div style="color:#fff; background:rgba(15,23,42,0.9); padding:6px 10px; border-radius:6px; border:1px solid #30363d;">
+            <b>${node.name}</b> (${node.node_type})<br/>
+            <span style="font-size:11px; color:#94a3b8;">Layer: ${node.layer.toUpperCase()}</span>
+          </div>`;
+        })
+        .nodeThreeObject(node => {
+          if (['AbsentRequirement', 'GapNode'].includes(node.node_type) || ['gap', 'absent'].includes(node.layer)) {
+            const group = new THREE.Group();
+            
+            // Core sphere
+            const coreGeo = new THREE.SphereGeometry(7, 12, 12);
+            const coreMat = new THREE.MeshBasicMaterial({ color: 0xe63946 });
+            const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+            group.add(coreMesh);
+
+            // Outer 3D pulsing aura sphere
+            const auraGeo = new THREE.SphereGeometry(13, 12, 12);
+            const auraMat = new THREE.MeshBasicMaterial({
+              color: 0xe63946,
+              transparent: true,
+              opacity: 0.35,
+              side: THREE.BackSide
+            });
+            const auraMesh = new THREE.Mesh(auraGeo, auraMat);
+            auraMesh.name = 'pulsingAura';
+            group.add(auraMesh);
+
+            return group;
+          }
+          return false;
+        })
+        .nodeColor(node => node.color || '#58a6ff')
+        .nodeVal(node => {
+          if (node.layer === 'req') return 12;
+          if (node.layer === 'ui') return 8;
+          return 4;
+        })
+
+        .linkWidth(link => getLinkWidth(link))
+        .linkColor(link => {
+          const isInter = isInterLayerLink(link);
+          if (isInter) {
+            if (link.rel_type === 'IMPLEMENTS') return isDark ? 'rgba(127, 119, 221, 0.75)' : 'rgba(102, 92, 215, 0.75)';
+            if (link.rel_type === 'RENDERS') return isDark ? 'rgba(29, 158, 117, 0.75)' : 'rgba(20, 128, 94, 0.75)';
+            if (link.rel_type === 'COVERS') return isDark ? 'rgba(88, 166, 255, 0.75)' : 'rgba(9, 105, 218, 0.75)';
+          }
+          return isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.10)';
+        })
+        .linkDirectionalParticles(0)
+        .onNodeHover(node => {
+          if (container) container.style.cursor = node ? 'pointer' : 'default';
+        })
+        .onNodeClick(node => {
+          focusNode(node);
+        });
+
+
+      // Add 3D Layer Planes (Glassmorphism Tier Visualizers at Z = +200, 0, -200)
+      addLayerPlanes();
+
+      // Configure degree-aware repulsive forces & link distances
+      updatePhysicsForces();
+
+      // Initial Sidebar Populate
+      updateNodeListCards();
+
+      // Hide Loading Screen
+      const loadingScreen = document.getElementById('loading-screen');
+      if (loadingScreen) {
+        loadingScreen.style.opacity = '0';
+        loadingScreen.style.display = 'none';
+        loadingScreen.style.pointerEvents = 'none';
+      }
+    }
+
+    // Add semi-transparent 3D Layer Planes (Dynamic size centered at origin)
+    let layerPlanesGroup = null;
+
+    function addLayerPlanes() {
+      if (!Graph) return;
+      const scene = Graph.scene();
+
+      if (layerPlanesGroup) {
+        scene.remove(layerPlanesGroup);
+      }
+      layerPlanesGroup = new THREE.Group();
+
+      const planeDim = Math.max(500, Math.min(1200, Math.round(600 * (currentSpacingScale || 1.0))));
+
+      const layers = [
+        { z: currentLayerGap, color: 0x7f77dd, label: `Requirement Layer (Z=+${currentLayerGap})` },
+        { z: 0, color: 0x1d9e75, label: "UI Layer (Z=0)" },
+        { z: -currentLayerGap, color: 0xba7517, label: `Code Layer (Z=-${currentLayerGap})` }
+      ];
+
+      layers.forEach(l => {
+        const planeGeo = new THREE.PlaneGeometry(planeDim, planeDim);
+        const planeMat = new THREE.MeshBasicMaterial({
+          color: l.color,
+          transparent: true,
+          opacity: 0.06,
+          side: THREE.DoubleSide
+        });
+        const planeMesh = new THREE.Mesh(planeGeo, planeMat);
+        planeMesh.position.set(0, 0, l.z);
+        layerPlanesGroup.add(planeMesh);
+
+        // Grid helper centered at (0,0)
+        const grid = new THREE.GridHelper(planeDim, 20, l.color, l.color);
+        grid.rotation.x = Math.PI / 2;
+        grid.position.set(0, 0, l.z);
+        grid.material.opacity = 0.18;
+        grid.material.transparent = true;
+        layerPlanesGroup.add(grid);
+      });
+
+      scene.add(layerPlanesGroup);
+    }
+
+
+    // 1. Draw 3D Labels for Edge Relationship Types (Capped for performance)
+    function draw3DLabels() {
+      if (!Graph || !labelsVisible) return;
+      const scene = Graph.scene();
+
+      if (labelsGroup) scene.remove(labelsGroup);
+      labelsGroup = new THREE.Group();
+      labelsGroup.visible = labelsVisible;
+
+      // Inter-layer Edge Labels (capped at top 60 for performance)
+      const currentLinks = (Graph.graphData().links || []).slice(0, 60);
+      currentLinks.forEach(link => {
+        if (['IMPLEMENTS', 'RENDERS', 'COVERS'].includes(link.rel_type)) {
+          const srcId = typeof link.source === 'object' ? link.source.id : link.source;
+          const tgtId = typeof link.target === 'object' ? link.target.id : link.target;
+          const srcNode = nodeMap.get(srcId);
+          const tgtNode = nodeMap.get(tgtId);
+
+          if (srcNode && tgtNode) {
+            const midX = ((srcNode.x || 0) + (tgtNode.x || 0)) / 2;
+            const midY = ((srcNode.y || 0) + (tgtNode.y || 0)) / 2;
+            const midZ = ((srcNode.z !== undefined ? srcNode.z : srcNode.fz || 0) + (tgtNode.z !== undefined ? tgtNode.z : tgtNode.fz || 0)) / 2;
+
+            const colorHex = link.rel_type === 'IMPLEMENTS' ? '#7f77dd' : (link.rel_type === 'RENDERS' ? '#1d9e75' : '#58a6ff');
+            const sprite = createTextSprite(`${link.rel_type}`, colorHex, 45, 14);
+            sprite.position.set(midX, midY, midZ);
+            labelsGroup.add(sprite);
+          }
+        }
+      });
+
+      scene.add(labelsGroup);
+    }
+
+    // 2. Interconnected Component Clustering & Group Labeling
+    function findConnectedClusters() {
+      const adj = new Map();
+      fullGraphData.nodes.forEach(n => adj.set(n.id, []));
+
+      fullGraphData.links.forEach(l => {
+        const sId = typeof l.source === 'object' ? l.source.id : l.source;
+        const tId = typeof l.target === 'object' ? l.target.id : l.target;
+        if (adj.has(sId) && adj.has(tId)) {
+          adj.get(sId).push(tId);
+          adj.get(tId).push(sId);
+        }
+      });
+
+      const visited = new Set();
+      const clusters = [];
+
+      fullGraphData.nodes.forEach(node => {
+        if (!visited.has(node.id)) {
+          const component = [];
+          const queue = [node.id];
+          visited.add(node.id);
+
+          while (queue.length > 0) {
+            const curr = queue.shift();
+            const currNode = nodeMap.get(curr);
+            if (currNode) component.push(currNode);
+
+            const neighbors = adj.get(curr) || [];
+            neighbors.forEach(nbr => {
+              if (!visited.has(nbr)) {
+                visited.add(nbr);
+                queue.push(nbr);
+              }
+            });
+          }
+
+          if (component.length >= 3) {
+            clusters.push(component);
+          }
+        }
+      });
+
+      return clusters;
+    }
+
+    function deriveClusterName(nodes) {
+      const tokenCounts = new Map();
+      const stop = new Set(['page', 'component', 'function', 'handler', 'get', 'set', 'route', 'code', 'ui', 'req', 'with', 'from', 'app']);
+
+      nodes.forEach(n => {
+        const text = (n.name + " " + (n.properties?.file || n.file || '')).toLowerCase();
+        const words = text.match(/[a-z]{4,}/g) || [];
+        words.forEach(w => {
+          if (!stop.has(w)) {
+            tokenCounts.set(w, (tokenCounts.get(w) || 0) + 1);
+          }
+        });
+      });
+
+      let topWord = 'Interconnected';
+      let maxCnt = 0;
+      tokenCounts.forEach((cnt, word) => {
+        if (cnt > maxCnt) {
+          maxCnt = cnt;
+          topWord = word;
+        }
+      });
+
+      const capitalized = topWord.charAt(0).toUpperCase() + topWord.slice(1);
+      return `Cluster: ${capitalized} Group (${nodes.length} nodes)`;
+    }
+
+    function drawClusterLabels() {
+      if (!Graph) return;
+      const scene = Graph.scene();
+
+      if (clustersGroup) scene.remove(clustersGroup);
+      clustersGroup = new THREE.Group();
+      clustersGroup.visible = clustersVisible;
+
+      const clusters = findConnectedClusters();
+
+      clusters.forEach(cluster => {
+        let sumX = 0, sumY = 0, sumZ = 0;
+        cluster.forEach(n => {
+          sumX += (n.x || 0);
+          sumY += (n.y || 0);
+          sumZ += (n.z !== undefined ? n.z : (n.fz || 0));
+        });
+        const centerX = sumX / cluster.length;
+        const centerY = sumY / cluster.length;
+        const centerZ = sumZ / cluster.length;
+
+        const clusterName = deriveClusterName(cluster);
+        const sprite = createTextSprite(clusterName, '#bc8cff', 85, 20);
+        sprite.position.set(centerX, centerY + 25, centerZ + 8);
+        clustersGroup.add(sprite);
+      });
+
+      scene.add(clustersGroup);
+    }
+
+    // Canvas Text Sprite Creation Helper
+    function createTextSprite(text, colorHex, scaleW = 80, scaleH = 20) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 128;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.90)';
+      ctx.strokeStyle = colorHex;
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      if (ctx.roundRect) {
+        ctx.roundRect(8, 8, 496, 112, 14);
+      } else {
+        ctx.rect(8, 8, 496, 112);
+      }
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, 256, 64);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.needsUpdate = true;
+      const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true });
+      const sprite = new THREE.Sprite(spriteMat);
+      sprite.scale.set(scaleW, scaleH, 1);
+      return sprite;
+    }
+
+    // Searchable DOM overlay for native browser Ctrl+F
+    function updateCtrlFOverlay() {
+      let overlay = document.getElementById('ctrl-f-overlay');
+      if (!overlay) return;
+
+      let html = '';
+      fullGraphData.nodes.forEach(n => {
+        html += `<div class="searchable-item" onclick="focusNodeById('${n.id}')">Node: ${n.name} (${n.node_type} - ${n.layer.toUpperCase()})</div>`;
+      });
+
+      fullGraphData.links.forEach(l => {
+        const sId = typeof l.source === 'object' ? l.source.id : l.source;
+        const tId = typeof l.target === 'object' ? l.target.id : l.target;
+        const sNode = nodeMap.get(sId);
+        const tNode = nodeMap.get(tId);
+        if (sNode && tNode) {
+          html += `<div class="searchable-item">Link ${l.rel_type}: ${sNode.name} to ${tNode.name}</div>`;
+        }
+      });
+
+      overlay.innerHTML = html;
+    }
+
+    function focusNodeById(id) {
+      const node = nodeMap.get(id);
+      if (node) focusNode(node);
+    }
+
+    // Focus Node in 3D Space
+    function focusNode(node) {
+      selectedNode = node;
+
+      if (traceModeActive) {
+        handleTraceNodeSelection(node);
+      }
+
+      const distance = 120;
+
+      const distRatio = 1 + distance/Math.hypot(node.x || 0, node.y || 0, node.z || node.fz || 0);
+
+      Graph.cameraPosition(
+        { x: (node.x || 0) * distRatio, y: (node.y || 0) * distRatio, z: ((node.z || node.fz || 0) + 60) },
+        node,
+        1500
+      );
+
+      // Open Inspector
+      openInspector(node);
+    }
+
+    // Camera Presets
+    function setCameraView(preset) {
+      if (!Graph) return;
+      if (preset === 'iso') {
+        Graph.cameraPosition({ x: 300, y: 300, z: currentLayerGap * 2.2 }, { x: 0, y: 0, z: 0 }, 1200);
+      } else if (preset === 'req') {
+        Graph.cameraPosition({ x: 0, y: 1, z: currentLayerGap + 250 }, { x: 0, y: 0, z: currentLayerGap }, 1200);
+      } else if (preset === 'ui') {
+        Graph.cameraPosition({ x: 0, y: 1, z: 250 }, { x: 0, y: 0, z: 0 }, 1200);
+      } else if (preset === 'code') {
+        Graph.cameraPosition({ x: 0, y: 1, z: -currentLayerGap + 250 }, { x: 0, y: 0, z: -currentLayerGap }, 1200);
+      }
+    }
+
+
+    // Disconnected Node Filter & Sidebar Filtering Logic
+    let hideDisconnectedOverall = false;
+    let hideDisconnectedIntra = false;
+    let hideDisconnectedInter = false;
+
+    function computeNodeDegrees() {
+      const degrees = new Map();
+      fullGraphData.nodes.forEach(n => {
+        degrees.set(n.id, { total: 0, intra: 0, inter: 0 });
+      });
+
+      fullGraphData.links.forEach(l => {
+        const sId = typeof l.source === 'object' ? l.source.id : l.source;
+        const tId = typeof l.target === 'object' ? l.target.id : l.target;
+        const sNode = nodeMap.get(sId);
+        const tNode = nodeMap.get(tId);
+
+        if (sNode && tNode) {
+          const isInter = sNode.layer !== tNode.layer;
+          
+          const sDeg = degrees.get(sId);
+          if (sDeg) {
+            sDeg.total++;
+            if (isInter) sDeg.inter++;
+            else sDeg.intra++;
+          }
+
+          const tDeg = degrees.get(tId);
+          if (tDeg) {
+            tDeg.total++;
+            if (isInter) tDeg.inter++;
+            else tDeg.intra++;
+          }
+        }
+      });
+
+      return degrees;
+    }
+
+    function applyActiveFilters() {
+      if (!fullGraphData || !fullGraphData.nodes) return;
+
+      hideDisconnectedOverall = document.getElementById('hide-disconnected-overall')?.checked || false;
+      hideDisconnectedIntra = document.getElementById('hide-disconnected-intra')?.checked || false;
+      hideDisconnectedInter = document.getElementById('hide-disconnected-inter')?.checked || false;
+
+      const degrees = computeNodeDegrees();
+
+      let candidateNodes = fullGraphData.nodes.filter(node => {
+        // 1. Layer filter
+        const matchesLayer = (currentLayerFilter === 'all') || (node.layer === currentLayerFilter);
+        if (!matchesLayer) return false;
+
+        // 2. Search query filter
+        const matchesQuery = !activeSearchQuery || 
+          (node.name && node.name.toLowerCase().includes(activeSearchQuery)) ||
+          (node.id && node.id.toLowerCase().includes(activeSearchQuery)) ||
+          (node.node_type && node.node_type.toLowerCase().includes(activeSearchQuery));
+        if (!matchesQuery) return false;
+
+        // 3. Disconnected node filters
+        const deg = degrees.get(node.id) || { total: 0, intra: 0, inter: 0 };
+        if (hideDisconnectedOverall && deg.total === 0) return false;
+        if (hideDisconnectedIntra && deg.intra === 0) return false;
+        if (hideDisconnectedInter && deg.inter === 0) return false;
+
+        return true;
+      });
+
+      // Sort candidate nodes by connectivity degree (total links) so core nodes stay when limiting
+      candidateNodes.sort((a, b) => {
+        const degA = degrees.get(a.id)?.total || 0;
+        const degB = degrees.get(b.id)?.total || 0;
+        return degB - degA;
+      });
+
+      const visibleNodes = candidateNodes.slice(0, maxVisibleNodes);
+      const visibleNodeIds = new Set(visibleNodes.map(n => n.id));
+
+      const visibleLinks = fullGraphData.links.filter(link => {
+        const sId = typeof link.source === 'object' ? link.source.id : link.source;
+        const tId = typeof link.target === 'object' ? link.target.id : link.target;
+        return visibleNodeIds.has(sId) && visibleNodeIds.has(tId);
+      });
+
+      if (Graph) {
+        Graph.graphData({ nodes: visibleNodes, links: visibleLinks });
+      }
+
+
+      filteredNodes = visibleNodes;
+      updateNodeListCards();
+
+      const statsElem = document.getElementById('stats-counter');
+      if (statsElem) {
+        statsElem.innerText = `${visibleNodes.length} / ${fullGraphData.nodes.length} Nodes | ${visibleLinks.length} / ${fullGraphData.links.length} Links`;
+      }
+    }
+
+    function updateNodeListCards() {
+      const listContainer = document.getElementById('node-list');
+      if (!listContainer) return;
+      listContainer.innerHTML = '';
+
+      // Display top 100 matching cards for smooth rendering
+      filteredNodes.slice(0, 100).forEach(node => {
+        const card = document.createElement('div');
+        card.className = 'node-card';
+        card.onclick = () => focusNode(node);
+
+        const badgeClass = `badge-${node.layer || 'code'}`;
+        card.innerHTML = `
+          <div class="node-card-title">
+            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 220px;">${node.name}</span>
+            <span class="node-badge ${badgeClass}">${node.node_type}</span>
+          </div>
+          <div class="node-card-desc">Layer: ${(node.layer || 'code').toUpperCase()} | Z=${node.fz}</div>
+        `;
+        listContainer.appendChild(card);
+      });
+    }
+
+    function filterLayer(layer, btnElem) {
+      currentLayerFilter = layer;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      if (btnElem) btnElem.classList.add('active');
+      applyActiveFilters();
+    }
+
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      activeSearchQuery = e.target.value.toLowerCase().trim();
+      applyActiveFilters();
+    });
+
+    function updateNodeList() {
+      applyActiveFilters();
+    }
+
+
+    // Blast Impact Calculator & Inspector Card
+    function calculateBlastImpact(startNodeId) {
+      const component = findFullConnectedComponent(startNodeId);
+      const totalImpacted = Math.max(0, component.nodes.size - 1);
+
+      let layerCounts = { code: 0, ui: 0, req: 0, gap: 0, absent: 0 };
+      component.nodes.forEach(nId => {
+        const node = nodeMap.get(nId);
+        if (node) {
+          const l = node.layer || 'code';
+          layerCounts[l] = (layerCounts[l] || 0) + 1;
+        }
+      });
+
+      let riskLevel = "LOW RISK";
+      let riskColor = "#2da44e";
+      let badgeBg = "rgba(45, 164, 78, 0.15)";
+
+      if (totalImpacted >= 30) {
+        riskLevel = "HIGH RISK";
+        riskColor = "#cf222e";
+        badgeBg = "rgba(207, 34, 46, 0.15)";
+      } else if (totalImpacted >= 10) {
+        riskLevel = "MEDIUM RISK";
+        riskColor = "#d97706";
+        badgeBg = "rgba(217, 119, 6, 0.15)";
+      }
+
+      return {
+        totalImpacted,
+        riskLevel,
+        riskColor,
+        badgeBg,
+        layerCounts,
+        component
+      };
+    }
+
+    // Inspector Overlay
+    function openInspector(node) {
+      const inspector = document.getElementById('inspector');
+      const title = document.getElementById('inspector-name');
+      const body = document.getElementById('inspector-body');
+
+      title.innerText = node.name;
+
+      const blastImpact = calculateBlastImpact(node.id);
+
+      let propsHtml = `
+        <div class="blast-score-card" style="margin-bottom: 14px; padding: 12px; border-radius: 10px; border: 1px solid ${blastImpact.riskColor}; background: ${blastImpact.badgeBg};">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 700; font-size: 13px; color: ${blastImpact.riskColor};">${blastImpact.riskLevel}</span>
+            <span style="font-size: 11px; font-weight: 600; background: rgba(0,0,0,0.25); padding: 2px 8px; border-radius: 4px;">${blastImpact.totalImpacted} Dependencies</span>
+          </div>
+          <div style="font-size: 11px; color: var(--text-sub); margin-bottom: 8px;">
+            Impacts ${blastImpact.totalImpacted} total elements across architecture layers.
+          </div>
+          <div style="display: flex; gap: 6px; font-size: 10px; flex-wrap: wrap;">
+            <span style="background: rgba(186,117,23,0.2); color: #ba7517; padding: 2px 6px; border-radius: 4px;">Code: ${blastImpact.layerCounts.code || 0}</span>
+            <span style="background: rgba(29,158,117,0.2); color: #1d9e75; padding: 2px 6px; border-radius: 4px;">UI: ${blastImpact.layerCounts.ui || 0}</span>
+            <span style="background: rgba(127,119,221,0.2); color: #7f77dd; padding: 2px 6px; border-radius: 4px;">Req: ${blastImpact.layerCounts.req || 0}</span>
+          </div>
+        </div>
+      `;
+
+      propsHtml += `<div><b>Node ID:</b> ${node.id}</div>`;
+      propsHtml += `<div><b>Type:</b> ${node.node_type} (${node.layer.toUpperCase()})</div>`;
+      propsHtml += `<div><b>Z-Plane:</b> ${node.fz}</div>`;
+
+      if (node.properties) {
+        Object.entries(node.properties).forEach(([k, v]) => {
+          if (k !== 'id' && k !== 'name') {
+            propsHtml += `<div style="word-break: break-all; margin-top: 2px;"><b>${k}:</b> ${v}</div>`;
+          }
+        });
+      }
+
+      body.innerHTML = propsHtml;
+      inspector.style.display = 'block';
+    }
+
+    function closeInspector() {
+      document.getElementById('inspector').style.display = 'none';
+    }
+
+    // Interactive Shortest Path Trace Mode
+    let traceModeActive = false;
+    let traceStartNode = null;
+    let traceEndNode = null;
+
+    function findShortestPath(startId, endId) {
+      const adj = new Map();
+      fullGraphData.nodes.forEach(n => adj.set(n.id, []));
+
+      fullGraphData.links.forEach(l => {
+        const sId = typeof l.source === 'object' ? l.source.id : l.source;
+        const tId = typeof l.target === 'object' ? l.target.id : l.target;
+        if (adj.has(sId) && adj.has(tId)) {
+          adj.get(sId).push({ neighborId: tId, link: l });
+          adj.get(tId).push({ neighborId: sId, link: l });
+        }
+      });
+
+      const queue = [[startId]];
+      const visited = new Set([startId]);
+
+      while (queue.length > 0) {
+        const path = queue.shift();
+        const curr = path[path.length - 1];
+
+        if (curr === endId) {
+          const pathLinks = new Set();
+          for (let i = 0; i < path.length - 1; i++) {
+            const u = path[i];
+            const v = path[i + 1];
+            const edge = (adj.get(u) || []).find(n => n.neighborId === v);
+            if (edge) pathLinks.add(edge.link);
+          }
+          return { pathNodes: new Set(path), pathOrder: path, pathLinks };
+        }
+
+        const neighbors = adj.get(curr) || [];
+        for (const { neighborId } of neighbors) {
+          if (!visited.has(neighborId)) {
+            visited.add(neighborId);
+            queue.push([...path, neighborId]);
+          }
+        }
+      }
+
+      return null;
+    }
+
+    function toggleTraceMode() {
+      const btn = document.getElementById('trace-mode-btn');
+      const panel = document.getElementById('trace-breadcrumb-panel');
+      const content = document.getElementById('trace-breadcrumb-content');
+
+      if (!traceModeActive) {
+        traceModeActive = true;
+        traceStartNode = null;
+        traceEndNode = null;
+        btn.innerText = '🗺️ Exit Trace';
+        btn.style.background = '#38bdf8';
+        btn.style.color = '#0f172a';
+
+        panel.style.display = 'block';
+        content.innerHTML = `<span><b>Trace Mode:</b> Click <b>START Node</b> on graph...</span>`;
+      } else {
+        traceModeActive = false;
+        traceStartNode = null;
+        traceEndNode = null;
+        btn.innerText = '🗺️ Trace Path';
+        btn.style.background = '';
+        btn.style.color = '';
+        panel.style.display = 'none';
+
+        // Reset visual path highlights
+        if (Graph) {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Graph.linkColor(link => {
+            const isInter = isInterLayerLink(link);
+            if (isInter) {
+              if (link.rel_type === 'IMPLEMENTS') return isDark ? 'rgba(127, 119, 221, 0.75)' : 'rgba(102, 92, 215, 0.75)';
+              if (link.rel_type === 'RENDERS') return isDark ? 'rgba(29, 158, 117, 0.75)' : 'rgba(20, 128, 94, 0.75)';
+              if (link.rel_type === 'COVERS') return isDark ? 'rgba(88, 166, 255, 0.75)' : 'rgba(9, 105, 218, 0.75)';
+            }
+            return isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.10)';
+          });
+          Graph.nodeColor(node => node.color || '#58a6ff');
+          Graph.linkDirectionalParticles(link => isInterLayerLink(link) ? 2 : 0);
+        }
+      }
+    }
+
+    document.getElementById('trace-mode-btn').addEventListener('click', toggleTraceMode);
+
+    function handleTraceNodeSelection(node) {
+      const content = document.getElementById('trace-breadcrumb-content');
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+      if (!traceStartNode) {
+        traceStartNode = node;
+        content.innerHTML = `<span><b>Start:</b> <span style="color:#38bdf8;">${node.name}</span> ➔ Click <b>END Node</b>...</span>`;
+      } else if (!traceEndNode && node.id !== traceStartNode.id) {
+        traceEndNode = node;
+        const result = findShortestPath(traceStartNode.id, traceEndNode.id);
+
+        if (result) {
+          let breadcrumbHtml = `<span><b>Path Trace (${result.pathOrder.length} steps):</b></span> `;
+          result.pathOrder.forEach((nId, idx) => {
+            const n = nodeMap.get(nId);
+            const name = n ? n.name : nId;
+            const type = n ? n.node_type : 'Node';
+            breadcrumbHtml += `<span style="background:rgba(56,189,248,0.15); color:#38bdf8; padding:3px 8px; border-radius:6px;">${name} (${type})</span>`;
+            if (idx < result.pathOrder.length - 1) {
+              breadcrumbHtml += `<span style="color:var(--text-sub);">➔</span>`;
+            }
+          });
+          content.innerHTML = breadcrumbHtml;
+
+          // Highlight shortest path edges & nodes in 3D graph
+          if (Graph) {
+            Graph.linkColor(l => result.pathLinks.has(l) ? '#38bdf8' : (isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)'));
+            Graph.nodeColor(n => result.pathNodes.has(n.id) ? (n.color || '#38bdf8') : (isDark ? 'rgba(60,65,75,0.15)' : 'rgba(200,205,215,0.2)'));
+            Graph.linkDirectionalParticles(l => result.pathLinks.has(l) ? 6 : 0)
+                 .linkDirectionalParticleWidth(l => result.pathLinks.has(l) ? 5 : 0)
+                 .linkDirectionalParticleSpeed(l => result.pathLinks.has(l) ? 0.02 : 0);
+          }
+        } else {
+          content.innerHTML = `<span><b>No path found</b> between <b>${traceStartNode.name}</b> and <b>${traceEndNode.name}</b> across graph layers.</span>`;
+        }
+      }
+    }
+
+
+    // Blast Simulator Mode (Traces connected impact paths across all layers, fades rest)
+    let activeBlastComponent = { nodes: new Set(), links: new Set() };
+
+    function findFullConnectedComponent(startNodeId) {
+      const adj = new Map();
+      fullGraphData.nodes.forEach(n => adj.set(n.id, []));
+
+      fullGraphData.links.forEach(l => {
+        const sId = typeof l.source === 'object' ? l.source.id : l.source;
+        const tId = typeof l.target === 'object' ? l.target.id : l.target;
+        if (adj.has(sId) && adj.has(tId)) {
+          adj.get(sId).push({ neighborId: tId, link: l });
+          adj.get(tId).push({ neighborId: sId, link: l });
+        }
+      });
+
+      const visitedNodes = new Set([startNodeId]);
+      const connectedLinks = new Set();
+      const queue = [startNodeId];
+
+      while (queue.length > 0) {
+        const curr = queue.shift();
+        const neighbors = adj.get(curr) || [];
+        neighbors.forEach(({ neighborId, link }) => {
+          connectedLinks.add(link);
+          if (!visitedNodes.has(neighborId)) {
+            visitedNodes.add(neighborId);
+            queue.push(neighborId);
+          }
+        });
+      }
+
+      return { nodes: visitedNodes, links: connectedLinks };
+    }
+
+    function toggleBlastSimulation() {
+      const btn = document.getElementById('blast-sim-btn');
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+      if (!blastSimulationActive) {
+        if (!selectedNode) {
+          alert('Please click and select a node first to simulate its blast radius impact!');
+          return;
+        }
+
+        blastSimulationActive = true;
+        btn.innerText = '⚡ Exit Simulation';
+        btn.style.background = '#d9381e';
+
+        activeBlastComponent = findFullConnectedComponent(selectedNode.id);
+
+        if (Graph) {
+          // 1. Faded / Highlighted Link Colors
+          Graph.linkColor(link => {
+            if (activeBlastComponent.links.has(link)) {
+              if (link.rel_type === 'IMPLEMENTS') return isDark ? 'rgba(127, 119, 221, 0.95)' : 'rgba(102, 92, 215, 0.95)';
+              if (link.rel_type === 'RENDERS') return isDark ? 'rgba(29, 158, 117, 0.95)' : 'rgba(20, 128, 94, 0.95)';
+              if (link.rel_type === 'COVERS') return isDark ? 'rgba(88, 166, 255, 0.95)' : 'rgba(9, 105, 218, 0.95)';
+              return isDark ? 'rgba(245, 158, 11, 0.95)' : 'rgba(217, 119, 6, 0.95)';
+            }
+            // FADE all non-connected edges completely
+            return isDark ? 'rgba(255, 255, 255, 0.02)' : 'rgba(0, 0, 0, 0.02)';
+          });
+
+          // 2. Faded / Highlighted Node Colors
+          Graph.nodeColor(node => {
+            if (activeBlastComponent.nodes.has(node.id)) {
+              return node.color || '#58a6ff';
+            }
+            // Dim non-connected nodes
+            return isDark ? 'rgba(60, 65, 75, 0.15)' : 'rgba(200, 205, 215, 0.20)';
+          });
+
+          // 3. Highlighted Particle Animations on connected edges only
+          Graph.linkDirectionalParticles(link => activeBlastComponent.links.has(link) ? 6 : 0)
+               .linkDirectionalParticleWidth(link => activeBlastComponent.links.has(link) ? 4 : 0)
+               .linkDirectionalParticleSpeed(link => activeBlastComponent.links.has(link) ? 0.015 : 0);
+        }
+      } else {
+        // Stop / Exit Blast Simulation
+        blastSimulationActive = false;
+        btn.innerText = '⚡ Blast Simulator';
+        btn.style.background = '';
+
+        if (Graph) {
+          Graph.linkColor(link => {
+            const isInter = isInterLayerLink(link);
+            if (isInter) {
+              if (link.rel_type === 'IMPLEMENTS') return isDark ? 'rgba(127, 119, 221, 0.75)' : 'rgba(102, 92, 215, 0.75)';
+              if (link.rel_type === 'RENDERS') return isDark ? 'rgba(29, 158, 117, 0.75)' : 'rgba(20, 128, 94, 0.75)';
+              if (link.rel_type === 'COVERS') return isDark ? 'rgba(88, 166, 255, 0.75)' : 'rgba(9, 105, 218, 0.75)';
+            }
+            return isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.10)';
+          });
+
+          Graph.nodeColor(node => node.color || '#58a6ff');
+
+          Graph.linkDirectionalParticles(2)
+               .linkDirectionalParticleWidth(link => isInterLayerLink(link) ? 3 : 1)
+               .linkDirectionalParticleSpeed(0.005);
+        }
+      }
+    }
+
+    document.getElementById('blast-sim-btn').addEventListener('click', toggleBlastSimulation);
+
+
+    // Initialize Page
+    window.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      loadGraphData();
+    });
+  </script>
+</body>
+</html>
