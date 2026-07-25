@@ -56,20 +56,15 @@ def main() -> None:
     from pipeline.online import run_online_pipeline
     report_path = run_online_pipeline(repo, pr_number)
 
-    # Print result path + full report text
+    # Print result summary & exported deliverable paths
     print("-" * 50)
-    print(f"Report saved to: {report_path}")
-    print()
-
-    p = Path(report_path)
-    if p.exists():
-        text = p.read_text(encoding="utf-8")
-        if hasattr(sys.stdout, "reconfigure"):
-            try:
-                sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-            except Exception:
-                pass
-        print(text)
+    print(f"✅ Blast Radius Analysis complete for PR #{pr_number}!")
+    print(f"📁 Deliverables saved to: {Path(report_path).parent}")
+    print(f"   • Markdown: {report_path}")
+    print(f"   • HTML:     {Path(report_path).with_suffix('.html')}")
+    print(f"   • PDF:      {Path(report_path).with_suffix('.pdf')}")
+    print(f"   • DOCX:     {Path(report_path).with_suffix('.docx')}")
+    print("-" * 50)
 
 
 if __name__ == "__main__":
