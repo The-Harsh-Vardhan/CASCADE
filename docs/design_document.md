@@ -52,6 +52,51 @@ The structured `BlastRadiusReport` JSON is transformed into an HTML report via J
 **LLM invocation is bounded to three phases (Phase 1 addition).**
 The Phase 1 rewrite adds an LLM call per page for semantic labeling — the only place in the pipeline where this is justified outside Phases 2 and 4. The justification: deterministic CSS selectors can identify what an element *is* (a `<button>`) but not what it *does* ("initiates the document signing workflow"). The LLM bridges this gap by reading the rendered page text and labeling components, user flows, and entity type. Critically, the LLM does not generate synthetic UI elements — it labels elements that Playwright already captured. The blast radius impact of a Phase 1 LLM failure is bounded: if the LLM call fails for a page, the `PageAnalysis` falls back to a URL-heuristic stub (`_guess_entity()`) and zero components rather than hallucinating components that don't exist.
 
+### Pipeline Sequence & Data Flow
+
+The sequence diagram below details how data flows through deterministic parsing and LLM reasoning boundaries across all six phases:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant App as Target App / GitHub
+    participant P1 as Phase 1: Playwright Crawl
+    participant P2 as Phase 2: Docling Spec Ingest
+    participant P3 as Phase 3: ast-grep Code Analysis
+    participant P4 as Phase 4: Neo4j Graph Builder
+    participant P5 as Phase 5: PPR Reason Engine
+    participant P6 as Phase 6: Jinja2 Report Renderer
+    participant Gemini as Google Gemini API
+
+    Note over P1,P3: Offline Pipeline Execution
+    App->>P1: Visit Auth/Unauth Pages (DOM + Text)
+    P1->>Gemini: Label Components & UserFlows (Phase 1b)
+    Gemini-->>P1: Return PageAnalysis JSON
+    App->>P2: Raw MDX Docs (25 files)
+    P2->>Gemini: Extract Structured Requirements
+    Gemini-->>P2: Return Requirement JSON List
+    App->>P3: TypeScript Repository AST
+    P3->>P3: ast-grep Function Extraction
+
+    Note over P4: Cross-Layer Resolution
+    P3-->>P4: CodeFunction Nodes
+    P1-->>P4: UIElement & UserFlow Nodes
+    P2-->>P4: Requirement Nodes
+    P4->>P4: Vector Cosine Similarity (top-15 pairs)
+    P4->>Gemini: Rerank & Confirm IMPLEMENTS links
+    Gemini-->>P4: Confirmed Edges + Confidence Scores
+    P4->>Neo4j: Persist 3-Layer Graph & GapNodes
+
+    Note over P5,P6: Online PR Analysis Execution
+    App->>P5: Fetch PR Diff (GitHub REST API)
+    P4-->>P5: Retrieve Subgraph & Seeds
+    P5->>P5: Calculate Personalized PageRank (NetworkX, α=0.85)
+    P5-->>P6: Structured BlastRadiusReport JSON
+    P6->>Gemini: Generate Executive Prose Summary
+    Gemini-->>P6: Non-Engineer Summary
+    P6-->>App: Final Markdown + HTML Blast Radius Report
+```
+
 ---
 
 ## Section 2: Graph Schema with Justification
@@ -102,6 +147,40 @@ CALLS:        CodeFunction → CodeFunction  (ast-grep static analysis)
 **PART_OF_FLOW** edges connect individual UIElement components to the parent UserFlow in which they participate.
 
 **CALLS** edges are intra-layer CodeFunction → CodeFunction edges extracted by `ast-grep`.
+
+### Complete 3-Layer Graph Schema & Relationships
+
+The diagram below provides a complete visual specification of all node types, edge types, properties, and cross-layer connectivities enforced in Neo4j:
+
+```mermaid
+graph TD
+    subgraph Requirements_Layer ["1. Product Requirements Layer"]
+        REQ["<b>Requirement Node</b><br/>• id: REQ-001<br/>• title: Document Sending<br/>• feature_area: sending<br/>• coverage_status: COVERED"]
+        GAP["<b>GapNode / AbsentRequirement</b><br/>• id: ABSENT-REQ-003<br/>• requirement_id: REQ-003<br/>• absence_type: AUTH_GATED<br/>• reason: Admin permission required"]
+    end
+
+    subgraph UI_Layer ["2. UI Structure & User Flow Layer"]
+        FLOW["<b>UserFlow Node</b><br/>• id: FLOW-001<br/>• name: Document Signing<br/>• steps: ['upload', 'fields', 'send']"]
+        UI["<b>UIElement Node</b><br/>• id: page:{sha256}<br/>• label: /settings/profile<br/>• selector: [data-testid='profile-form']"]
+    end
+
+    subgraph Code_Layer ["3. Code Implementation Layer"]
+        CF1["<b>CodeFunction Node</b><br/>• id: sendDocument<br/>• file: packages/lib/server-only/send.ts<br/>• signature: sendDocument(id: string)"]
+        CF2["<b>CodeFunction Node</b><br/>• id: checkPermissions<br/>• file: packages/lib/server-only/auth.ts<br/>• signature: checkPermissions(userId)"]
+    end
+
+    CF1 -->|"CALLS<br/>(ast-grep AST)"| CF2
+    CF1 -->|"RENDERS<br/>(URL pattern, conf: 0.70)"| UI
+    CF1 -->|"IMPLEMENTS<br/>(LLM rerank, conf: 0.65 - 1.0)"| REQ
+    FLOW -->|"BELONGS_TO<br/>(step_order)"| UI
+    UI -->|"COVERS<br/>(UI vocabulary)"| REQ
+    FLOW -->|"COVERS<br/>(keyword match, max 40)"| REQ
+    GAP -.->|"ABSENT_FROM"| REQ
+
+    style Requirements_Layer fill:#2e1065,stroke:#7c3aed,color:#fff
+    style UI_Layer fill:#064e3b,stroke:#059669,color:#fff
+    style Code_Layer fill:#78350f,stroke:#d97706,color:#fff
+```
 
 ### Concrete Traversal Example
 
@@ -191,6 +270,32 @@ These two dimensions are multiplied to produce the final risk tier assignment, p
 | **DARK_CHANGE** | Changed function has no graph path to any requirement or UI | Manual review mandatory |
 
 The tier thresholds (0.5, 0.2) are calibrated for Documenso's graph density. With ~1,622 CodeFunction nodes and 272 requirements (Phase 2 rewrite; formerly 25), the graph is significantly denser at the Requirements layer. The average PPR score for an affected node is approximately 0.15–0.35. A threshold of 0.5 therefore selects only directly-connected, strongly-linked requirements.
+
+### Dual-Score Risk Tier Decision Flowchart
+
+The flowchart below demonstrates the mathematical decision logic that converts Personalized PageRank impact scores and semantic traceability confidence into actionable risk tiers:
+
+```mermaid
+flowchart TD
+    Start["Seeded Changed CodeFunction<br/>(From PR Diff)"] --> PPR["Compute Personalized PageRank (PPR)<br/>(NetworkX, α=0.85, 2.5× Sink Boost)"]
+    PPR --> Impact["Get Node PPR Score<br/>(impact_score)"]
+    
+    Impact --> EdgeCheck{"Has Graph Path to<br/>Requirement / UI?"}
+    EdgeCheck -- No --> Dark["Classify as <b>DARK_CHANGE</b><br/>• Flagged for Mandatory Manual QA Review"]
+    
+    EdgeCheck -- Yes --> TraceConf["Get Edge Traceability Confidence<br/>(traceability_confidence)"]
+    TraceConf --> Multiply["Combined Score = <br/>impact_score × traceability_confidence"]
+    
+    Multiply --> TierCheck{"Combined Score Range"}
+    TierCheck -- "Score ≥ 0.50" --> High["Risk Tier: <b>HIGH</b> 🔴<br/>• Red Flagged in Report<br/>• Mandatory QA Action Required"]
+    TierCheck -- "0.20 ≤ Score < 0.50" --> Med["Risk Tier: <b>MEDIUM</b> 🟠<br/>• Amber Flagged in Report<br/>• Recommended QA Review"]
+    TierCheck -- "Score < 0.20" --> Low["Risk Tier: <b>LOW</b> 🟡<br/>• Surfaced with Caveat<br/>• Verify before updating test plans"]
+    
+    style High fill:#7f1d1d,stroke:#ef4444,color:#fff
+    style Med fill:#78350f,stroke:#f59e0b,color:#fff
+    style Low fill:#713f12,stroke:#eab308,color:#fff
+    style Dark fill:#111827,stroke:#6b7280,color:#fff
+```
 
 ### Worked Example: sendDocument() in PR #3046
 
@@ -335,6 +440,35 @@ One residual limitation: `docs.documenso.com` is Next.js/JavaScript-rendered. Ev
 COVERS edges are capped at 40 per flow. Three flows (sending, signing, templates) hit this cap, meaning their true keyword-match set is larger. The cap prevents blast radius inflation at the cost of potentially missing some requirement links for high-coverage flows.
 
 **The call graph depth limitation is the most consequential scope cut.** `ast-grep` captures direct function definitions and call sites within a file or across explicit imports. It does not follow the tRPC abstraction boundary — a React client calling `api.document.send.useMutation()` is not connected in the call graph to the server-side `sendDocument()` procedure. This is why PR #3046 produces 13 dark changes: all changed functions that interact with the UI layer do so through tRPC hooks that are invisible to the current static analysis. The 13 dark changes for PR #3046 are a consequence of the tRPC abstraction gap documented in this section.
+
+### tRPC Network Boundary Gap Flowchart
+
+The diagram below illustrates the static analysis limitation where tRPC client-side hooks are decoupled from server-side procedure handlers:
+
+```mermaid
+flowchart LR
+    subgraph Frontend ["Client-Side React Component"]
+        ClientComp["AttachmentPopover.tsx<br/><code>trpc.attachment.create.useMutation()</code>"]
+    end
+
+    subgraph NetworkBoundary ["tRPC Network Abstraction Boundary"]
+        RPC["tRPC Router Protocol Contract<br/><i>(No Direct TypeScript Function Import)</i>"]
+    end
+
+    subgraph Backend ["Server-Side Handler"]
+        ServerHandler["createAttachment.ts<br/><code>export const createAttachment = ...</code>"]
+    end
+
+    ClientComp -.->|"tRPC Hook Invocation<br/>(Invisible to ast-grep)"| RPC
+    RPC -.->|"RPC Contract Mapping"| ServerHandler
+
+    ServerHandler -->|"Result in Phase 5"| DarkResult["Classified as <b>DARK_CHANGE</b><br/><i>(Surfaced in Report for Manual Review)</i>"]
+
+    style Frontend fill:#1e293b,stroke:#38bdf8,color:#fff
+    style NetworkBoundary fill:#312e81,stroke:#6366f1,stroke-dasharray: 5 5,color:#fff
+    style Backend fill:#1e293b,stroke:#f59e0b,color:#fff
+    style DarkResult fill:#881337,stroke:#f43f5e,color:#fff
+```
 
 **Bugs fixed vs. deferred.** From the v4 audit:
 
