@@ -1,4 +1,6 @@
-<img src="../cascade_logo.png" alt="CASCADE Logo" width="380" />
+<p align="center">
+  <img src="../cascade_logo.png" alt="CASCADE Logo" width="220" />
+</p>
 
 # CASCADE — Technical Design Document
 ### *Change Analysis for Software Cascade using Dependency Evidence*
