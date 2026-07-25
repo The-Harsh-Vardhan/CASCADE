@@ -118,6 +118,37 @@ See a real example: [`blast_radius_report.md`](blast_radius_report.md)
 
 ---
 
+## Knowledge Graph Architecture & Visualization
+
+The system constructs a heterogeneous, 3-layered knowledge graph in Neo4j that bridges the semantic gap between low-level code changes and high-level product requirements.
+
+![Blast Radius 3D Knowledge Graph Explorer](docs/images/graph_explorer.png)
+
+### The 3 Layers
+
+1. **Product Requirements Layer (Top):**
+   - **`Requirement` Nodes:** Extracted from Documenso PRD/MDX docs using Docling + Gemini. Categorized into 9 feature areas (`signing`, `sending`, `templates`, `teams`, `webhooks`, `api`, `auth`, `admin`, `notifications`).
+   - **`AbsentRequirement` / `GapNode` Nodes:** Requirements flagged as missing UI/code coverage (e.g., auth-gated features or uncrawled endpoints).
+2. **UI Structural & User Flow Layer (Middle):**
+   - **`UIElement` Nodes:** Web pages and DOM elements captured during Playwright crawling.
+   - **`UserFlow` Nodes:** Canonical end-to-end user workflows (e.g., Document Signing, Team Member Invitation).
+3. **Code Implementation Layer (Bottom):**
+   - **`CodeFunction` Nodes:** Functions, tRPC routes, and React component handlers parsed via `ast-grep` static analysis.
+
+### Core Relationships & Graph Edges
+
+- **`IMPLEMENTS`** (`CodeFunction` → `Requirement`): Semantic mapping confirmed via hybrid vector embedding + LLM reranking.
+- **`RENDERS`** (`CodeFunction` → `UIElement`): Links server/component logic to UI pages.
+- **`COVERS`** (`UserFlow` / `UIElement` → `Requirement`): Connects user flows and UI surfaces to satisfied requirements.
+- **`CALLS`** (`CodeFunction` → `CodeFunction`): Code-level call graph established via static AST parsing.
+- **`BELONGS_TO`** (`UserFlow` → `UIElement`): Step-order mapping for canonical user journeys.
+
+### Interactive 3D Graph Explorer
+
+An interactive 3D Force Graph visualization is pre-built at [`data/graph_explorer.html`](data/graph_explorer.html). Open this HTML file directly in any modern browser to inspect, search, filter, and interactively explore the 2,300+ nodes and 7,400+ cross-layer edges.
+
+---
+
 ## Prerequisites
 
 | Tool | Version | Install |
