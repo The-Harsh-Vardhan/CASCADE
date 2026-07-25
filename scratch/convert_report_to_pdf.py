@@ -4,7 +4,9 @@ from playwright.async_api import async_playwright
 import markdown
 
 def convert():
-    md_path = Path("submission/blast_radius_report_pr3046.md")
+    md_path = Path("submission/blast radius report/blast_radius_report_pr3046.md")
+    if not md_path.exists():
+        md_path = Path("blast_radius_report.md")
     md_text = md_path.read_text(encoding="utf-8")
     
     # Convert markdown extension
@@ -15,7 +17,7 @@ def convert():
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Blast Radius Analysis & QA Test Guide — PR #3046</title>
+    <title>CASCADE — Blast Radius Analysis & QA Test Guide — PR #3046</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.0/github-markdown.min.css">
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <style>
@@ -71,7 +73,7 @@ def convert():
 </body>
 </html>"""
 
-    html_file = Path("submission/blast_radius_report_pr3046.html")
+    html_file = Path("submission/blast radius report/blast_radius_report_pr3046.html")
     html_file.write_text(full_html, encoding="utf-8")
     print("[OK] Saved HTML to:", html_file)
 
@@ -85,7 +87,7 @@ def convert():
             print("Loading Report in Playwright:", url)
             await page.goto(url, wait_until="networkidle")
             await page.wait_for_timeout(4000)
-            pdf_file = Path("submission/blast_radius_report_pr3046.pdf")
+            pdf_file = Path("submission/blast radius report/blast_radius_report_pr3046.pdf")
             await page.pdf(
                 path=str(pdf_file),
                 format="A4",
