@@ -93,3 +93,12 @@ outputs/requirements/
 # AI coding assistant config (internal dev tooling — not for evaluators)
 AGENTS.md
 .agents/
+
+# Internal docs — dev process artifacts (not deliverables)
+# Files stay on disk locally; not tracked in git
+docs/archives/
+docs/deep research/
+docs/audits/
+docs/implementation_plans/
+docs/walkthroughs/
+docs/skills and workflows/
