@@ -249,7 +249,86 @@ def convert():
                 print_background=True,
                 margin={"top": "12mm", "bottom": "12mm", "left": "12mm", "right": "12mm"}
             )
-            print("[OK] Saved Design Doc v2 PDF to:", v2_pdf_file)
+            # Design Doc Expanded
+            exp_md_path = Path("docs/design_document_expanded.md")
+            if exp_md_path.exists():
+                exp_md = exp_md_path.read_text(encoding="utf-8")
+                exp_html_body = markdown.markdown(exp_md, extensions=["tables", "fenced_code"])
+                exp_full_html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CASCADE — Technical Design Document (Expanded Edition)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.0/github-markdown.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        body {{
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }}
+        .markdown-body {{
+            background-color: #0d1117;
+            color: #c9d1d9;
+        }}
+        .markdown-body table {{
+            display: table;
+            width: 100%;
+        }}
+        @media print {{
+            body {{
+                padding: 15px;
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                font-size: 13px !important;
+                line-height: 1.4 !important;
+            }}
+            .markdown-body {{
+                background-color: #ffffff !important;
+                color: #000000 !important;
+            }}
+        }}
+    </style>
+</head>
+<body class="markdown-body">
+{exp_html_body}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {{
+            document.querySelectorAll("pre code.language-mermaid").forEach(function(el) {{
+                var parent = el.parentElement;
+                var div = document.createElement("div");
+                div.className = "mermaid";
+                div.textContent = el.textContent;
+                parent.replaceWith(div);
+            }});
+            mermaid.initialize({{ startOnLoad: true, theme: 'dark' }});
+        }});
+    </script>
+</body>
+</html>"""
+                exp_html_file = Path("docs/design_document_expanded.html")
+                exp_html_file.write_text(exp_full_html, encoding="utf-8")
+                (Path("submission/design document/design_document_expanded.html")).write_text(exp_full_html, encoding="utf-8")
+
+                exp_url = exp_html_file.resolve().as_uri()
+                print("Loading Design Doc Expanded in Playwright:", exp_url)
+                await page.goto(exp_url, wait_until="networkidle")
+                await page.wait_for_timeout(4000)
+                exp_pdf_file = Path("docs/design_document_expanded.pdf")
+                await page.pdf(
+                    path=str(exp_pdf_file),
+                    format="A4",
+                    print_background=True,
+                    margin={"top": "12mm", "bottom": "12mm", "left": "12mm", "right": "12mm"}
+                )
+                (Path("submission/design document/design_document_expanded.pdf")).write_bytes(exp_pdf_file.read_bytes())
+                print("[OK] Saved Design Doc Expanded PDF to:", exp_pdf_file)
+
             await browser.close()
 
     asyncio.run(print_pdf())
