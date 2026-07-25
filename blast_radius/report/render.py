@@ -96,15 +96,6 @@ def render(report: BlastRadiusReport) -> tuple[Path, Path]:
     except Exception as e:
         print(f"[report] WARNING: Summary generation failed unexpectedly: {e}. Proceeding without.")
 
-    # -- HTML report -------------------------------------------------------
-    # v4 fix P1-27: autoescape=False -- all content is internal/controlled
-    from jinja2 import Environment, FileSystemLoader
-    env = Environment(loader=FileSystemLoader("templates"), autoescape=False)
-    template = env.get_template("report.html.j2")
-    html = template.render(report=report)
-    html_path = REPORTS_DIR / "blast_radius_report.html"
-    html_path.write_text(html, encoding="utf-8")
-
     # -- Markdown report (CASCADE v4 Non-Engineer QA Lead Edition) --------
     high_req   = [n for n in report.affected_requirements if n.risk_tier == "HIGH"]
     medium_req = [n for n in report.affected_requirements if n.risk_tier == "MEDIUM"]
@@ -294,6 +285,75 @@ def render(report: BlastRadiusReport) -> tuple[Path, Path]:
     md_path = REPORTS_DIR / "blast_radius_report.md"
     md_text = "\n".join(lines)
     md_path.write_text(md_text, encoding="utf-8")
+
+    # -- HTML (.html) report ------------------------------------------------
+    html_path = REPORTS_DIR / "blast_radius_report.html"
+    try:
+        import markdown
+        html_body = markdown.markdown(md_text, extensions=["tables", "fenced_code"])
+        full_html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CASCADE — Blast Radius Analysis & QA Test Guide — PR #{report.pr_number}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.0/github-markdown.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        body {{
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }}
+        .markdown-body {{
+            background-color: #0d1117;
+            color: #c9d1d9;
+        }}
+        .markdown-body table {{
+            display: table;
+            width: 100%;
+        }}
+        pre code {{
+            background: transparent !important;
+        }}
+        @media print {{
+            body {{
+                padding: 20px;
+                background-color: #ffffff !important;
+                color: #000000 !important;
+            }}
+            .markdown-body {{
+                background-color: #ffffff !important;
+                color: #000000 !important;
+            }}
+        }}
+    </style>
+</head>
+<body class="markdown-body">
+{html_body}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {{
+            const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+            codeBlocks.forEach(function(block) {{
+                const pre = block.parentElement;
+                const div = document.createElement("div");
+                div.className = "mermaid";
+                div.textContent = block.textContent;
+                pre.parentElement.replaceChild(div, pre);
+            }});
+            mermaid.initialize({{ startOnLoad: true, theme: "dark" }});
+        }});
+    </script>
+</body>
+</html>
+"""
+        html_path.write_text(full_html, encoding="utf-8")
+    except Exception as e:
+        print(f"[report] WARNING: HTML export failed: {e}")
 
     # -- Word Document (.docx) report ---------------------------------------
     docx_path = REPORTS_DIR / "blast_radius_report.docx"
