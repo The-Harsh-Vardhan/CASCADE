@@ -1,4 +1,4 @@
-![CASCADE Banner](cascade_banner.png)
+![CASCADE Logo](cascade_logo.png)
 
 # CASCADE — Blast Radius Analysis & QA Test Guide
 ### *Target PR:* [documenso/documenso #3046 — fix: tighten permission and validation checks](https://github.com/documenso/documenso/pull/3046)

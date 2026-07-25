@@ -1,4 +1,4 @@
-![CASCADE Banner](images/cascade_banner.png)
+![CASCADE Logo](images/cascade_logo.png)
 
 # CASCADE — Technical Design Document
 ### *Change Analysis for Software Cascade using Dependency Evidence*

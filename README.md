@@ -1,4 +1,4 @@
-![CASCADE Banner](docs/images/cascade_banner.png)
+![CASCADE Logo](docs/images/cascade_logo.png)
 
 # CASCADE — Change Analysis for Software Cascade using Dependency Evidence
 

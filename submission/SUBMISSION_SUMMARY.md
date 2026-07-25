@@ -1,4 +1,4 @@
-![CASCADE Banner](cascade_banner.png)
+![CASCADE Logo](cascade_logo.png)
 
 # CASCADE — Change Analysis for Software Cascade using Dependency Evidence
 ### *Testsigma AI Engineer Assignment — Submission Package*
