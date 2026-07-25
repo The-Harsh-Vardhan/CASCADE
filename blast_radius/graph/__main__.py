@@ -1,5 +1,5 @@
 """
-Phase 4 entrypoint — run via: python -m blast_radius.graph
+Phase 4 entrypoint -- run via: python -m blast_radius.graph
 """
 
 from blast_radius.graph import build_graph

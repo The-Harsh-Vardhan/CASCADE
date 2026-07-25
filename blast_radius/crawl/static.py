@@ -1,5 +1,5 @@
 """
-blast_radius/crawl/static.py — Static docs crawler using httpx + BeautifulSoup4.
+blast_radius/crawl/static.py -- Static docs crawler using httpx + BeautifulSoup4.
 Capped at 3 pages per scope decision (overview, features, api).
 """
 import hashlib

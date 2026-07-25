@@ -1,5 +1,5 @@
 """
-blast_radius/code/pr.py — Fetch PR changed-file list via GitHub API (httpx).
+blast_radius/code/pr.py -- Fetch PR changed-file list via GitHub API (httpx).
 
 v4 fix (P0-18): GitHub API primary, PyDriller optional fallback.
 v4 fix (P1-19): Explicit path normalization; warning when no seeds found.
@@ -35,7 +35,7 @@ def get_pr_delta(repo_path: str, pr_number: int, merge_sha: str) -> PRDelta:
     changed_files, pr_meta = _get_files_from_github_api(pr_number)
 
     if not changed_files:
-        print("[code] WARNING: GitHub API returned no files — trying PyDriller fallback")
+        print("[code] WARNING: GitHub API returned no files -- trying PyDriller fallback")
         changed_files = _get_files_from_pydriller(repo_path, merge_sha)
         pr_meta = {}
 
@@ -85,14 +85,14 @@ def get_pr_delta(repo_path: str, pr_number: int, merge_sha: str) -> PRDelta:
 def _get_files_from_github_api(pr_number: int) -> tuple[list[ChangedFile], dict]:
     """
     Fetch PR file list and metadata from GitHub REST API.
-    Returns (changed_files, pr_meta_dict) — both empty on failure.
+    Returns (changed_files, pr_meta_dict) -- both empty on failure.
     """
     headers = {"Accept": "application/vnd.github.v3+json"}
     if settings.github_token:
         headers["Authorization"] = f"token {settings.github_token}"
     else:
         print(
-            "[code] WARNING: GITHUB_TOKEN not set — "
+            "[code] WARNING: GITHUB_TOKEN not set -- "
             "unauthenticated rate limit is 60 req/hour"
         )
 
@@ -108,7 +108,7 @@ def _get_files_from_github_api(pr_number: int) -> tuple[list[ChangedFile], dict]
         pr_meta = {}
 
     try:
-        # Fetch file list — paginate if >30 files
+        # Fetch file list -- paginate if >30 files
         all_files: list[ChangedFile] = []
         page = 1
         while True:
@@ -144,7 +144,7 @@ def _get_files_from_github_api(pr_number: int) -> tuple[list[ChangedFile], dict]
 
 def _get_files_from_pydriller(repo_path: str, merge_sha: str) -> list[ChangedFile]:
     """
-    Fallback: PyDriller (not a declared dep — may raise ImportError).
+    Fallback: PyDriller (not a declared dep -- may raise ImportError).
     Returns [] on any failure.
     """
     try:

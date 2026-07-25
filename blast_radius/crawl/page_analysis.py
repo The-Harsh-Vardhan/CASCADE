@@ -1,5 +1,5 @@
 """
-blast_radius/crawl/page_analysis.py — PageAnalysis dataclass + LLM-powered page analyzer.
+blast_radius/crawl/page_analysis.py -- PageAnalysis dataclass + LLM-powered page analyzer.
 
 Called once per crawled page. Passes condensed page text to call_llm_json()
 and returns a structured PageAnalysis object covering all interactive components,
@@ -17,7 +17,7 @@ from blast_radius.llm import call_llm_json
 
 logger = logging.getLogger(__name__)
 
-# ── Prompt ─────────────────────────────────────────────────────────────────────
+# -- Prompt ---------------------------------------------------------------------
 
 _SYSTEM_PROMPT = """\
 You are analyzing a page from Documenso, an open-source document signing platform.
@@ -41,7 +41,7 @@ Return ONLY a JSON object with these exact fields (no preamble, no fences):
 }"""
 
 
-# ── Dataclass ──────────────────────────────────────────────────────────────────
+# -- Dataclass ------------------------------------------------------------------
 
 @dataclass
 class PageAnalysis:
@@ -59,7 +59,7 @@ class PageAnalysis:
         return asdict(self)
 
 
-# ── Helpers ────────────────────────────────────────────────────────────────────
+# -- Helpers --------------------------------------------------------------------
 
 def slug(url: str) -> str:
     """Convert a URL to a safe filesystem slug (max 80 chars)."""
@@ -149,7 +149,7 @@ def _entity_from_url_strict(url: str) -> str | None:
 
 
 
-# ── Main analyzer ──────────────────────────────────────────────────────────────
+# -- Main analyzer --------------------------------------------------------------
 
 async def analyze_page(
     url: str,
@@ -184,7 +184,7 @@ async def analyze_page(
             documenso_entity=str(data.get("documenso_entity", _guess_entity(url))),
         )
     except Exception as exc:
-        logger.warning("LLM analysis failed for %s: %s — using heuristic stub.", url, exc)
+        logger.warning("LLM analysis failed for %s: %s -- using heuristic stub.", url, exc)
         return PageAnalysis(
             url=url,
             title=title,

@@ -1,5 +1,5 @@
 """
-blast_radius/api/fetch.py — Fetches Documenso API specifications via HTTP/OpenAPI or Docs parsing.
+blast_radius/api/fetch.py -- Fetches Documenso API specifications via HTTP/OpenAPI or Docs parsing.
 """
 
 from __future__ import annotations

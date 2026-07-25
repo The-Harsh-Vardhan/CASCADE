@@ -1,5 +1,5 @@
 """
-blast_radius/crawl/runner.py — Two-phase Documenso crawler.
+blast_radius/crawl/runner.py -- Two-phase Documenso crawler.
 
 Phase 1: Public pages (no auth)
   - documenso.com marketing pages
@@ -33,7 +33,7 @@ from blast_radius.crawl.page_analysis import PageAnalysis, slug, _guess_entity, 
 
 logger = logging.getLogger(__name__)
 
-# ── URL lists ──────────────────────────────────────────────────────────────────
+# -- URL lists ------------------------------------------------------------------
 
 PUBLIC_URLS: list[str] = [
     # Marketing site
@@ -57,7 +57,7 @@ PUBLIC_URLS: list[str] = [
     "https://docs.documenso.com/api-reference/endpoint/post-apiv1documents",
 ]
 
-# Authenticated routes — document/{id} sub-pages are added dynamically
+# Authenticated routes -- document/{id} sub-pages are added dynamically
 _AUTH_PATHS_BASE: list[str] = [
     "/documents",
     "/documents/new",
@@ -76,7 +76,7 @@ _DOC_SUB_PATHS: list[str] = [
     "/send",
 ]
 
-# ── Output dirs ────────────────────────────────────────────────────────────────
+# -- Output dirs ----------------------------------------------------------------
 
 def _out_dir() -> Path:
     p = Path("outputs") / "crawl"
@@ -152,7 +152,7 @@ def _extract_fallback_components(url: str, html: str, title: str) -> list[str]:
     return comps[:8]
 
 
-# ── Per-page capture ───────────────────────────────────────────────────────────
+# -- Per-page capture -----------------------------------------------------------
 
 async def _capture(
     page,
@@ -171,7 +171,7 @@ async def _capture(
 
         await page.goto(url, wait_until="domcontentloaded", timeout=30_000)
 
-        # Wait for Next.js hydration — wait for a real interactive element
+        # Wait for Next.js hydration -- wait for a real interactive element
         try:
             await page.wait_for_selector(
                 "button, input, [role='button'], [data-testid]",
@@ -186,16 +186,16 @@ async def _capture(
 
         actual_url = page.url.rstrip("/")
 
-        # Deduplicate URLs — no URL should appear more than once
+        # Deduplicate URLs -- no URL should appear more than once
         if seen_urls is not None:
             if actual_url in seen_urls:
-                logger.warning("  Duplicate URL %s — skipping", actual_url)
+                logger.warning("  Duplicate URL %s -- skipping", actual_url)
                 return None
             seen_urls.add(actual_url)
 
         # Detect auth redirect
         if requires_auth and ("/signin" in actual_url or "/login" in actual_url):
-            logger.warning("  Auth redirect — skipping %s", url)
+            logger.warning("  Auth redirect -- skipping %s", url)
             return None
 
         title = await page.title() or actual_url
@@ -287,7 +287,7 @@ async def _analyze_with_text(
         outbound_links = list(data.get("outbound_links", []))
         user_flows = list(data.get("user_flows", []))
     except Exception as exc:
-        logger.warning("LLM analysis failed for %s: %s — using heuristic fallback.", url, exc)
+        logger.warning("LLM analysis failed for %s: %s -- using heuristic fallback.", url, exc)
 
     # Ensure NO page has 0 components
     if len(ui_components) < 2:
@@ -309,7 +309,7 @@ async def _analyze_with_text(
     )
 
 
-# ── Main async runner ──────────────────────────────────────────────────────────
+# -- Main async runner ----------------------------------------------------------
 
 async def _inject_stealth(page) -> None:
     """Hide navigator.webdriver to reduce bot-detection on login pages."""
@@ -324,14 +324,14 @@ async def _inject_stealth(page) -> None:
 async def _check_already_authed(page, base: str) -> bool:
     """
     Navigate to /documents. If we land there (not redirected to /signin),
-    the persistent context has a valid session — no login needed.
+    the persistent context has a valid session -- no login needed.
     """
     try:
         await page.goto(f"{base}/documents", wait_until="domcontentloaded", timeout=20_000)
         await page.wait_for_timeout(2_000)
         current = page.url
         if "/signin" not in current and "/login" not in current:
-            logger.info("Persistent context has a valid session — skipping login form.")
+            logger.info("Persistent context has a valid session -- skipping login form.")
             return True
     except Exception as exc:
         logger.warning("Pre-auth check failed: %s", exc)
@@ -350,7 +350,7 @@ async def run_full_crawl_async() -> list[PageAnalysis]:
     results: list[PageAnalysis] = []
     seen_urls: set[str] = set()
 
-    # ── Phase 1: Public pages — fresh context ──────────────────────────────────
+    # -- Phase 1: Public pages -- fresh context ----------------------------------
     async with async_playwright() as p:
         browser = await p.chromium.launch(
             headless=True,
@@ -377,11 +377,11 @@ async def run_full_crawl_async() -> list[PageAnalysis]:
         await context.close()
         await browser.close()
 
-    # ── Phase 2: Authenticated pages — persistent context ─────────────────────
+    # -- Phase 2: Authenticated pages -- persistent context ---------------------
     has_creds = bool(settings.documenso_email and settings.documenso_password)
     if not has_creds:
         logger.warning(
-            "DOCUMENSO_EMAIL/DOCUMENSO_PASSWORD not set — skipping authenticated crawl."
+            "DOCUMENSO_EMAIL/DOCUMENSO_PASSWORD not set -- skipping authenticated crawl."
         )
     else:
         logger.info("=== Phase 2: Authenticated app pages (persistent context) ===")
@@ -430,7 +430,7 @@ async def run_full_crawl_async() -> list[PageAnalysis]:
                 ]
 
                 if doc_id:
-                    logger.info("Found document ID '%s' — adding document flow sub-pages.", doc_id)
+                    logger.info("Found document ID '%s' -- adding document flow sub-pages.", doc_id)
                     auth_paths.extend([
                         f"/documents/{doc_id}/recipients",
                         f"/documents/{doc_id}/fields",
@@ -438,7 +438,7 @@ async def run_full_crawl_async() -> list[PageAnalysis]:
                     ])
                 else:
                     logger.warning(
-                        "No document ID found — skipping document flow pages. "
+                        "No document ID found -- skipping document flow pages. "
                         "Create a document manually at app.documenso.com/documents/new first."
                     )
 
@@ -460,11 +460,11 @@ async def run_full_crawl_async() -> list[PageAnalysis]:
                     if r:
                         results.append(r)
             else:
-                logger.error("Login failed — authenticated pages skipped.")
+                logger.error("Login failed -- authenticated pages skipped.")
 
             await auth_ctx.close()
 
-    # ── Persist summary ────────────────────────────────────────────────────────
+    # -- Persist summary --------------------------------------------------------
     summary_path = out_dir / "summary.json"
     summary_path.write_text(
         json.dumps([r.to_dict() for r in results], indent=2, ensure_ascii=False),
@@ -477,14 +477,14 @@ async def run_full_crawl_async() -> list[PageAnalysis]:
 
 
 def run_full_crawl() -> list[PageAnalysis]:
-    """Synchronous entry point — runs the full two-phase crawl."""
+    """Synchronous entry point -- runs the full two-phase crawl."""
     return asyncio.run(run_full_crawl_async())
 
 
-# ── Rich progress table ────────────────────────────────────────────────────────
+# -- Rich progress table --------------------------------------------------------
 
 def _print_table(results: list[PageAnalysis]) -> None:
-    """Print progress table using plain print() — no TextIOWrapper to avoid buffer-close bugs."""
+    """Print progress table using plain print() -- no TextIOWrapper to avoid buffer-close bugs."""
     print(f"\n[Phase 1 Crawl] {len(results)} pages captured")
     print(f"{'URL':<55} {'Entity':<14} {'Comps':>5}  Auth")
     print("-" * 82)

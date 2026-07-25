@@ -1,5 +1,5 @@
 """
-Phase 3 entrypoint — run via: python -m blast_radius.code
+Phase 3 entrypoint -- run via: python -m blast_radius.code
 """
 
 from blast_radius.code import run_code_analysis

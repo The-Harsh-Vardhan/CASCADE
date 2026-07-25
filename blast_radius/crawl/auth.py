@@ -1,9 +1,9 @@
 """
-blast_radius/crawl/auth.py — Playwright login flow for app.documenso.com.
+blast_radius/crawl/auth.py -- Playwright login flow for app.documenso.com.
 
 Provides two helpers:
-  login(page)              — fills email/password and waits for /documents redirect
-  find_document_id(page)   — scrapes the documents list to find a real doc ID
+  login(page)              -- fills email/password and waits for /documents redirect
+  find_document_id(page)   -- scrapes the documents list to find a real doc ID
                              (needed to build sub-page URLs for the auth crawl)
 """
 from __future__ import annotations
@@ -29,7 +29,7 @@ async def login(page: Page) -> bool:
 
     if not email or not password:
         logger.warning(
-            "DOCUMENSO_EMAIL / DOCUMENSO_PASSWORD not configured — "
+            "DOCUMENSO_EMAIL / DOCUMENSO_PASSWORD not configured -- "
             "skipping authenticated crawl."
         )
         return False
@@ -40,14 +40,14 @@ async def login(page: Page) -> bool:
     try:
         await page.goto(signin_url, wait_until="domcontentloaded", timeout=30_000)
 
-        # Wait for React hydration — the form inputs aren't interactive immediately
+        # Wait for React hydration -- the form inputs aren't interactive immediately
         try:
             await page.wait_for_load_state("networkidle", timeout=10_000)
         except Exception:
             pass
         await page.wait_for_timeout(2_500)
 
-        # ── Locate email input (broad selector set) ────────────────────────────
+        # -- Locate email input (broad selector set) ----------------------------
         email_sel = (
             'input[type="email"], '
             'input[name="email"], '
@@ -64,7 +64,7 @@ async def login(page: Page) -> bool:
             logger.error("Could not fill email field: %s", exc)
             return False
 
-        # ── Locate password input ──────────────────────────────────────────────
+        # -- Locate password input ----------------------------------------------
         pwd_sel = (
             'input[type="password"], '
             'input[name="password"], '
@@ -80,7 +80,7 @@ async def login(page: Page) -> bool:
             logger.error("Could not fill password field: %s", exc)
             return False
 
-        # ── Save debug screenshot before submit ────────────────────────────────
+        # -- Save debug screenshot before submit --------------------------------
         try:
             debug_dir = Path("outputs") / "crawl"
             debug_dir.mkdir(parents=True, exist_ok=True)
@@ -89,7 +89,7 @@ async def login(page: Page) -> bool:
         except Exception:
             pass
 
-        # ── Submit — try button click first, then Enter ────────────────────────
+        # -- Submit -- try button click first, then Enter ------------------------
         submitted = False
         try:
             btn = page.locator("button[type='submit']").first
@@ -104,7 +104,7 @@ async def login(page: Page) -> bool:
             await pwd_loc.press("Enter")
             logger.info("Pressed Enter in password field.")
 
-        # ── Poll URL for redirect (Next.js client-side) ────────────────────────
+        # -- Poll URL for redirect (Next.js client-side) ------------------------
         await page.wait_for_timeout(3_000)
         for _ in range(30):  # up to 30 s
             current = page.url
@@ -118,7 +118,7 @@ async def login(page: Page) -> bool:
             except Exception:
                 pass
             logger.error(
-                "Login timed out after 30 s — still on %s. "
+                "Login timed out after 30 s -- still on %s. "
                 "Check outputs/crawl/debug_signin.png for the form state.",
                 page.url,
             )
@@ -127,10 +127,10 @@ async def login(page: Page) -> bool:
         await page.wait_for_timeout(1_500)
         final_url = page.url
         if "/signin" in final_url or "/login" in final_url:
-            logger.error("Login did not redirect — credentials may be wrong.")
+            logger.error("Login did not redirect -- credentials may be wrong.")
             return False
 
-        logger.info("Login successful — landed at: %s", final_url)
+        logger.info("Login successful -- landed at: %s", final_url)
         return True
 
     except Exception as exc:

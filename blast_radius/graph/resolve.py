@@ -1,24 +1,24 @@
 """
-blast_radius/graph/resolve.py — Entity resolution: Requirements ↔ CodeFunctions ↔ UI.
+blast_radius/graph/resolve.py -- Entity resolution: Requirements ↔ CodeFunctions ↔ UI.
 
 Three-stage pipeline:
   1. Vectorized cosine similarity (sentence-transformers all-MiniLM-L6-v2)
-     with keyword pre-filter — reduces LLM calls by ~60-80%
+     with keyword pre-filter -- reduces LLM calls by ~60-80%
   2. Gemini LLM reranker via call_llm_json() for confirmed links
-  3. [NEW] UI → Requirement resolver via accessibility-tree keyword matching
+  3. [NEW] UI -> Requirement resolver via accessibility-tree keyword matching
   4. [NEW] Infrastructure requirement resolver via config-file pattern matching
   5. [NEW] tRPC procedure name bridge for higher-quality function vocabulary
 
 v4 fixes applied:
-  P2-24: cosine threshold calibrated at 0.25 for cross-domain NL→code matching
+  P2-24: cosine threshold calibrated at 0.25 for cross-domain NL->code matching
   P0-22: fn_labels[j] used directly instead of broken functions.index(fn)
-  P0-21: IMPLEMENTS is CodeFunction → Requirement (from_id=fn, to_id=req)
+  P0-21: IMPLEMENTS is CodeFunction -> Requirement (from_id=fn, to_id=req)
   LLM:   uses call_llm_json (never direct Gemini/Anthropic calls)
 
 v5 fixes:
-  FIX-1: Add resolve_ui_to_requirements() — UIElement/Page → Requirement COVERS edges
+  FIX-1: Add resolve_ui_to_requirements() -- UIElement/Page -> Requirement COVERS edges
   FIX-2: Remove "server" from _STOPWORDS; add tRPC procedure name vocabulary bridge
-  FIX-3: Add resolve_infra_requirements() — config-file pattern matching for infra reqs
+  FIX-3: Add resolve_infra_requirements() -- config-file pattern matching for infra reqs
 """
 
 import json
@@ -42,18 +42,18 @@ def _encoder() -> SentenceTransformer:
     return _model
 
 
-# ── Keyword pre-filter ────────────────────────────────────────────────────────
+# -- Keyword pre-filter --------------------------------------------------------
 
-# FIX-2: Removed "server" — it IS a meaningful discriminator for Documenso
+# FIX-2: Removed "server" -- it IS a meaningful discriminator for Documenso
 # (server-only functions are backend; client-only are frontend UI code).
-# Also removed "route" — tRPC router names are high-signal vocabulary.
+# Also removed "route" -- tRPC router names are high-signal vocabulary.
 _STOPWORDS = {
     "page", "component", "module", "function", "service", "handler",
     "type", "interface", "model", "schema", "data", "item",
     "list", "user", "get", "set", "create", "update", "delete",
 }
 
-# ── Infrastructure requirement patterns ───────────────────────────────────────
+# -- Infrastructure requirement patterns ---------------------------------------
 # FIX-3: Requirements about tooling/infra (Docker, Prisma, Lingui) have zero
 # function-name overlap. Resolve them via config file existence patterns instead.
 _INFRA_PATTERNS: list[tuple[list[str], list[str]]] = [
@@ -98,13 +98,13 @@ def _req_matches_infra_pattern(req: Requirement, pattern_kws: list[str]) -> bool
     return any(kw in req_lower for kw in pattern_kws)
 
 
-# ── Main resolution ───────────────────────────────────────────────────────────
+# -- Main resolution -----------------------------------------------------------
 
 def resolve_requirements_to_functions(
     requirements: list[Requirement],
     functions: list[CodeFunction],
     *,
-    cosine_threshold: float = 0.25,   # calibrated for NL-requirement → code-name cross-domain
+    cosine_threshold: float = 0.25,   # calibrated for NL-requirement -> code-name cross-domain
     llm_rerank_threshold: float = 0.65,
     run_id: str = "v1",
 ) -> list[EntityLink]:
@@ -127,7 +127,7 @@ def resolve_requirements_to_functions(
     links: list[EntityLink] = []
     req_texts = [r.text for r in requirements]
 
-    # FIX-2: Use tRPC procedure name when available — it's a cleaner vocabulary
+    # FIX-2: Use tRPC procedure name when available -- it's a cleaner vocabulary
     # than raw AST function names (e.g. "document.getById" > "getDocumentByIdRoute")
     fn_labels = []
     for f in functions:
@@ -159,7 +159,7 @@ def resolve_requirements_to_functions(
                 adjusted = score * (1.2 if has_overlap else 1.0)
                 candidates.append((i, j, score, adjusted))
 
-    # Sort by adjusted score — best pairs first
+    # Sort by adjusted score -- best pairs first
     candidates.sort(key=lambda x: x[3], reverse=True)
 
     if not candidates:
@@ -211,7 +211,7 @@ def resolve_requirements_to_functions(
             "Functions include tRPC procedures, lib/server-only business logic for "
             "documents, envelopes, recipients, attachments, permissions, and webhooks.\n\n"
             "For each candidate pair, decide if the function plausibly IMPLEMENTS the "
-            "requirement. A positive match requires a logical functional relationship — "
+            "requirement. A positive match requires a logical functional relationship -- "
             "shared vocabulary alone is NOT sufficient.\n\n"
             'Return ONLY a JSON array. Each element must have:\n'
             '  "req_id": string\n'
@@ -282,7 +282,7 @@ def resolve_ui_to_functions(
 ) -> list[EntityLink]:
     """
     Match CodeFunction files to Pages via URL path segment matching.
-    Creates RENDERS edges: CodeFunction → Page.
+    Creates RENDERS edges: CodeFunction -> Page.
 
     v4 fix: Page node IDs use 'page:{sha}' format to match UPSERT_PAGE in writer.py.
     """
@@ -319,7 +319,7 @@ def resolve_ui_to_functions(
     return links
 
 
-# ── FIX-1: New resolver — UI/Page → Requirement (COVERS edges) ───────────────
+# -- FIX-1: New resolver -- UI/Page -> Requirement (COVERS edges) ---------------
 
 def resolve_ui_to_requirements(
     snapshots: list[PageSnapshot],
@@ -335,8 +335,8 @@ def resolve_ui_to_requirements(
       - Match against requirement keywords and text via word overlap scoring.
       - Emit COVERS edge when overlap score >= 2 meaningful non-stopword words.
 
-    This closes the previously missing UI → Requirement link type, enabling
-    blast radius traversal paths: Code → UI → Requirement.
+    This closes the previously missing UI -> Requirement link type, enabling
+    blast radius traversal paths: Code -> UI -> Requirement.
     """
     links: list[EntityLink] = []
     emitted: set[tuple[str, str]] = set()  # deduplicate (page_id, req_id) pairs
@@ -390,7 +390,7 @@ def resolve_ui_to_requirements(
     return links
 
 
-# ── FIX-3: Infrastructure requirement resolver ───────────────────────────────
+# -- FIX-3: Infrastructure requirement resolver -------------------------------
 
 def resolve_infra_requirements(
     requirements: list[Requirement],
@@ -407,7 +407,7 @@ def resolve_infra_requirements(
 
     Creates synthetic IMPLEMENTS edges from a virtual infra sentinel node.
     These are low-confidence but prevent these requirements from becoming
-    false GapNodes — they ARE implemented, just not as TypeScript functions.
+    false GapNodes -- they ARE implemented, just not as TypeScript functions.
     """
     import os
     links: list[EntityLink] = []

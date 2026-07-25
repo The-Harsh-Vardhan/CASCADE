@@ -1,38 +1,38 @@
 """
-blast_radius/ingest/fetch.py — Fetches all Documenso documentation sources.
+blast_radius/ingest/fetch.py -- Fetches all Documenso documentation sources.
 
-Primary sources: GitHub raw MDX files from apps/docs/content/docs/ — these are
+Primary sources: GitHub raw MDX files from apps/docs/content/docs/ -- these are
 static, fully readable, and cover every feature area. The original docs.documenso.com
 URLs are JS-rendered and return <2 KB of useful text; MDX files are the canonical
 source of truth.
 
 Sources:
-  Group A — GitHub raw Markdown (always works)
+  Group A -- GitHub raw Markdown (always works)
   1.  README.md
   2.  CONTRIBUTING.md
 
-  Group B — User docs (GitHub MDX)
-  3.  mdx_documents_fields   — add-fields.mdx     (signing)
-  4.  mdx_documents_send     — send.mdx            (sending)
-  5.  mdx_documents_upload   — upload.mdx          (sending)
-  6.  mdx_documents_recipients — add-recipients.mdx (sending)
-  7.  mdx_templates_create   — create.mdx          (templates)
-  8.  mdx_templates_use      — use.mdx             (templates)
-  9.  mdx_orgs_overview      — overview.mdx        (teams)
-  10. mdx_orgs_members       — members.mdx         (teams)
-  11. mdx_orgs_groups        — groups.mdx          (teams)
-  12. mdx_settings_security  — security.mdx        (auth)
-  13. mdx_settings_api_tokens— api-tokens.mdx      (auth/api)
-  14. mdx_settings_profile   — profile.mdx         (admin)
+  Group B -- User docs (GitHub MDX)
+  3.  mdx_documents_fields   -- add-fields.mdx     (signing)
+  4.  mdx_documents_send     -- send.mdx            (sending)
+  5.  mdx_documents_upload   -- upload.mdx          (sending)
+  6.  mdx_documents_recipients -- add-recipients.mdx (sending)
+  7.  mdx_templates_create   -- create.mdx          (templates)
+  8.  mdx_templates_use      -- use.mdx             (templates)
+  9.  mdx_orgs_overview      -- overview.mdx        (teams)
+  10. mdx_orgs_members       -- members.mdx         (teams)
+  11. mdx_orgs_groups        -- groups.mdx          (teams)
+  12. mdx_settings_security  -- security.mdx        (auth)
+  13. mdx_settings_api_tokens-- api-tokens.mdx      (auth/api)
+  14. mdx_settings_profile   -- profile.mdx         (admin)
 
-  Group C — Developer docs (GitHub MDX)
-  15. mdx_webhooks_events    — events.mdx          (webhooks)
-  16. mdx_webhooks_setup     — setup.mdx           (webhooks)
-  17. mdx_api_documents      — documents.mdx       (api)
-  18. mdx_api_recipients     — recipients.mdx      (api)
-  19. mdx_api_templates      — templates.mdx       (api)
-  20. mdx_api_auth           — authentication.mdx  (auth)
-  21. mdx_docs_index         — index.mdx           (overview)
+  Group C -- Developer docs (GitHub MDX)
+  15. mdx_webhooks_events    -- events.mdx          (webhooks)
+  16. mdx_webhooks_setup     -- setup.mdx           (webhooks)
+  17. mdx_api_documents      -- documents.mdx       (api)
+  18. mdx_api_recipients     -- recipients.mdx      (api)
+  19. mdx_api_templates      -- templates.mdx       (api)
+  20. mdx_api_auth           -- authentication.mdx  (auth)
+  21. mdx_docs_index         -- index.mdx           (overview)
 
 All sources truncated to MAX_CHARS before passing to the LLM.
 """
@@ -46,17 +46,17 @@ from blast_radius.config import settings
 
 logger = logging.getLogger(__name__)
 
-# ── Source registry ────────────────────────────────────────────────────────────
+# -- Source registry ------------------------------------------------------------
 
 _GH_RAW = "https://raw.githubusercontent.com/documenso/documenso/main"
 _MDX    = f"{_GH_RAW}/apps/docs/content/docs"
 
 SOURCES: list[tuple[str, str]] = [
-    # Group A — plain Markdown (reliable, large)
+    # Group A -- plain Markdown (reliable, large)
     ("README.md",               f"{_GH_RAW}/README.md"),
     ("CONTRIBUTING.md",         f"{_GH_RAW}/CONTRIBUTING.md"),
 
-    # Group B — User docs MDX
+    # Group B -- User docs MDX
     ("mdx_documents_fields",    f"{_MDX}/users/documents/add-fields.mdx"),
     ("mdx_documents_send",      f"{_MDX}/users/documents/send.mdx"),
     ("mdx_documents_upload",    f"{_MDX}/users/documents/upload.mdx"),
@@ -73,7 +73,7 @@ SOURCES: list[tuple[str, str]] = [
     ("mdx_settings_profile",    f"{_MDX}/users/settings/profile.mdx"),
     ("mdx_gs_send_first",       f"{_MDX}/users/getting-started/send-first-document.mdx"),
 
-    # Group C — Developer docs MDX
+    # Group C -- Developer docs MDX
     ("mdx_webhooks_events",     f"{_MDX}/developers/webhooks/events.mdx"),
     ("mdx_webhooks_setup",      f"{_MDX}/developers/webhooks/setup.mdx"),
     ("mdx_webhooks_verify",     f"{_MDX}/developers/webhooks/verification.mdx"),
@@ -98,7 +98,7 @@ _HEADERS = {
 }
 
 
-# ── Internal helpers ───────────────────────────────────────────────────────────
+# -- Internal helpers -----------------------------------------------------------
 
 def _html_to_text(html: str) -> str:
     """Strip HTML tags, scripts, nav, and footer; return clean plain text."""
@@ -130,7 +130,7 @@ def _fetch_one(url: str, client: httpx.Client) -> str:
     return resp.text
 
 
-# ── Public API ─────────────────────────────────────────────────────────────────
+# -- Public API -----------------------------------------------------------------
 
 def fetch_all_sources() -> list[tuple[str, str]]:
     """
@@ -177,7 +177,7 @@ def fetch_all_sources() -> list[tuple[str, str]]:
     return results
 
 
-# Backward-compat shims ──────────────────────────────────────────────────────
+# Backward-compat shims ------------------------------------------------------
 
 def fetch_readme_text() -> tuple[str, str]:
     """Return (source_name, text) for README.md only."""

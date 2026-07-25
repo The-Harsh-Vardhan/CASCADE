@@ -1,5 +1,5 @@
 """
-blast_radius/crawl/dynamic.py — Playwright-based crawler for Documenso app.
+blast_radius/crawl/dynamic.py -- Playwright-based crawler for Documenso app.
 Crawls both authenticated app pages (/documents, /templates, /settings)
 and unauthenticated entry points (/, /signin, /signup).
 """

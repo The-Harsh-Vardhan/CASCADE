@@ -1,8 +1,8 @@
 """
-blast_radius/report/render.py — Generate HTML + Markdown blast radius reports.
+blast_radius/report/render.py -- Generate HTML + Markdown blast radius reports.
 
 v4 fixes:
-  P1-27: autoescape=False — content is internal/controlled (not user-generated).
+  P1-27: autoescape=False -- content is internal/controlled (not user-generated).
   P2-28: Affected UI elements section included in both HTML and Markdown.
   LLM:   _generate_summary() uses call_llm_sync (never anthropic directly).
          Graceful fallback to structured summary if LLM quota is exhausted.
@@ -21,7 +21,7 @@ def _generate_summary(report: BlastRadiusReport) -> str:
     Generate plain-English executive summary using Gemini via call_llm_sync.
     Falls back to a structured summary string if LLM quota is exhausted.
 
-    LLM rule: NEVER call google.generativeai directly — always use blast_radius.llm.
+    LLM rule: NEVER call google.generativeai directly -- always use blast_radius.llm.
     """
     high = [n for n in report.affected_requirements if n.risk_tier == "HIGH"]
     prompt = (
@@ -42,7 +42,7 @@ def _generate_summary(report: BlastRadiusReport) -> str:
     except Exception as e:
         err = str(e)
         if "429" in err or "quota" in err.lower() or "RESOURCE_EXHAUSTED" in err:
-            print(f"[report] LLM quota exhausted — using structured summary fallback.")
+            print(f"[report] LLM quota exhausted -- using structured summary fallback.")
         else:
             print(f"[report] WARNING: LLM summary failed: {e}. Using structured fallback.")
 
@@ -96,8 +96,8 @@ def render(report: BlastRadiusReport) -> tuple[Path, Path]:
     except Exception as e:
         print(f"[report] WARNING: Summary generation failed unexpectedly: {e}. Proceeding without.")
 
-    # ── HTML report ───────────────────────────────────────────────────────
-    # v4 fix P1-27: autoescape=False — all content is internal/controlled
+    # -- HTML report -------------------------------------------------------
+    # v4 fix P1-27: autoescape=False -- all content is internal/controlled
     from jinja2 import Environment, FileSystemLoader
     env = Environment(loader=FileSystemLoader("templates"), autoescape=False)
     template = env.get_template("report.html.j2")
@@ -105,14 +105,14 @@ def render(report: BlastRadiusReport) -> tuple[Path, Path]:
     html_path = REPORTS_DIR / "blast_radius_report.html"
     html_path.write_text(html, encoding="utf-8")
 
-    # ── Markdown report ───────────────────────────────────────────────────
+    # -- Markdown report ---------------------------------------------------
     high_req   = [n for n in report.affected_requirements if n.risk_tier == "HIGH"]
     medium_req = [n for n in report.affected_requirements if n.risk_tier == "MEDIUM"]
     high_ui    = [n for n in report.affected_ui_elements   if n.risk_tier == "HIGH"]
     medium_ui  = [n for n in report.affected_ui_elements   if n.risk_tier == "MEDIUM"]
 
     lines = [
-        f"# Blast Radius Report — PR #{report.pr_number}",
+        f"# Blast Radius Report -- PR #{report.pr_number}",
         "",
         f"**PR:** [{report.pr_title}]({report.pr_url})  ",
         f"**Mode:** {report.mode}  **Run ID:** `{report.run_id}`",
@@ -141,7 +141,7 @@ def render(report: BlastRadiusReport) -> tuple[Path, Path]:
             lines += [
                 f"- **{n.label}**",
                 f"  - Impact: {n.impact_score:.2f} | Confidence: {n.traceability_confidence:.2f}",
-                f"  - Evidence: {' → '.join(n.evidence_path)}",
+                f"  - Evidence: {' -> '.join(n.evidence_path)}",
                 "",
             ]
     if medium_ui:

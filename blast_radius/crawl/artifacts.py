@@ -1,5 +1,5 @@
 """
-blast_radius/crawl/artifacts.py — Manages reading/writing PageSnapshots and CrawlManifest.
+blast_radius/crawl/artifacts.py -- Manages reading/writing PageSnapshots and CrawlManifest.
 """
 import json
 import logging

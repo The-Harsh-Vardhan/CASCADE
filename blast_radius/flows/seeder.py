@@ -167,7 +167,7 @@ def seed_user_flows(driver, requirements=None, page_analyses=None) -> int:
     Returns number of flows seeded.
     """
     if driver is None:
-        logger.warning("[flows] Neo4j driver is None — skipping flow seeding.")
+        logger.warning("[flows] Neo4j driver is None -- skipping flow seeding.")
         return 0
 
     try:

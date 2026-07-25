@@ -1,5 +1,5 @@
 """
-blast_radius/crawl — Phase 1 Playwright + Static Docs Crawler.
+blast_radius/crawl -- Phase 1 Playwright + Static Docs Crawler.
 
 Fixture mode: if settings.crawl_use_fixture is True, skip live crawling
 and load pre-committed PageSnapshot JSON files from data/crawl/fixtures/.
@@ -59,7 +59,7 @@ async def run_crawl_async() -> tuple[CrawlManifest, list[PageSnapshot]]:
 
     if settings.crawl_use_fixture:
         logger.info(
-            "[crawl] CRAWL_USE_FIXTURE=true — loading pre-committed fixtures (run_id=%s)",
+            "[crawl] CRAWL_USE_FIXTURE=true -- loading pre-committed fixtures (run_id=%s)",
             run_id,
         )
         all_snapshots = _load_fixtures()

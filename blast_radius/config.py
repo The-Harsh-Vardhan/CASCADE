@@ -1,5 +1,5 @@
 """
-blast_radius/config.py — Centralized configuration settings via Pydantic BaseSettings.
+blast_radius/config.py -- Centralized configuration settings via Pydantic BaseSettings.
 """
 from pathlib import Path
 from typing import Optional
@@ -14,7 +14,7 @@ class Settings(BaseSettings):
         extra="ignore"
     )
 
-    # LLM — Google Gemini (supports multiple project keys via GEMINI_API_KEY_1..10)
+    # LLM -- Google Gemini (supports multiple project keys via GEMINI_API_KEY_1..10)
     # Falls back to GEMINI_API_KEY for single-key backward compatibility.
     gemini_api_key:    str = Field("", description="Fallback single Gemini API key")
     gemini_api_key_1:  str = Field("", alias="GEMINI_API_KEY_1")
@@ -50,7 +50,7 @@ class Settings(BaseSettings):
     # Neo4j
     neo4j_uri: str = Field("bolt://localhost:7687")
     neo4j_user: str = Field("neo4j")
-    neo4j_password: str = Field("password", description="Neo4j password — required")
+    neo4j_password: str = Field("password", description="Neo4j password -- required")
 
     # GitHub
     github_token: Optional[str] = Field(None, description="GitHub token for PR API calls")
@@ -66,9 +66,9 @@ class Settings(BaseSettings):
     documenso_password: Optional[str] = Field(None, description="Documenso account password")
     documenso_base_url: str = Field("https://app.documenso.com")
 
-    # PR Analysis — BUG-10 Fix: default pr_number to 0 so module import succeeds before Phase 3
-    pr_number: int = Field(0, description="Target PR number — set before Phase 3")
-    merge_sha: str = Field("", description="Pinned merge SHA — set before Phase 3")
+    # PR Analysis -- BUG-10 Fix: default pr_number to 0 so module import succeeds before Phase 3
+    pr_number: int = Field(0, description="Target PR number -- set before Phase 3")
+    merge_sha: str = Field("", description="Pinned merge SHA -- set before Phase 3")
 
     # Pipeline Settings
     data_dir: Path = Field(Path("data"))
@@ -82,7 +82,7 @@ class Settings(BaseSettings):
         from rich.console import Console
         from rich.table import Table
         console = Console()
-        table = Table(title="Blast Radius Analyzer — Configuration")
+        table = Table(title="Blast Radius Analyzer -- Configuration")
         table.add_column("Key", style="cyan")
         table.add_column("Value", style="green")
         table.add_column("Status", style="yellow")

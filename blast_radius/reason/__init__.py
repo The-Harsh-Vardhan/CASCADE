@@ -1,5 +1,5 @@
 """
-blast_radius/reason/__init__.py — Phase 5: Blast Radius Reasoning orchestrator.
+blast_radius/reason/__init__.py -- Phase 5: Blast Radius Reasoning orchestrator.
 
 Loads Phase 3/4 artifacts, runs forward PPR, computes affected nodes,
 and writes data/reports/blast_radius_report.json.
@@ -9,7 +9,7 @@ primary source. Neo4j is attempted as a secondary source if available.
 This avoids a hard Neo4j dependency while remaining compatible with the spec.
 
 v4 fixes:
-  P0-21: IMPLEMENTS direction is CodeFunction → Requirement (forward PPR).
+  P0-21: IMPLEMENTS direction is CodeFunction -> Requirement (forward PPR).
   P1-25: min_absolute=1e-5 floor passed to normalize_scores.
   P2-26: Removed no-op Neo4j hard-fail; JSON fallback is authoritative.
 """
@@ -31,7 +31,7 @@ DATA_DIR = Path(settings.data_dir)
 REPORTS_DIR = DATA_DIR / "reports"
 
 
-# ── Artifact loaders ──────────────────────────────────────────────────────────
+# -- Artifact loaders ----------------------------------------------------------
 
 def _load_artifacts() -> tuple[list[CodeFunction], PRDelta]:
     """Load Phase 3 call_graph.json and the PR delta file."""
@@ -55,7 +55,7 @@ def _load_graph_data(functions: list[CodeFunction]) -> tuple[list[EntityLink], d
     """
     Load entity links and build node_metadata for evidence path rendering.
 
-    Primary source: data/graph/entity_links.json (Phase 4 output — always available).
+    Primary source: data/graph/entity_links.json (Phase 4 output -- always available).
     The node_metadata dict is built from entity links + call_graph (no Neo4j needed).
 
     v4 fix (P0-21): IMPLEMENTS is CodeFunction -> Requirement (already correct in JSON).
@@ -110,7 +110,7 @@ def _load_graph_data(functions: list[CodeFunction]) -> tuple[list[EntityLink], d
             if to_id not in node_meta:
                 node_meta[to_id] = {
                     "node_type": "Page",
-                    "label": to_id,  # page:{sha} — enriched below if crawl available
+                    "label": to_id,  # page:{sha} -- enriched below if crawl available
                 }
         elif link.rel_type == "COVERS":
             # Source = Page node; Target = Requirement node
@@ -160,7 +160,7 @@ def _load_graph_data(functions: list[CodeFunction]) -> tuple[list[EntityLink], d
     return entity_links, node_meta, absent_requirements
 
 
-# ── Main analysis ─────────────────────────────────────────────────────────────
+# -- Main analysis -------------------------------------------------------------
 
 def analyze_pr() -> BlastRadiusReport:
     """
@@ -179,7 +179,7 @@ def analyze_pr() -> BlastRadiusReport:
     graph = build_projection(functions, entity_links)
     print(f"[reason] Graph: {graph.number_of_nodes()} nodes, {graph.number_of_edges()} edges")
 
-    # Identify seeds: PR changed paths → CodeFunction IDs
+    # Identify seeds: PR changed paths -> CodeFunction IDs
     changed_paths = {cf.path for cf in delta.changed_files}
     seeds = [fn.function_id for fn in functions if fn.file in changed_paths]
 
@@ -212,7 +212,7 @@ def analyze_pr() -> BlastRadiusReport:
 
     print(f"[reason] Seeds: {len(seeds)} changed functions")
 
-    # Forward PPR — v4 fix P1-25: min_absolute floor
+    # Forward PPR -- v4 fix P1-25: min_absolute floor
     raw_scores  = personalized_pagerank(graph, seeds)
     normalized  = normalize_scores(raw_scores, set(seeds), min_absolute=1e-5)
 
@@ -252,7 +252,7 @@ def analyze_pr() -> BlastRadiusReport:
     low_conf = [n for n in affected_ui + affected_req if n.risk_tier == "LOW"]
     if low_conf:
         manual_review.append(
-            f"{len(low_conf)} node(s) have LOW confidence — verify before updating test plans."
+            f"{len(low_conf)} node(s) have LOW confidence -- verify before updating test plans."
         )
     if dark_changes:
         manual_review.append(

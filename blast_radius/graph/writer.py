@@ -1,5 +1,5 @@
 """
-blast_radius/graph/writer.py — Neo4j write operations for Phase 4.
+blast_radius/graph/writer.py -- Neo4j write operations for Phase 4.
 
 BUG-07 fix applied: build_graph() clears stale GapNodes and resets
 coverage_status at the start of each run to prevent accumulation across runs.
@@ -21,6 +21,7 @@ from blast_radius.graph.schema import (
     CREATE_IMPLEMENTS,
     CREATE_RENDERS,
     CREATE_COVERS,
+    CREATE_UI_IMPLEMENTS,
     CREATE_CALLS,
     CREATE_ABSENT_FROM,
     MARK_MISSING_REQUIREMENTS,
@@ -41,7 +42,7 @@ def get_driver():
 
 
 def ensure_schema(driver) -> None:
-    """Create uniqueness constraints (idempotent — IF NOT EXISTS)."""
+    """Create uniqueness constraints (idempotent -- IF NOT EXISTS)."""
     with driver.session() as session:
         for constraint in CONSTRAINTS:
             try:
@@ -230,7 +231,7 @@ def write_code_functions(session, functions: list) -> int:
                 }).consume()
                 calls_written += 1
             except Exception:
-                pass  # callee not in graph (cross-file reference) — expected
+                pass  # callee not in graph (cross-file reference) -- expected
 
     print(f"[graph] {len(functions)} CodeFunction nodes, {calls_written} CALLS edges")
     return len(functions)
@@ -238,11 +239,12 @@ def write_code_functions(session, functions: list) -> int:
 
 def write_entity_links(session, links: list, run_id: str = "v1") -> int:
     """
-    Write IMPLEMENTS and RENDERS edges to Neo4j.
+    Write IMPLEMENTS, UI_IMPLEMENTS, RENDERS, and COVERS edges to Neo4j.
     Returns count of successfully written edges. Logs but does not raise on failures.
     """
     template_map = {
-        "IMPLEMENTS": CREATE_IMPLEMENTS,
+        "IMPLEMENTS": CREATE_IMPLEMENTS,       # CodeFunction -> Requirement
+        "UI_IMPLEMENTS": CREATE_UI_IMPLEMENTS,  # UIElement -> Requirement (tiered)
         "RENDERS": CREATE_RENDERS,
         "COVERS": CREATE_COVERS,
     }
@@ -279,7 +281,7 @@ def mark_absent_requirements(session, run_id: str = "v1") -> int:
     Mark requirements with no IMPLEMENTS edge as MISSING, create GapNodes.
     Returns count of missing requirements.
 
-    v4 fix (P0-21): uses correct IMPLEMENTS direction (CodeFunction → Requirement).
+    v4 fix (P0-21): uses correct IMPLEMENTS direction (CodeFunction -> Requirement).
     """
     result = session.run(MARK_MISSING_REQUIREMENTS).single()
     missing_count = result["missing_count"] if result else 0

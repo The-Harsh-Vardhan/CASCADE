@@ -1,5 +1,5 @@
 """
-blast_radius/api/seeder.py — Seeds APIEndpoint nodes and relationships into Neo4j.
+blast_radius/api/seeder.py -- Seeds APIEndpoint nodes and relationships into Neo4j.
 """
 
 from __future__ import annotations
@@ -25,7 +25,7 @@ def seed_api_endpoints(driver, repo_dir: str | Path | None = None) -> int:
     Returns number of APIEndpoint nodes seeded.
     """
     if driver is None:
-        logger.warning("[api] Neo4j driver is None — skipping APIEndpoint seeding.")
+        logger.warning("[api] Neo4j driver is None -- skipping APIEndpoint seeding.")
         return 0
 
     if repo_dir is None:
@@ -100,7 +100,7 @@ def seed_api_endpoints(driver, repo_dir: str | Path | None = None) -> int:
                     RETURN count(rel) AS c
                 """, ep_id=ep_id, route_pattern=route_file_pattern).single()["c"]
 
-                # Step 3: Fallback — ts-rest contract handlers only (exact name match)
+                # Step 3: Fallback -- ts-rest contract handlers only (exact name match)
                 if res_path == 0 and ep.get("handler_function"):
                     h_fn = ep["handler_function"]
                     session.run("""

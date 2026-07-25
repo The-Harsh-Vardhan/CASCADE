@@ -1,5 +1,5 @@
 """
-Phase 6 entrypoint — run via: python -m blast_radius.report
+Phase 6 entrypoint -- run via: python -m blast_radius.report
 """
 from blast_radius.report import render_report
 

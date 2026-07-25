@@ -1,13 +1,116 @@
 """
-blast_radius/graph/queries.py — Neo4j Cypher helper queries for UserFlow nodes and graph operations.
+blast_radius/graph/queries.py -- Neo4j Cypher helper queries for UserFlow nodes and graph operations.
+
+Includes:
+  - UserFlow upsert + edge creation
+  - AbsentRequirement node upsert + smoke-test query
+  - Dark-code path check via Cypher
 """
 
 from __future__ import annotations
 
 import json
 import logging
+from typing import Any
 
 logger = logging.getLogger(__name__)
+
+
+# -- AbsentRequirement schema -------------------------------------------------
+
+UPSERT_ABSENT_REQUIREMENT = """
+MERGE (a:AbsentRequirement {id: $id})
+SET a.requirement_id   = $requirement_id,
+    a.absence_type     = $absence_type,
+    a.reason           = $reason,
+    a.confidence       = $confidence,
+    a.evidence         = $evidence,
+    a.closest_page_url = $closest_page_url
+WITH a
+OPTIONAL MATCH (r:Requirement {id: $requirement_id})
+FOREACH (_ IN CASE WHEN r IS NOT NULL THEN [1] ELSE [] END |
+    MERGE (r)-[:ABSENT_FROM]->(a)
+)
+WITH a
+OPTIONAL MATCH (p1:Page)
+WHERE $closest_page_url <> "" AND (p1.url = $closest_page_url OR p1.url CONTAINS $closest_page_url OR $closest_page_url CONTAINS p1.url)
+WITH a, p1
+OPTIONAL MATCH (p2:Page)
+WITH a, coalesce(p1, p2) AS p
+WHERE p IS NOT NULL
+WITH a, p LIMIT 1
+MERGE (a)-[:MISSING_FROM]->(p)
+"""
+
+
+def write_absent_requirements(session, absent_list: list[Any]) -> int:
+    """
+    Upsert AbsentRequirement nodes from fusion/mapper output and create MISSING_FROM edges to Pages.
+
+    Args:
+        session:      open Neo4j session
+        absent_list:  list of AbsentRequirement dataclasses or dicts
+
+    Returns:
+        count of nodes written
+    """
+    written = 0
+    for a in absent_list:
+        # Accept dataclasses or plain dicts (from JSON reload)
+        if hasattr(a, "__dataclass_fields__"):
+            from dataclasses import asdict
+            d = asdict(a)
+        elif isinstance(a, dict):
+            d = a
+        else:
+            logger.warning("[queries] Skipping unknown absent type: %s", type(a))
+            continue
+
+        try:
+            session.run(UPSERT_ABSENT_REQUIREMENT, {
+                "id":               d["id"],
+                "requirement_id":   d["requirement_id"],
+                "absence_type":     d["absence_type"],
+                "reason":           d["reason"],
+                "confidence":       float(d.get("confidence", 0.90)),
+                "evidence":         d.get("evidence", ""),
+                "closest_page_url": d.get("closest_page_url", ""),
+            }).consume()
+            written += 1
+        except Exception as exc:
+            logger.warning("[queries] Failed to write AbsentRequirement %s: %s", d.get("id"), exc)
+
+            written += 1
+        except Exception as exc:
+            logger.warning("[queries] Failed to write AbsentRequirement %s: %s", d.get("id"), exc)
+
+    logger.info("[queries] Wrote %d AbsentRequirement nodes", written)
+    return written
+
+
+def get_absent_requirements(session) -> list[dict]:
+    """
+    Return all AbsentRequirement nodes from Neo4j.
+
+    Used in the smoke test:
+        absent = get_absent_requirements(session)
+        assert len(absent) >= 8
+
+    Returns list of dicts with keys:
+        id, requirement_id, absence_type, reason, confidence, evidence
+    """
+    query = """
+    MATCH (a:AbsentRequirement)
+    RETURN a.id             AS id,
+           a.requirement_id AS requirement_id,
+           a.absence_type   AS absence_type,
+           a.reason         AS reason,
+           a.confidence     AS confidence,
+           a.evidence       AS evidence
+    ORDER BY a.absence_type, a.id
+    """
+    result = session.run(query)
+    return [record.data() for record in result]
 
 UPSERT_USER_FLOW = """
 MERGE (f:UserFlow {id: $id})

@@ -1,8 +1,8 @@
 """
-blast_radius/llm.py — Centralised LLM client wrapper with multi-key rotation.
+blast_radius/llm.py -- Centralised LLM client wrapper with multi-key rotation.
 
 All pipeline phases import from here. Never instantiate the Gemini client
-directly in phase code — always go through call_llm() or call_llm_json().
+directly in phase code -- always go through call_llm() or call_llm_json().
 
 Usage:
     from blast_radius.llm import call_llm, call_llm_json
@@ -39,7 +39,7 @@ logger = logging.getLogger(__name__)
 # Load .env file automatically if present
 load_dotenv()
 
-# ── Multi-key pool ─────────────────────────────────────────────────────────────
+# -- Multi-key pool -------------------------------------------------------------
 
 from blast_radius.config import settings as _settings
 
@@ -77,7 +77,7 @@ def _is_quota_error(exc: Exception) -> bool:
     return "429" in msg or "RESOURCE_EXHAUSTED" in msg or "quota" in msg.lower()
 
 
-# ── Public API ─────────────────────────────────────────────────────────────────
+# -- Public API -----------------------------------------------------------------
 
 async def call_llm(prompt: str, *, temperature: float | None = None) -> str:
     """
@@ -105,7 +105,7 @@ async def call_llm(prompt: str, *, temperature: float | None = None) -> str:
                 )
                 last_exc = exc
                 continue   # try next key
-            # Non-quota error — raise immediately
+            # Non-quota error -- raise immediately
             raise RuntimeError(f"LLM call failed: {exc}") from exc
 
     # All keys exhausted
@@ -132,7 +132,7 @@ async def call_llm_json(
     full_prompt = prompt
     if schema_hint:
         full_prompt += (
-            f"\n\nRespond ONLY with valid JSON matching this schema — "
+            f"\n\nRespond ONLY with valid JSON matching this schema -- "
             f"no explanation, no markdown fences:\n{schema_hint}"
         )
     else:

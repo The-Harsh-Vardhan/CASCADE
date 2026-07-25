@@ -1,5 +1,5 @@
 """
-blast_radius/reason/impact.py — Compute affected nodes and evidence paths from PPR scores.
+blast_radius/reason/impact.py -- Compute affected nodes and evidence paths from PPR scores.
 
 v4 fixes applied:
   - evidence_path stores human-readable labels (fn.name, URL, req text excerpt)
@@ -33,7 +33,7 @@ def evidence_path_labels(
             seed,
             target,
             method="dijkstra",
-            weight="weight",   # string attribute name — not a callable
+            weight="weight",   # string attribute name -- not a callable
         )
     except (nx.NetworkXNoPath, nx.NodeNotFound):
         return []
@@ -70,9 +70,9 @@ def compute_affected_nodes(
     Compute blast radius: affected UI/Pages and Requirements from changed functions.
 
     Returns:
-      affected_ui     — Page/UIElement nodes reachable from seeds
-      affected_req    — Requirement nodes reachable from seeds
-      dark_changes    — seed functions with no reachable downstream nodes
+      affected_ui     -- Page/UIElement nodes reachable from seeds
+      affected_req    -- Requirement nodes reachable from seeds
+      dark_changes    -- seed functions with no reachable downstream nodes
                         (changed code with no graph-traced impact)
     """
     affected_ui:  list[AffectedNode] = []

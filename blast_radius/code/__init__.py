@@ -1,9 +1,9 @@
 """
-blast_radius/code/__init__.py — Phase 3: Code Analysis orchestrator.
+blast_radius/code/__init__.py -- Phase 3: Code Analysis orchestrator.
 
 Runs:
-  1. ast-grep two-pass scan → call_graph.json
-  2. GitHub API PR delta fetch → pr_<number>.json
+  1. ast-grep two-pass scan -> call_graph.json
+  2. GitHub API PR delta fetch -> pr_<number>.json
   3. Path alignment verification (BUG-04 fix)
 
 Output artifacts:
@@ -38,7 +38,7 @@ def run_code_analysis() -> dict:
             f"  Run: git clone --depth 1 https://github.com/documenso/documenso {repo}"
         )
 
-    # ── Pass 1: ast-grep scan ─────────────────────────────────────────────
+    # -- Pass 1: ast-grep scan ---------------------------------------------
     print("[code] Running ast-grep scan (ts-functions + trpc-procedures)...")
     functions = build_call_graph(repo)
     trpc_fns = [f for f in functions if f.ast_node_type == "trpc-procedure"]
@@ -55,14 +55,14 @@ def run_code_analysis() -> dict:
     )
     print(f"[code] Saved call graph => {call_graph_path}")
 
-    # ── Pass 2: GitHub API PR delta ──────────────────────────────────────
+    # -- Pass 2: GitHub API PR delta --------------------------------------
     print(f"[code] Fetching PR #{settings.pr_number} delta from GitHub API...")
     delta = get_pr_delta(REPO_PATH, settings.pr_number, settings.merge_sha)
     delta_path = CODE_DIR / f"pr_{settings.pr_number}.json"
     delta_path.write_text(delta.model_dump_json(indent=2), encoding="utf-8")
     print(f"[code] Saved PR delta => {delta_path}")
 
-    # ── BUG-04 fix: path alignment guard ────────────────────────────────
+    # -- BUG-04 fix: path alignment guard --------------------------------
     print("[code] Verifying path alignment (BUG-04 fix)...")
     verify_path_alignment(functions, delta)
 

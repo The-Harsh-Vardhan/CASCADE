@@ -1,47 +1,32 @@
 [
   {
-    "requirement_id": "REQ-48EAFF4BD035E9F9",
-    "text": "The platform provides self-hosting capabilities for users to host and manage document signing infrastructure independent",
+    "requirement_id": "REQ-007",
+    "text": "The software must be packaged as standard Docker container images allowing users to self-host the platform on Docker, Do",
     "reason": "No IMPLEMENTS link above confidence threshold"
   },
   {
-    "requirement_id": "REQ-842243203048E352",
-    "text": "The platform provides digital document signing capabilities as an open-source alternative to proprietary signature tools",
+    "requirement_id": "REQ-013",
+    "text": "The platform must support secure vulnerability disclosures via GitHub Security Advisories to protect self-hosted and clo",
     "reason": "No IMPLEMENTS link above confidence threshold"
   },
   {
-    "requirement_id": "REQ-A1256723E6E4F4DD",
-    "text": "Support for Docker and Docker Compose containerized deployments.",
+    "requirement_id": "REQ-152",
+    "text": "Allow teams to set up webhooks for integrating document events with external services.",
     "reason": "No IMPLEMENTS link above confidence threshold"
   },
   {
-    "requirement_id": "REQ-40844F6210671440",
-    "text": "PostgreSQL database storage with Prisma ORM data modeling and migrations.",
+    "requirement_id": "REQ-183",
+    "text": "Standard plans enforce a limit of uploading a maximum of 5 documents simultaneously.",
     "reason": "No IMPLEMENTS link above confidence threshold"
   },
   {
-    "requirement_id": "REQ-08FF5E4D359609DB",
-    "text": "Developers can generate and manage API keys for authentication.",
+    "requirement_id": "REQ-197",
+    "text": "The system must trigger a webhook notification with payload event 'DOCUMENT_CREATED' whenever a new document or template",
     "reason": "No IMPLEMENTS link above confidence threshold"
   },
   {
-    "requirement_id": "REQ-B9C06609F45FD37C",
-    "text": "The platform tracks document status transitions across a predefined lifecycle from draft to completed.",
-    "reason": "No IMPLEMENTS link above confidence threshold"
-  },
-  {
-    "requirement_id": "REQ-4D20F6362D467B85",
-    "text": "The platform supports distinct recipient roles including signers and approvers.",
-    "reason": "No IMPLEMENTS link above confidence threshold"
-  },
-  {
-    "requirement_id": "REQ-D8940375FBCE77ED",
-    "text": "The platform applies digital signing certificates to enable digital verification of signed documents.",
-    "reason": "No IMPLEMENTS link above confidence threshold"
-  },
-  {
-    "requirement_id": "REQ-0609D7DA44531267",
-    "text": "The software can be self-hosted and deployed using Docker, Kubernetes, or Railway.",
+    "requirement_id": "REQ-199",
+    "text": "The system must trigger a webhook notification with payload event 'DOCUMENT_OPENED' when a recipient opens the document ",
     "reason": "No IMPLEMENTS link above confidence threshold"
   }
 ]

@@ -462,11 +462,30 @@
       <input type="range" id="edge-width-slider" min="1" max="10" value="3" step="0.5">
       <span id="edge-width-val" style="min-width: 28px; text-align: right;">3px</span>
     </div>
+    <div class="control-group" title="Expand or compress 3D node spacing across the graph layout">
+      <label for="spacing-slider">Expand/Compress:</label>
+      <input type="range" id="spacing-slider" min="0.5" max="3.0" value="1.0" step="0.1">
+      <span id="spacing-val" style="min-width: 32px; text-align: right;">1.0x</span>
+    </div>
+    <div class="control-group" title="Adjust 3D distance between Requirement, UI, and Code layer planes">
+      <label for="layer-gap-slider">Layer Gap:</label>
+      <input type="range" id="layer-gap-slider" min="50" max="600" value="200" step="10">
+      <span id="layer-gap-val" style="min-width: 42px; text-align: right;">200px</span>
+    </div>
+    <div class="control-group" title="Limit maximum number of visible nodes in 3D graph">
+      <label for="node-limit-slider">Node Limit:</label>
+      <input type="range" id="node-limit-slider" min="50" max="2400" value="500" step="50">
+      <span id="node-limit-val" style="min-width: 40px; text-align: right;">500</span>
+    </div>
+
+
+
+
     <button class="btn" id="toggle-labels-btn" title="Toggle 3D Labels for Nodes & Edges">
-      🏷️ Labels: ON
+      🏷️ Labels: OFF
     </button>
     <button class="btn" id="toggle-clusters-btn" title="Toggle Interconnected Group Cluster Labels">
-      🧩 Clusters: ON
+      🧩 Clusters: OFF
     </button>
     <button class="btn" id="refresh-data-btn" title="Refresh Neo4j Data Cache">
       🔄 Refresh Cache
@@ -504,6 +523,25 @@
       <button class="tab-btn" onclick="filterLayer('gap', this)">Gap</button>
     </div>
 
+    <!-- Disconnected Filter Options Panel -->
+    <div class="filter-panel" style="padding: 10px 14px; border-bottom: 1px solid var(--panel-border); font-size: 12px; display: flex; flex-direction: column; gap: 6px; background: rgba(0,0,0,0.15);">
+      <div style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--text-sub); letter-spacing: 0.5px; margin-bottom: 2px;">
+        🔌 Disconnected Node Filters
+      </div>
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+        <input type="checkbox" id="hide-disconnected-overall" onchange="applyActiveFilters()">
+        <span>🚫 Hide Unconnected (0 total edges)</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+        <input type="checkbox" id="hide-disconnected-intra" onchange="applyActiveFilters()">
+        <span>↔️ Hide Same-Layer Isolated (0 intra-layer)</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+        <input type="checkbox" id="hide-disconnected-inter" onchange="applyActiveFilters()">
+        <span>↕️ Hide Cross-Layer Isolated (0 inter-layer)</span>
+      </label>
+    </div>
+
     <!-- Scrollable Node List -->
     <div class="node-list" id="node-list"></div>
   </div>
@@ -530,8 +568,9 @@
     let interLayerEdgeWidth = 3;
     let labelsGroup = null;
     let clustersGroup = null;
-    let labelsVisible = true;
-    let clustersVisible = true;
+    let labelsVisible = false;
+    let clustersVisible = false;
+
 
     function isInterLayerLink(link) {
       const srcId = typeof link.source === 'object' ? link.source.id : link.source;
@@ -579,6 +618,93 @@
         Graph.linkWidth(link => getLinkWidth(link));
       }
     });
+
+    // Expand / Compress Node Spacing Slider Control
+    let currentSpacingScale = 1.0;
+    document.getElementById('spacing-slider').addEventListener('input', (e) => {
+      currentSpacingScale = parseFloat(e.target.value);
+      document.getElementById('spacing-val').innerText = currentSpacingScale.toFixed(1) + 'x';
+      updatePhysicsForces();
+    });
+
+    // Node Limit Slider Control
+    let maxVisibleNodes = 500;
+    document.getElementById('node-limit-slider').addEventListener('input', (e) => {
+      maxVisibleNodes = parseInt(e.target.value);
+      document.getElementById('node-limit-val').innerText = maxVisibleNodes >= 2400 ? 'ALL' : maxVisibleNodes;
+      applyActiveFilters();
+    });
+
+
+    // Layer Gap Slider Control (Adjusts distance between Requirement, UI, and Code layers)
+    let currentLayerGap = 200;
+    document.getElementById('layer-gap-slider').addEventListener('input', (e) => {
+      currentLayerGap = parseInt(e.target.value);
+      document.getElementById('layer-gap-val').innerText = currentLayerGap + 'px';
+      updateLayerPositions();
+    });
+
+    function updateLayerPositions() {
+      if (!fullGraphData || !fullGraphData.nodes) return;
+
+      fullGraphData.nodes.forEach(node => {
+        if (node.layer === 'req') node.fz = currentLayerGap;
+        else if (node.layer === 'ui') node.fz = 0;
+        else if (node.layer === 'code') node.fz = -currentLayerGap;
+        else if (node.layer === 'gap') node.fz = currentLayerGap * 1.1;
+        else if (node.layer === 'absent') node.fz = currentLayerGap * 1.25;
+        else node.fz = currentLayerGap;
+      });
+
+      // Update 3D Visual Planes
+      addLayerPlanes();
+
+      if (labelsVisible) draw3DLabels();
+      if (clustersVisible) drawClusterLabels();
+
+      if (Graph) {
+        Graph.d3ReheatSimulation();
+      }
+    }
+
+
+
+    function updatePhysicsForces() {
+      if (!Graph) return;
+
+      const degrees = computeNodeDegrees();
+
+      // 1. Charge force (repulsion) — highly connected hub nodes get stronger repulsion
+      const chargeForce = Graph.d3Force('charge');
+      if (chargeForce) {
+        chargeForce.strength(node => {
+          const deg = degrees.get(node.id)?.total || 1;
+          const degreeFactor = Math.min(1 + Math.log2(deg + 1), 4.5);
+          return -140 * degreeFactor * currentSpacingScale;
+        });
+      }
+
+      // 2. Link force (distance) — scaled by spacing scale and hub degree
+      const linkForce = Graph.d3Force('link');
+      if (linkForce) {
+        linkForce.distance(link => {
+          const sId = typeof link.source === 'object' ? link.source.id : link.source;
+          const tId = typeof link.target === 'object' ? link.target.id : link.target;
+          const sDeg = degrees.get(sId)?.total || 1;
+          const tDeg = degrees.get(tId)?.total || 1;
+          const maxDeg = Math.max(sDeg, tDeg);
+          const hubBonus = maxDeg > 5 ? Math.min(maxDeg * 2.5, 80) : 0;
+
+          const isInter = isInterLayerLink(link);
+          const baseDist = isInter ? (90 + hubBonus) : (40 + hubBonus * 0.5);
+          return baseDist * currentSpacingScale;
+        });
+      }
+
+      // Smoothly reheat physics simulation
+      Graph.d3ReheatSimulation();
+    }
+
 
     // Labels Toggle Button
     document.getElementById('toggle-labels-btn').addEventListener('click', () => {
@@ -695,6 +821,8 @@
         .graphData(fullGraphData)
         .backgroundColor(isDark ? '#0b0c10' : '#f8f9fa')
         .nodeId('id')
+        .warmupTicks(30)
+        .cooldownTicks(60)
         .nodeLabel(node => {
           return `<div style="color:#fff; background:rgba(15,23,42,0.9); padding:6px 10px; border-radius:6px; border:1px solid #30363d;">
             <b>${node.name}</b> (${node.node_type})<br/>
@@ -717,19 +845,27 @@
           }
           return isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.10)';
         })
-        .linkDirectionalParticles(2)
-        .linkDirectionalParticleWidth(link => isInterLayerLink(link) ? 3 : 1)
+        .linkDirectionalParticles(link => isInterLayerLink(link) ? 2 : 0)
+        .linkDirectionalParticleWidth(link => isInterLayerLink(link) ? 3 : 0)
         .linkDirectionalParticleSpeed(0.005)
         .onEngineStop(() => {
           draw3DLabels();
           drawClusterLabels();
         })
+        .onNodeHover(node => {
+          if (container) container.style.cursor = node ? 'pointer' : 'default';
+        })
         .onNodeClick(node => {
           focusNode(node);
         });
 
+
       // Add 3D Layer Planes (Glassmorphism Tier Visualizers at Z = +200, 0, -200)
       addLayerPlanes();
+
+      // Configure degree-aware repulsive forces & link distances
+      updatePhysicsForces();
+
 
       // Schedule 3D Labels & Connected Component Cluster Labels
       setTimeout(() => {
@@ -762,10 +898,11 @@
       layerPlanesGroup = new THREE.Group();
 
       const layers = [
-        { z: 200, color: 0x7f77dd, label: "Requirement Layer (Z=+200)" },
+        { z: currentLayerGap, color: 0x7f77dd, label: `Requirement Layer (Z=+${currentLayerGap})` },
         { z: 0, color: 0x1d9e75, label: "UI Layer (Z=0)" },
-        { z: -200, color: 0xba7517, label: "Code Layer (Z=-200)" }
+        { z: -currentLayerGap, color: 0xba7517, label: `Code Layer (Z=-${currentLayerGap})` }
       ];
+
 
       layers.forEach(l => {
         const planeGeo = new THREE.PlaneGeometry(600, 600);
@@ -1008,42 +1145,120 @@
     function setCameraView(preset) {
       if (!Graph) return;
       if (preset === 'iso') {
-        Graph.cameraPosition({ x: 300, y: 300, z: 400 }, { x: 0, y: 0, z: 0 }, 1200);
+        Graph.cameraPosition({ x: 300, y: 300, z: currentLayerGap * 2.2 }, { x: 0, y: 0, z: 0 }, 1200);
       } else if (preset === 'req') {
-        Graph.cameraPosition({ x: 0, y: 1, z: 450 }, { x: 0, y: 0, z: 200 }, 1200);
+        Graph.cameraPosition({ x: 0, y: 1, z: currentLayerGap + 250 }, { x: 0, y: 0, z: currentLayerGap }, 1200);
       } else if (preset === 'ui') {
         Graph.cameraPosition({ x: 0, y: 1, z: 250 }, { x: 0, y: 0, z: 0 }, 1200);
       } else if (preset === 'code') {
-        Graph.cameraPosition({ x: 0, y: 1, z: 50 }, { x: 0, y: 0, z: -200 }, 1200);
+        Graph.cameraPosition({ x: 0, y: 1, z: -currentLayerGap + 250 }, { x: 0, y: 0, z: -currentLayerGap }, 1200);
       }
     }
 
-    // Sidebar Filtering Logic
-    function filterLayer(layer, btnElem) {
-      currentLayerFilter = layer;
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      if (btnElem) btnElem.classList.add('active');
-      updateNodeList();
+
+    // Disconnected Node Filter & Sidebar Filtering Logic
+    let hideDisconnectedOverall = false;
+    let hideDisconnectedIntra = false;
+    let hideDisconnectedInter = false;
+
+    function computeNodeDegrees() {
+      const degrees = new Map();
+      fullGraphData.nodes.forEach(n => {
+        degrees.set(n.id, { total: 0, intra: 0, inter: 0 });
+      });
+
+      fullGraphData.links.forEach(l => {
+        const sId = typeof l.source === 'object' ? l.source.id : l.source;
+        const tId = typeof l.target === 'object' ? l.target.id : l.target;
+        const sNode = nodeMap.get(sId);
+        const tNode = nodeMap.get(tId);
+
+        if (sNode && tNode) {
+          const isInter = sNode.layer !== tNode.layer;
+          
+          const sDeg = degrees.get(sId);
+          if (sDeg) {
+            sDeg.total++;
+            if (isInter) sDeg.inter++;
+            else sDeg.intra++;
+          }
+
+          const tDeg = degrees.get(tId);
+          if (tDeg) {
+            tDeg.total++;
+            if (isInter) tDeg.inter++;
+            else tDeg.intra++;
+          }
+        }
+      });
+
+      return degrees;
     }
 
-    document.getElementById('search-input').addEventListener('input', (e) => {
-      activeSearchQuery = e.target.value.toLowerCase().trim();
-      updateNodeList();
-    });
+    function applyActiveFilters() {
+      if (!fullGraphData || !fullGraphData.nodes) return;
 
-    function updateNodeList() {
-      const listContainer = document.getElementById('node-list');
-      listContainer.innerHTML = '';
+      hideDisconnectedOverall = document.getElementById('hide-disconnected-overall')?.checked || false;
+      hideDisconnectedIntra = document.getElementById('hide-disconnected-intra')?.checked || false;
+      hideDisconnectedInter = document.getElementById('hide-disconnected-inter')?.checked || false;
 
-      filteredNodes = fullGraphData.nodes.filter(node => {
+      const degrees = computeNodeDegrees();
+
+      let candidateNodes = fullGraphData.nodes.filter(node => {
+        // 1. Layer filter
         const matchesLayer = (currentLayerFilter === 'all') || (node.layer === currentLayerFilter);
+        if (!matchesLayer) return false;
+
+        // 2. Search query filter
         const matchesQuery = !activeSearchQuery || 
           (node.name && node.name.toLowerCase().includes(activeSearchQuery)) ||
           (node.id && node.id.toLowerCase().includes(activeSearchQuery)) ||
           (node.node_type && node.node_type.toLowerCase().includes(activeSearchQuery));
-        
-        return matchesLayer && matchesQuery;
+        if (!matchesQuery) return false;
+
+        // 3. Disconnected node filters
+        const deg = degrees.get(node.id) || { total: 0, intra: 0, inter: 0 };
+        if (hideDisconnectedOverall && deg.total === 0) return false;
+        if (hideDisconnectedIntra && deg.intra === 0) return false;
+        if (hideDisconnectedInter && deg.inter === 0) return false;
+
+        return true;
       });
+
+      // Sort candidate nodes by connectivity degree (total links) so core nodes stay when limiting
+      candidateNodes.sort((a, b) => {
+        const degA = degrees.get(a.id)?.total || 0;
+        const degB = degrees.get(b.id)?.total || 0;
+        return degB - degA;
+      });
+
+      const visibleNodes = candidateNodes.slice(0, maxVisibleNodes);
+      const visibleNodeIds = new Set(visibleNodes.map(n => n.id));
+
+      const visibleLinks = fullGraphData.links.filter(link => {
+        const sId = typeof link.source === 'object' ? link.source.id : link.source;
+        const tId = typeof link.target === 'object' ? link.target.id : link.target;
+        return visibleNodeIds.has(sId) && visibleNodeIds.has(tId);
+      });
+
+      if (Graph) {
+        Graph.graphData({ nodes: visibleNodes, links: visibleLinks });
+      }
+
+
+      filteredNodes = visibleNodes;
+      updateNodeListCards();
+
+      const statsElem = document.getElementById('stats-counter');
+      if (statsElem) {
+        statsElem.innerText = `${visibleNodes.length} / ${fullGraphData.nodes.length} Nodes | ${visibleLinks.length} / ${fullGraphData.links.length} Links`;
+      }
+    }
+
+    function updateNodeListCards() {
+      const listContainer = document.getElementById('node-list');
+      if (!listContainer) return;
+      listContainer.innerHTML = '';
 
       // Display top 100 matching cards for smooth rendering
       filteredNodes.slice(0, 100).forEach(node => {
@@ -1062,6 +1277,23 @@
         listContainer.appendChild(card);
       });
     }
+
+    function filterLayer(layer, btnElem) {
+      currentLayerFilter = layer;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      if (btnElem) btnElem.classList.add('active');
+      applyActiveFilters();
+    }
+
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      activeSearchQuery = e.target.value.toLowerCase().trim();
+      applyActiveFilters();
+    });
+
+    function updateNodeList() {
+      applyActiveFilters();
+    }
+
 
     // Inspector Overlay
     function openInspector(node) {
@@ -1089,51 +1321,112 @@
       document.getElementById('inspector').style.display = 'none';
     }
 
-    // Blast Simulator Shockwave Mode (Traces connected impact paths from selected node)
-    document.getElementById('blast-sim-btn').addEventListener('click', () => {
-      if (!selectedNode) {
-        alert('Please click and select a node first to simulate its blast radius impact!');
-        return;
+    // Blast Simulator Mode (Traces connected impact paths across all layers, fades rest)
+    let activeBlastComponent = { nodes: new Set(), links: new Set() };
+
+    function findFullConnectedComponent(startNodeId) {
+      const adj = new Map();
+      fullGraphData.nodes.forEach(n => adj.set(n.id, []));
+
+      fullGraphData.links.forEach(l => {
+        const sId = typeof l.source === 'object' ? l.source.id : l.source;
+        const tId = typeof l.target === 'object' ? l.target.id : l.target;
+        if (adj.has(sId) && adj.has(tId)) {
+          adj.get(sId).push({ neighborId: tId, link: l });
+          adj.get(tId).push({ neighborId: sId, link: l });
+        }
+      });
+
+      const visitedNodes = new Set([startNodeId]);
+      const connectedLinks = new Set();
+      const queue = [startNodeId];
+
+      while (queue.length > 0) {
+        const curr = queue.shift();
+        const neighbors = adj.get(curr) || [];
+        neighbors.forEach(({ neighborId, link }) => {
+          connectedLinks.add(link);
+          if (!visitedNodes.has(neighborId)) {
+            visitedNodes.add(neighborId);
+            queue.push(neighborId);
+          }
+        });
       }
-      
-      blastSimulationActive = true;
-      const selectedId = selectedNode.id;
 
-      // Find 1-hop and 2-hop connected links radiating from selected node
-      const impactedLinks = new Set();
-      const connectedNodeIds = new Set([selectedId]);
+      return { nodes: visitedNodes, links: connectedLinks };
+    }
 
-      fullGraphData.links.forEach(l => {
-        const sId = typeof l.source === 'object' ? l.source.id : l.source;
-        const tId = typeof l.target === 'object' ? l.target.id : l.target;
-        if (sId === selectedId || tId === selectedId) {
-          impactedLinks.add(l);
-          connectedNodeIds.add(sId);
-          connectedNodeIds.add(tId);
+    function toggleBlastSimulation() {
+      const btn = document.getElementById('blast-sim-btn');
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+      if (!blastSimulationActive) {
+        if (!selectedNode) {
+          alert('Please click and select a node first to simulate its blast radius impact!');
+          return;
         }
-      });
 
-      // 2-hop propagation
-      fullGraphData.links.forEach(l => {
-        const sId = typeof l.source === 'object' ? l.source.id : l.source;
-        const tId = typeof l.target === 'object' ? l.target.id : l.target;
-        if (connectedNodeIds.has(sId) || connectedNodeIds.has(tId)) {
-          impactedLinks.add(l);
+        blastSimulationActive = true;
+        btn.innerText = '⚡ Exit Simulation';
+        btn.style.background = '#d9381e';
+
+        activeBlastComponent = findFullConnectedComponent(selectedNode.id);
+
+        if (Graph) {
+          // 1. Faded / Highlighted Link Colors
+          Graph.linkColor(link => {
+            if (activeBlastComponent.links.has(link)) {
+              if (link.rel_type === 'IMPLEMENTS') return isDark ? 'rgba(127, 119, 221, 0.95)' : 'rgba(102, 92, 215, 0.95)';
+              if (link.rel_type === 'RENDERS') return isDark ? 'rgba(29, 158, 117, 0.95)' : 'rgba(20, 128, 94, 0.95)';
+              if (link.rel_type === 'COVERS') return isDark ? 'rgba(88, 166, 255, 0.95)' : 'rgba(9, 105, 218, 0.95)';
+              return isDark ? 'rgba(245, 158, 11, 0.95)' : 'rgba(217, 119, 6, 0.95)';
+            }
+            // FADE all non-connected edges completely
+            return isDark ? 'rgba(255, 255, 255, 0.02)' : 'rgba(0, 0, 0, 0.02)';
+          });
+
+          // 2. Faded / Highlighted Node Colors
+          Graph.nodeColor(node => {
+            if (activeBlastComponent.nodes.has(node.id)) {
+              return node.color || '#58a6ff';
+            }
+            // Dim non-connected nodes
+            return isDark ? 'rgba(60, 65, 75, 0.15)' : 'rgba(200, 205, 215, 0.20)';
+          });
+
+          // 3. Highlighted Particle Animations on connected edges only
+          Graph.linkDirectionalParticles(link => activeBlastComponent.links.has(link) ? 6 : 0)
+               .linkDirectionalParticleWidth(link => activeBlastComponent.links.has(link) ? 4 : 0)
+               .linkDirectionalParticleSpeed(link => activeBlastComponent.links.has(link) ? 0.015 : 0);
         }
-      });
-
-      // Launch particle shockwave specifically along impact paths
-      Graph.linkDirectionalParticles(link => impactedLinks.has(link) ? 8 : 1)
-           .linkDirectionalParticleWidth(link => impactedLinks.has(link) ? 5 : 1)
-           .linkDirectionalParticleSpeed(link => impactedLinks.has(link) ? 0.025 : 0.003);
-
-      setTimeout(() => {
-        Graph.linkDirectionalParticles(2)
-             .linkDirectionalParticleWidth(link => isInterLayerLink(link) ? 3 : 1)
-             .linkDirectionalParticleSpeed(0.005);
+      } else {
+        // Stop / Exit Blast Simulation
         blastSimulationActive = false;
-      }, 6000);
-    });
+        btn.innerText = '⚡ Blast Simulator';
+        btn.style.background = '';
+
+        if (Graph) {
+          Graph.linkColor(link => {
+            const isInter = isInterLayerLink(link);
+            if (isInter) {
+              if (link.rel_type === 'IMPLEMENTS') return isDark ? 'rgba(127, 119, 221, 0.75)' : 'rgba(102, 92, 215, 0.75)';
+              if (link.rel_type === 'RENDERS') return isDark ? 'rgba(29, 158, 117, 0.75)' : 'rgba(20, 128, 94, 0.75)';
+              if (link.rel_type === 'COVERS') return isDark ? 'rgba(88, 166, 255, 0.75)' : 'rgba(9, 105, 218, 0.75)';
+            }
+            return isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.10)';
+          });
+
+          Graph.nodeColor(node => node.color || '#58a6ff');
+
+          Graph.linkDirectionalParticles(2)
+               .linkDirectionalParticleWidth(link => isInterLayerLink(link) ? 3 : 1)
+               .linkDirectionalParticleSpeed(0.005);
+        }
+      }
+    }
+
+    document.getElementById('blast-sim-btn').addEventListener('click', toggleBlastSimulation);
+
 
     // Initialize Page
     window.addEventListener('DOMContentLoaded', () => {

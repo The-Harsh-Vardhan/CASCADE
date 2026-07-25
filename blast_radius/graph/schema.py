@@ -1,13 +1,14 @@
 """
-blast_radius/graph/schema.py — Neo4j Cypher templates for graph construction.
+blast_radius/graph/schema.py -- Neo4j Cypher templates for graph construction.
 
-v4 fix (P0-21): IMPLEMENTS direction is CodeFunction → Requirement.
-v5 fix (FIX-1): Added COVERS edge (Page/UIElement → Requirement) from UI resolver.
+v4 fix (P0-21): IMPLEMENTS direction is CodeFunction -> Requirement.
+v5 fix (FIX-1): Added COVERS edge (Page/UIElement -> Requirement) from UI resolver.
 v5 fix (FIX-3): MARK_MISSING excludes infra-pattern IMPLEMENTS (source='infra_pattern').
-PPR seeded at changed CodeFunctions propagates FORWARD to Requirements via CALLS → IMPLEMENTS.
+v6 fix (FIX-6): Added CREATE_UI_IMPLEMENTS (UIElement -> Requirement) for tiered keyword matching.
+PPR seeded at changed CodeFunctions propagates FORWARD to Requirements via CALLS -> IMPLEMENTS.
 """
 
-# ── Constraints (idempotent — IF NOT EXISTS) ──────────────────────────────────
+# -- Constraints (idempotent -- IF NOT EXISTS) ----------------------------------
 CONSTRAINTS = [
     "CREATE CONSTRAINT req_id IF NOT EXISTS FOR (n:Requirement) REQUIRE n.id IS UNIQUE",
     "CREATE CONSTRAINT ui_id  IF NOT EXISTS FOR (n:UIElement)   REQUIRE n.id IS UNIQUE",
@@ -15,9 +16,10 @@ CONSTRAINTS = [
     "CREATE CONSTRAINT gap_id IF NOT EXISTS FOR (n:GapNode)      REQUIRE n.id IS UNIQUE",
     "CREATE CONSTRAINT page_id IF NOT EXISTS FOR (n:Page)        REQUIRE n.id IS UNIQUE",
     "CREATE CONSTRAINT api_ep_id IF NOT EXISTS FOR (n:APIEndpoint) REQUIRE n.id IS UNIQUE",
+    "CREATE CONSTRAINT absent_req_id IF NOT EXISTS FOR (n:AbsentRequirement) REQUIRE n.id IS UNIQUE",
 ]
 
-# ── Node upserts ──────────────────────────────────────────────────────────────
+# -- Node upserts --------------------------------------------------------------
 UPSERT_REQUIREMENT = """
 MERGE (n:Requirement {id: $id})
 SET n.text = $text, n.req_type = $req_type, n.coverage_status = $coverage_status,
@@ -42,9 +44,9 @@ MERGE (n:Page {url: $url})
 SET n.id = $id, n.screenshot_path = $screenshot_path, n.updated_at = $updated_at
 """
 
-# ── Edges ─────────────────────────────────────────────────────────────────────
+# -- Edges ---------------------------------------------------------------------
 
-# v4 fix (P0-21): IMPLEMENTS = CodeFunction → Requirement
+# v4 fix (P0-21): IMPLEMENTS = CodeFunction -> Requirement
 CREATE_IMPLEMENTS = """
 MATCH (c:CodeFunction {id: $from_id}), (r:Requirement {id: $to_id})
 MERGE (c)-[e:IMPLEMENTS]->(r)
@@ -52,7 +54,7 @@ SET e.confidence = $confidence, e.evidence = $evidence,
     e.source = $source, e.run_id = $run_id, e.created_at = $created_at
 """
 
-# RENDERS: CodeFunction → Page (file path segment matches URL)
+# RENDERS: CodeFunction -> Page (file path segment matches URL)
 CREATE_RENDERS = """
 MATCH (c:CodeFunction {id: $from_id}), (p:Page {id: $to_id})
 MERGE (c)-[e:RENDERS]->(p)
@@ -60,10 +62,20 @@ SET e.confidence = $confidence, e.evidence = $evidence,
     e.source = $source, e.run_id = $run_id, e.created_at = $created_at
 """
 
-# FIX-1: COVERS: Page/UIElement → Requirement (UI vocabulary keyword match)
+# FIX-1: COVERS: Page/UIElement -> Requirement (UI vocabulary keyword match)
 CREATE_COVERS = """
 MATCH (p:Page {id: $from_id}), (r:Requirement {id: $to_id})
 MERGE (p)-[e:COVERS]->(r)
+SET e.confidence = $confidence, e.evidence = $evidence,
+    e.source = $source, e.run_id = $run_id, e.created_at = $created_at
+"""
+
+# FIX-6: IMPLEMENTS from UIElement -> Requirement (tiered keyword confidence)
+# source values: keyword_match_exact (0.90) | keyword_match_single (0.70)
+#                page_level_match (0.65)    | llm_semantic (0.55)
+CREATE_UI_IMPLEMENTS = """
+MATCH (ui:UIElement {id: $from_id}), (r:Requirement {id: $to_id})
+MERGE (ui)-[e:IMPLEMENTS]->(r)
 SET e.confidence = $confidence, e.evidence = $evidence,
     e.source = $source, e.run_id = $run_id, e.created_at = $created_at
 """
@@ -86,10 +98,15 @@ SET e.run_id = $run_id, e.created_at = $created_at
 
 # v4 fix (P0-21): check IMPLEMENTS in correct direction
 # v5 fix (FIX-3): exclude infra-pattern IMPLEMENTS from gap classification
+# v6 fix (FIX-6): also exclude ui_implements (UIElement-based) from gap classification
 MARK_MISSING_REQUIREMENTS = """
 MATCH (r:Requirement)
 WHERE NOT (:CodeFunction)-[:IMPLEMENTS]->(r)
   AND NOT ()-[:IMPLEMENTS {source: 'infra_pattern'}]->(r)
+  AND NOT ()-[:IMPLEMENTS {source: 'keyword_match_exact'}]->(r)
+  AND NOT ()-[:IMPLEMENTS {source: 'keyword_match_single'}]->(r)
+  AND NOT ()-[:IMPLEMENTS {source: 'page_level_match'}]->(r)
+  AND NOT ()-[:IMPLEMENTS {source: 'llm_semantic'}]->(r)
   AND NOT ()-[:COVERS]->(r)
 SET r.coverage_status = 'MISSING'
 RETURN count(r) as missing_count

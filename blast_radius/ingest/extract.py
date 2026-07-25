@@ -1,14 +1,14 @@
 """
-blast_radius/ingest/extract.py — LLM-driven requirement extraction.
+blast_radius/ingest/extract.py -- LLM-driven requirement extraction.
 
 One LLM call per source using an exhaustive extraction prompt that targets
 every button action, user flow, API endpoint, config option, webhook event,
 and permission distinction in Documenso.
 
 Deduplication rules (applied after all sources are combined):
-  1. Exact title match → keep first occurrence, merge acceptance_criteria
-  2. Jaccard word overlap > 70 % → keep the richer (longer) version
-Target: 50–80 unique requirements.
+  1. Exact title match -> keep first occurrence, merge acceptance_criteria
+  2. Jaccard word overlap > 70 % -> keep the richer (longer) version
+Target: 50-80 unique requirements.
 """
 import logging
 from typing import Any
@@ -18,7 +18,7 @@ from blast_radius.models import Provenance, Requirement
 
 logger = logging.getLogger(__name__)
 
-# ── Controlled vocabularies ────────────────────────────────────────────────────
+# -- Controlled vocabularies ----------------------------------------------------
 
 VALID_AREAS: frozenset[str] = frozenset(
     {"signing", "sending", "templates", "teams", "webhooks", "api", "auth", "admin", "notifications"}
@@ -28,7 +28,7 @@ VALID_TYPES: frozenset[str] = frozenset(
 )
 VALID_PRIORITIES: frozenset[str] = frozenset({"core", "secondary", "nice-to-have"})
 
-# ── Extraction prompt ──────────────────────────────────────────────────────────
+# -- Extraction prompt ----------------------------------------------------------
 
 _SYSTEM = """\
 You are a requirements analyst specializing in document signing platforms.
@@ -86,14 +86,14 @@ def _build_prompt(source_name: str, content: str) -> str:
     return f"{_SYSTEM}\n\nSOURCE: {source_name}\n\nDOCUMENTATION TEXT:\n{content}"
 
 
-# ── Extraction ─────────────────────────────────────────────────────────────────
+# -- Extraction -----------------------------------------------------------------
 
 async def extract_requirements_from_text(
     source_name: str, text: str
 ) -> list[dict[str, Any]]:
     """
     Send one LLM call for `source_name` and return raw requirement dicts.
-    IDs are NOT assigned here — that happens after deduplication.
+    IDs are NOT assigned here -- that happens after deduplication.
     """
     logger.info(
         "Extracting requirements from %-20s (%d chars)", source_name, len(text)
@@ -109,7 +109,7 @@ async def extract_requirements_from_text(
         return []
 
     if not isinstance(raw, list):
-        logger.warning("LLM returned non-list for %s — skipping.", source_name)
+        logger.warning("LLM returned non-list for %s -- skipping.", source_name)
         return []
 
     items: list[dict[str, Any]] = []
@@ -156,12 +156,12 @@ async def extract_requirements_from_text(
         )
 
     logger.info(
-        "  → %d valid requirements extracted from %s", len(items), source_name
+        "  -> %d valid requirements extracted from %s", len(items), source_name
     )
     return items
 
 
-# ── Deduplication ──────────────────────────────────────────────────────────────
+# -- Deduplication --------------------------------------------------------------
 
 def _title_words(title: str) -> frozenset[str]:
     """Lowercase word tokens longer than 2 chars (stop-word filtered)."""
@@ -187,8 +187,8 @@ def _detail_score(item: dict[str, Any]) -> int:
 def deduplicate_raw(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """
     Deduplicate raw requirement dicts:
-      1. Exact title match (case-insensitive) → keep first, merge ACs.
-      2. Jaccard overlap > 0.70 → keep the richer version.
+      1. Exact title match (case-insensitive) -> keep first, merge ACs.
+      2. Jaccard overlap > 0.70 -> keep the richer version.
     """
     unique: list[dict[str, Any]] = []
 
@@ -210,7 +210,7 @@ def deduplicate_raw(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 merged = True
                 break
 
-            # Rule 2: high word overlap → keep richer
+            # Rule 2: high word overlap -> keep richer
             if _jaccard(existing["title"], title) > 0.70:
                 if _detail_score(item) > _detail_score(existing):
                     # Replace existing with the richer variant but merge ACs
@@ -228,11 +228,11 @@ def deduplicate_raw(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
         if not merged:
             unique.append(dict(item))  # defensive copy
 
-    logger.info("Dedup: %d raw → %d unique", len(items), len(unique))
+    logger.info("Dedup: %d raw -> %d unique", len(items), len(unique))
     return unique
 
 
-# ── ID assignment & model conversion ──────────────────────────────────────────
+# -- ID assignment & model conversion ------------------------------------------
 
 def assign_ids_and_build_requirements(
     items: list[dict[str, Any]],
@@ -273,10 +273,10 @@ def assign_ids_and_build_requirements(
     return requirements
 
 
-# ── Legacy shim (kept for any code that still calls the old signature) ─────────
+# -- Legacy shim (kept for any code that still calls the old signature) ---------
 
 def deduplicate_requirements(requirements: list[Requirement]) -> list[Requirement]:
-    """Convert Requirement objects → raw dicts → dedup → back to objects."""
+    """Convert Requirement objects -> raw dicts -> dedup -> back to objects."""
     raw = [
         {
             "title": r.title or r.text[:60],

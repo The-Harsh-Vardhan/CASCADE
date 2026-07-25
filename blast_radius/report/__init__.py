@@ -1,5 +1,5 @@
 """
-blast_radius/report/__init__.py — Phase 6: Human-Readable Report orchestrator.
+blast_radius/report/__init__.py -- Phase 6: Human-Readable Report orchestrator.
 """
 from pathlib import Path
 

@@ -1,5 +1,5 @@
 """
-blast_radius/graph/visualizer.py — Standalone 3D Crystal Lattice Graph Exporter & Generator.
+blast_radius/graph/visualizer.py -- Standalone 3D Crystal Lattice Graph Exporter & Generator.
 
 Queries Neo4j database for all nodes and edges across Code, UI, and Requirement layers,
 formats them with 3D spatial layer coordinates, exports data/graph_data.json,
@@ -77,6 +77,10 @@ def fetch_neo4j_graph() -> dict[str, Any]:
                     z_plane = 200
                     color = "#a32d2d"
                     layer = "gap"
+                elif node_type == "AbsentRequirement":
+                    z_plane = 250
+                    color = "#e63946"
+                    layer = "absent"
                 else:  # Requirement
                     z_plane = 200
                     color = "#7f77dd"

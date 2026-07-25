@@ -1,5 +1,5 @@
 """
-blast_radius/api/extract.py — Extracts APIEndpoints from local Documenso repo analysis.
+blast_radius/api/extract.py -- Extracts APIEndpoints from local Documenso repo analysis.
 """
 
 from __future__ import annotations
@@ -42,7 +42,7 @@ def extract_api_endpoints_from_repo(repo_dir: str | Path) -> list[dict[str, Any]
         endpoints_map[ep["id"]] = ep
 
     if not repo_path.exists():
-        logger.warning("Repo directory %s does not exist — returning fetched spec list.", repo_dir)
+        logger.warning("Repo directory %s does not exist -- returning fetched spec list.", repo_dir)
         return list(endpoints_map.values())
 
     # 2. Parse ts-rest contract file (packages/api/v1/contract.ts)

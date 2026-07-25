@@ -1,5 +1,5 @@
 """
-blast_radius/pipeline/offline.py — Offline indexing and graph construction pipeline.
+blast_radius/pipeline/offline.py -- Offline indexing and graph construction pipeline.
 """
 
 from __future__ import annotations

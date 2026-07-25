@@ -1,5 +1,5 @@
 """
-blast_radius/models.py — Data contracts shared across all pipeline phases.
+blast_radius/models.py -- Data contracts shared across all pipeline phases.
 """
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from typing import Any, Optional
 from pydantic import BaseModel, Field
 
 
-# ── Phase 1: Crawl ───────────────────────────────────────────────────────────
+# -- Phase 1: Crawl -----------------------------------------------------------
 
 class Transition(BaseModel):
     action: str
@@ -42,7 +42,7 @@ class CrawlManifest(BaseModel):
     transitions: list[Transition] = Field(default_factory=list)
 
 
-# ── Phase 2: Requirements ─────────────────────────────────────────────────────
+# -- Phase 2: Requirements -----------------------------------------------------
 
 class Provenance(BaseModel):
     source_file: str
@@ -61,7 +61,7 @@ class Requirement(BaseModel):
     related_ui_keywords: list[str] = Field(default_factory=list)
     coverage_status: str = "UNKNOWN"  # "COVERED"|"MISSING"|"UNKNOWN"
 
-    # ── Extended Phase 2 fields (added for richer ingestion) ──────────────────
+    # -- Extended Phase 2 fields (added for richer ingestion) ------------------
     title: str = ""                                      # short name, ≤ 8 words
     description: str = ""                                # full requirement text
     feature_area: str = ""                               # signing|sending|templates|
@@ -73,7 +73,7 @@ class Requirement(BaseModel):
     source: str = ""                                     # originating doc name
 
 
-# ── Phase 3: Code ─────────────────────────────────────────────────────────────
+# -- Phase 3: Code -------------------------------------------------------------
 
 class CodeFunction(BaseModel):
     function_id: str
@@ -115,7 +115,7 @@ class PRDelta(BaseModel):
     changed_function_ids: list[str] = Field(default_factory=list)
 
 
-# ── Phase 4: Graph & Absence ──────────────────────────────────────────────────
+# -- Phase 4: Graph & Absence --------------------------------------------------
 
 class GapNode(BaseModel):
     gap_id: str
@@ -135,7 +135,7 @@ class EntityLink(BaseModel):
     run_id: str = "v1"
 
 
-# ── Phase 5 & 6: Reasoning & Report ─────────────────────────────────────────
+# -- Phase 5 & 6: Reasoning & Report -----------------------------------------
 
 class AffectedNode(BaseModel):
     node_id: str

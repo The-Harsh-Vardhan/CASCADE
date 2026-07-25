@@ -1,5 +1,5 @@
 """
-blast_radius/code/index.py — AST-grep static analysis to build a call graph.
+blast_radius/code/index.py -- AST-grep static analysis to build a call graph.
 
 Phase 3 DEEP implementation:
 - Two-pass scan: ts-functions.yml + trpc-procedures.yml
@@ -7,9 +7,9 @@ Phase 3 DEEP implementation:
 - BUG-04 fix: verify_path_alignment() raises hard if 0 matches
 
 Scan paths (Documenso-specific, as of v2025):
-  packages/lib/          — server-only business logic
-  packages/trpc/server/  — tRPC procedure definitions
-  apps/remix/app/        — Remix UI actions/loaders (optional, falls back gracefully)
+  packages/lib/          -- server-only business logic
+  packages/trpc/server/  -- tRPC procedure definitions
+  apps/remix/app/        -- Remix UI actions/loaders (optional, falls back gracefully)
 """
 
 import json
@@ -88,7 +88,7 @@ def _extract_name_from_text(text: str, rule_id: str) -> str:
 def _parse_ast_grep_output(stdout: str) -> list[dict]:
     """
     Parse ast-grep JSON output. Handles both array and NDJSON formats.
-    ast-grep exits 1 with no matches (POSIX grep convention) — caller must
+    ast-grep exits 1 with no matches (POSIX grep convention) -- caller must
     allow returncode=1.
     """
     stdout = stdout.strip()
@@ -119,7 +119,7 @@ def ast_matches(repo: Path, rule_file: str) -> list[dict]:
     Scan paths (Documenso-specific):
       - packages/lib/          (server-only business logic)
       - packages/trpc/server/  (tRPC procedures)
-      - apps/remix/app/        (Remix UI actions/loaders — optional)
+      - apps/remix/app/        (Remix UI actions/loaders -- optional)
 
     Excludes migrations, node_modules, dist, build.
     """
@@ -167,7 +167,7 @@ def ast_matches(repo: Path, rule_file: str) -> list[dict]:
 def verify_path_alignment(functions: list[CodeFunction], delta: PRDelta) -> None:
     """
     BUG-04 fix: ensure CodeFunction.file paths can be matched against
-    PRDelta changed_files paths. Raises hard if 0 matches — means 100%
+    PRDelta changed_files paths. Raises hard if 0 matches -- means 100%
     dark changes and the report would be meaningless.
     """
     if not functions or not delta.changed_files:
@@ -189,7 +189,7 @@ def verify_path_alignment(functions: list[CodeFunction], delta: PRDelta) -> None
     if matches == 0:
         raise ValueError(
             "ZERO path matches between CodeFunctions and PRDelta. "
-            "Path normalization failed — all functions will be dark changes.\n"
+            "Path normalization failed -- all functions will be dark changes.\n"
             f"  fn.file sample:    {sample_fn}\n"
             f"  delta.path sample: {sample_delta}"
         )
@@ -202,8 +202,8 @@ def verify_path_alignment(functions: list[CodeFunction], delta: PRDelta) -> None
 def build_call_graph(repo: Path) -> list[CodeFunction]:
     """
     Two-pass AST scan:
-      Pass 1 — ts-functions.yml: function_declaration, method_definition, arrow_function
-      Pass 2 — trpc-procedures.yml: variable_declarator with name matching *Route
+      Pass 1 -- ts-functions.yml: function_declaration, method_definition, arrow_function
+      Pass 2 -- trpc-procedures.yml: variable_declarator with name matching *Route
 
     BUG-04 fix applied: fn.file stored as forward-slash repo-relative path.
     """
@@ -277,7 +277,7 @@ def build_call_graph(repo: Path) -> list[CodeFunction]:
             "Check rules/trpc-procedures.yml against the actual router file structure."
         )
 
-    # ── Same-file call resolution (conservative: name appears in same file) ──
+    # -- Same-file call resolution (conservative: name appears in same file) --
     name_to_ids: dict[str, list[str]] = {}
     for fn in fn_lookup.values():
         name_to_ids.setdefault(fn.name, []).append(fn.function_id)

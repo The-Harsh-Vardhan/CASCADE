@@ -1,13 +1,13 @@
 """
-blast_radius/ingest — Phase 2 Requirements Ingestion Package.
+blast_radius/ingest -- Phase 2 Requirements Ingestion Package.
 
 Pipeline:
   1. Fetch all 11 Documenso documentation sources via httpx.
   2. One LLM call per source (call_llm_json) using the exhaustive extraction prompt.
   3. Deduplicate across all sources (exact title + Jaccard > 70 %).
   4. Assign stable REQ-NNN IDs.
-  5. Save to outputs/requirements/requirements.json   ← primary output
-            + data/requirements/requirements.json     ← legacy path for Phase 4
+  5. Save to outputs/requirements/requirements.json   <- primary output
+            + data/requirements/requirements.json     <- legacy path for Phase 4
   6. Print breakdown by feature_area; flag any area with < 3 requirements.
 
 Target: ≥ 50 unique requirements covering all 8 required feature areas.
@@ -31,7 +31,7 @@ from blast_radius.ingest.extract import (
 
 logger = logging.getLogger(__name__)
 
-# ── Validation thresholds ──────────────────────────────────────────────────────
+# -- Validation thresholds ------------------------------------------------------
 MIN_TOTAL: int = 50
 MIN_PER_AREA: int = 3
 REQUIRED_AREAS: frozenset[str] = frozenset(
@@ -39,7 +39,7 @@ REQUIRED_AREAS: frozenset[str] = frozenset(
 )
 
 
-# ── Serialisation helpers ──────────────────────────────────────────────────────
+# -- Serialisation helpers ------------------------------------------------------
 
 def _req_to_output_dict(req: Requirement) -> dict:
     """Serialize a Requirement to the canonical outputs/requirements schema."""
@@ -82,7 +82,7 @@ def _print_breakdown(requirements: list[Requirement]) -> None:
     out.flush()
 
 
-# ── Core pipeline ──────────────────────────────────────────────────────────────
+# -- Core pipeline --------------------------------------------------------------
 
 async def run_ingest_async() -> list[Requirement]:
     """Async implementation of the Phase 2 ingestion pipeline."""

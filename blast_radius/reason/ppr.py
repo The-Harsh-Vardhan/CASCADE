@@ -1,9 +1,9 @@
 """
-blast_radius/reason/ppr.py — Personalized PageRank for blast radius computation.
+blast_radius/reason/ppr.py -- Personalized PageRank for blast radius computation.
 
 v4 fixes:
   P1-25: min_absolute floor (1e-5) prevents noise amplification from disconnected nodes.
-  P0-21: Graph is forward (CodeFunction → Requirement), NOT reversed.
+  P0-21: Graph is forward (CodeFunction -> Requirement), NOT reversed.
          PPR seeded at changed CodeFunctions propagates TO Pages and Requirements.
 """
 
@@ -16,19 +16,19 @@ def build_projection(functions: list, entity_links: list) -> nx.DiGraph:
 
     Nodes:
       - CodeFunction nodes (one per indexed function)
-    Edges (all directed CodeFunction → Target):
-      - CALLS:      CodeFunction → CodeFunction  (weight=1.0)
-      - RENDERS:    CodeFunction → Page           (weight=0.95)
-      - IMPLEMENTS: CodeFunction → Requirement   (weight=0.85)
+    Edges (all directed CodeFunction -> Target):
+      - CALLS:      CodeFunction -> CodeFunction  (weight=1.0)
+      - RENDERS:    CodeFunction -> Page           (weight=0.95)
+      - IMPLEMENTS: CodeFunction -> Requirement   (weight=0.85)
 
     PPR seeded at changed CodeFunctions propagates FORWARD to reach
-    Pages and Requirements — these are the blast radius targets.
+    Pages and Requirements -- these are the blast radius targets.
     """
     WEIGHTS = {
         "CALLS":      1.0,
         "RENDERS":    0.95,
         "IMPLEMENTS": 0.85,
-        "COVERS":     0.75,   # Page/UIElement → Requirement (FIX-1 new edge type)
+        "COVERS":     0.75,   # Page/UIElement -> Requirement (FIX-1 new edge type)
     }
 
     g = nx.DiGraph()
@@ -75,10 +75,10 @@ def build_projection(functions: list, entity_links: list) -> nx.DiGraph:
 
 def personalized_pagerank(graph: nx.DiGraph, seeds: list[str]) -> dict[str, float]:
     """
-    Forward PPR — seeds are changed CodeFunction nodes.
+    Forward PPR -- seeds are changed CodeFunction nodes.
     Activation flows toward Pages and Requirements (the blast radius targets).
 
-    v4 fix: graph is NOT reversed — forward propagation finds downstream impact.
+    v4 fix: graph is NOT reversed -- forward propagation finds downstream impact.
     """
     if not seeds:
         raise RuntimeError(
@@ -99,7 +99,7 @@ def personalized_pagerank(graph: nx.DiGraph, seeds: list[str]) -> dict[str, floa
         personalization[s] = weight_per_seed
 
     return nx.pagerank(
-        graph,           # forward — NOT reversed
+        graph,           # forward -- NOT reversed
         alpha=0.85,
         personalization=personalization,
         max_iter=100,

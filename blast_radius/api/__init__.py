@@ -1,5 +1,5 @@
 """
-blast_radius/api — APIEndpoint package for Documenso REST API analysis & graph seeding.
+blast_radius/api -- APIEndpoint package for Documenso REST API analysis & graph seeding.
 """
 
 from blast_radius.api.fetch import fetch_documenso_api_spec
