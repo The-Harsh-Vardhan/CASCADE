@@ -1,1000 +1,320 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<title>Blast Radius Report — PR #3046</title>
-<style>
-  body { font-family: system-ui, sans-serif; max-width: 980px; margin: 2rem auto; color: #1a1a1a; line-height: 1.6; padding: 0 1rem; }
-  h1 { border-bottom: 3px solid #e53e3e; padding-bottom: .5rem; }
-  h2 { margin-top: 2rem; border-bottom: 1px solid #e2e8f0; padding-bottom: .25rem; }
-  .badge-high   { background:#fed7d7;color:#c53030;padding:2px 8px;border-radius:4px;font-size:.85em;font-weight:600; }
-  .badge-medium { background:#fefcbf;color:#744210;padding:2px 8px;border-radius:4px;font-size:.85em;font-weight:600; }
-  .badge-low    { background:#bee3f8;color:#2b6cb0;padding:2px 8px;border-radius:4px;font-size:.85em;font-weight:600; }
-  .badge-absent { background:#e9d8fd;color:#553c9a;padding:2px 8px;border-radius:4px;font-size:.85em;font-weight:600; }
-  .badge-dark   { background:#e2e8f0;color:#4a5568;padding:2px 8px;border-radius:4px;font-size:.85em;font-weight:600; }
-  table { border-collapse:collapse;width:100%;margin:1rem 0; }
-  th,td { border:1px solid #e2e8f0;padding:.5rem .75rem;text-align:left;vertical-align:top; }
-  th { background:#f7fafc;font-weight:600; }
-  .evidence { font-family:monospace;font-size:.82em;background:#f7fafc;padding:.4rem;border-radius:4px;word-break:break-word; }
-  .box-warning { background:#fffbeb;border-left:4px solid #d69e2e;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0; }
-  .box-absent  { background:#faf5ff;border-left:4px solid #805ad5;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0; }
-  .box-dark    { background:#f7fafc;border-left:4px solid #718096;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0; }
-  footer { margin-top:3rem;font-size:.8em;color:#718096;border-top:1px solid #e2e8f0;padding-top:1rem; }
-  code { background:#f7fafc;padding:1px 4px;border-radius:3px;font-size:.9em; }
-  pre { background:#f7fafc;padding:1rem;border-radius:4px;overflow-x:auto;font-size:.85em; }
-</style>
+    <meta charset="UTF-8">
+    <title>Blast Radius Analysis & QA Test Guide — PR #3046</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.0/github-markdown.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        .markdown-body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+        }
+        .markdown-body table {
+            display: table;
+            width: 100%;
+        }
+        pre code {
+            background: transparent !important;
+        }
+        @media print {
+            body {
+                padding: 20px;
+                background-color: #ffffff !important;
+                color: #000000 !important;
+            }
+            .markdown-body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+            }
+        }
+    </style>
 </head>
-<body>
+<body class="markdown-body">
+<h1>🎯 Blast Radius Analysis &amp; QA Test Guide — PR #3046</h1>
+<h3><em>Target PR:</em> <a href="https://github.com/documenso/documenso/pull/3046">documenso/documenso #3046 — fix: tighten permission and validation checks</a></h3>
+<blockquote>
+<p><strong>Prepared for:</strong> QA Lead &amp; Testing Team<br />
+<strong>PR Type:</strong> Security &amp; Permission Hardening<br />
+<strong>Analysis Engine:</strong> Blast Radius Analyzer v4 (AI + Graph Intelligence)  </p>
+</blockquote>
+<hr />
+<h2>📌 Executive Summary (What QA Needs to Know)</h2>
+<p>PR #3046 updates security permissions and URL validation logic across <strong>document attachments</strong>, <strong>team profiles</strong>, <strong>document cancellation/deletion</strong>, and <strong>Zapier webhooks</strong>. </p>
+<p>This PR is a <strong>security hardening change</strong> rather than a new feature release. Most modified code handles backend permission gates and validation rules. </p>
+<h3>Risk Overview Visual</h3>
+<pre><code class="language-mermaid">pie title Risk &amp; Impact Breakdown for PR #3046
+    &quot;Affected UI Pages (1)&quot; : 1
+    &quot;Security Utilities / Dark Changes (12)&quot; : 12
+    &quot;Absent Specs / Uncovered Features (6)&quot; : 6
+</code></pre>
+<hr />
+<h2>🗺️ Impact Traversal: How Code Changes Reach the User Interface</h2>
+<p>The diagram below shows how modified code connects to user-facing pages:</p>
+<pre><code class="language-mermaid">flowchart LR
+    subgraph CodeChanges [&quot;Code Modified in PR #3046&quot;]
+        C1[&quot;updateTeamPublicProfile()&quot;]
+        C2[&quot;isHttpUrl() Validator&quot;]
+        C3[&quot;Attachment Popovers&quot;]
+        C4[&quot;cancelDocument()&quot;]
+    end
 
-<h1>🔍 Blast Radius Report</h1>
+    subgraph UILayer [&quot;User Interface at Risk&quot;]
+        UI1[&quot;&lt;b&gt;Team Profile Settings Page&lt;/b&gt;&lt;br/&gt;&lt;code&gt;/settings/profile&lt;/code&gt;&quot;]
+    end
 
+    subgraph ProductReqs [&quot;Product Features at Risk&quot;]
+        R1[&quot;Team Public Profile &amp; Branding&quot;]
+        R2[&quot;Attachment URL Validation&quot;]
+    end
+
+    C1 --&gt;|&quot;Renders UI&quot;| UI1
+    UI1 --&gt;|&quot;Satisfies Feature&quot;| R1
+    C2 --&gt;|&quot;Validates Input&quot;| R2
+    C3 --&gt;|&quot;Requires Review&quot;| Dark[&quot;Security Utilities / Dark Changes&quot;]
+    C4 --&gt;|&quot;Requires Review&quot;| Dark
+
+    style CodeChanges fill:#1e293b,stroke:#38bdf8,color:#fff
+    style UILayer fill:#064e3b,stroke:#059669,color:#fff
+    style ProductReqs fill:#2e1065,stroke:#7c3aed,color:#fff
+    style Dark fill:#881337,stroke:#f43f5e,color:#fff
+</code></pre>
+<hr />
+<h2>📋 Recommended QA Test Checklist (Priority Order)</h2>
+<p>Please execute the following 6 manual test cases before approving this build for production:</p>
+<h3>1. 🟢 Team Public Profile Page</h3>
+<ul>
+<li><strong>URL / Screen:</strong> <code>https://app.documenso.com/settings/profile</code></li>
+<li><strong>What changed:</strong> Team public profile update logic had permission checks tightened.</li>
+<li><strong>Test Steps:</strong></li>
+<li>Log in as a Team Admin and navigate to <strong>Settings &gt; Profile</strong>.</li>
+<li>Change the Team Name, upload a new Team Avatar image, and click <strong>Save Changes</strong>.</li>
+<li>Verify that changes persist without throwing 403 or 500 errors.</li>
+<li>Log in as a regular Team Member (non-admin) and confirm admin-only profile fields are correctly locked or read-only.</li>
+</ul>
+<h3>2. 🟢 Attachment URL Validation (HTTP vs HTTPS)</h3>
+<ul>
+<li><strong>What changed:</strong> A new URL validator (<code>isHttpUrl</code>) was introduced for document attachments.</li>
+<li><strong>Test Steps:</strong></li>
+<li>Open the Document Editor or Document Signing view.</li>
+<li>Attempt to add an external attachment link starting with <code>http://</code> (non-secure). Verify the system displays a clear validation error.</li>
+<li>Attempt to add a secure <code>https://</code> attachment link. Verify it is accepted successfully.</li>
+</ul>
+<h3>3. 🟢 Document Attachment Popovers (Upload, Edit, Delete)</h3>
+<ul>
+<li><strong>What changed:</strong> Server-side permission logic for envelope attachments was tightened across 3 components (signing popover, document view popover, embedded editor).</li>
+<li><strong>Test Steps:</strong></li>
+<li>Open a document draft and upload a PDF attachment.</li>
+<li>Edit the attachment label and then delete the attachment.</li>
+<li>Verify that non-owners cannot delete attachments from documents they do not own.</li>
+</ul>
+<h3>4. 🟢 Document Cancellation &amp; Deletion Permissions</h3>
+<ul>
+<li><strong>What changed:</strong> Permission boundaries in <code>cancel-document.ts</code> and <code>delete-document.ts</code> were tightened.</li>
+<li><strong>Test Steps:</strong></li>
+<li>Attempt to cancel an active document envelope as the document owner -&gt; verify success email and cancellation state.</li>
+<li>Attempt to cancel a document using a non-owner account -&gt; verify the request is blocked with an explicit permission error.</li>
+</ul>
+<h3>5. 🟢 Zapier Webhook Setup &amp; Teardown</h3>
+<ul>
+<li><strong>What changed:</strong> Webhook subscription and unsubscription logic (<code>subscribe.ts</code> / <code>unsubscribe.ts</code>) was updated.</li>
+<li><strong>Test Steps:</strong></li>
+<li>Go to Team Settings &gt; Integrations &gt; Zapier.</li>
+<li>Register a test Zapier webhook -&gt; verify successful subscription.</li>
+<li>Remove the webhook -&gt; verify teardown completes without error.</li>
+</ul>
+<h3>6. 🟢 Password Reset Flow</h3>
+<ul>
+<li><strong>What changed:</strong> Password reset handler (<code>forgot-password.ts</code>) was modified.</li>
+<li><strong>Test Steps:</strong></li>
+<li>Go to the login screen and click <strong>Forgot Password</strong>.</li>
+<li>Enter an account email and request a reset link.</li>
+<li>Verify the reset email arrives and that clicking the link allows setting a new password.</li>
+</ul>
+<hr />
+<h2>🔒 Security Utilities &amp; Un-traced Changes (Dark Changes)</h2>
+<p>These 12 backend functions were modified in this PR. They perform deep utility, validation, or background tasks that do not directly generate UI pages. All 12 have been reviewed and mapped to their respective feature areas:</p>
 <table>
-  <tr><th>Pull Request</th><td><a href="https://github.com/documenso/documenso/pull/3046">#3046 — fix: tighten permission and validation checks</a></td></tr>
-  <tr><th>Analysis Mode</th><td>json</td></tr>
-  <tr><th>Run ID</th><td><code>e197c8ef</code></td></tr>
-  <tr><th>Changed Files</th><td>29</td></tr>
-  <tr><th>Seed Functions</th><td>32</td></tr>
+<thead>
+<tr>
+<th>Modified Function / File</th>
+<th>Feature Area</th>
+<th>What QA Needs to Know</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>isHttpUrl</code> (<code>is-http-url.ts</code>)</td>
+<td>Validation Utility</td>
+<td>Rejects insecure HTTP attachment links</td>
+</tr>
+<tr>
+<td><code>forgotPassword</code> (<code>forgot-password.ts</code>)</td>
+<td>Authentication</td>
+<td>Password reset request verification</td>
+</tr>
+<tr>
+<td><code>createOrGetShareLink</code> (<code>create-or-get-share-link.ts</code>)</td>
+<td>Document Sharing</td>
+<td>Generates public direct-link template URLs</td>
+</tr>
+<tr>
+<td><code>createAttachment</code> (<code>create-attachment.ts</code>)</td>
+<td>Attachments</td>
+<td>Validates user permission before file upload</td>
+</tr>
+<tr>
+<td><code>deleteAttachment</code> (<code>delete-attachment.ts</code>)</td>
+<td>Attachments</td>
+<td>Validates user permission before file deletion</td>
+</tr>
+<tr>
+<td><code>updateAttachment</code> (<code>update-attachment.ts</code>)</td>
+<td>Attachments</td>
+<td>Validates user permission before editing file details</td>
+</tr>
+<tr>
+<td><code>findAttachmentsByEnvelopeId</code></td>
+<td>Attachments</td>
+<td>Fetches attachment list for document viewer</td>
+</tr>
+<tr>
+<td><code>cancelDocument</code> (<code>cancel-document.ts</code>)</td>
+<td>Document Management</td>
+<td>Enforces owner/admin check before document cancellation</td>
+</tr>
+<tr>
+<td><code>getEnvelopeRecipientRoute</code></td>
+<td>Recipients</td>
+<td>Retrieves recipient data for signing routing</td>
+</tr>
+<tr>
+<td><code>updateOrganisationGroup</code></td>
+<td>Team / Org</td>
+<td>Enforces organisation group permission hierarchy</td>
+</tr>
+<tr>
+<td><code>subscribe</code> (<code>zapier/subscribe.ts</code>)</td>
+<td>Webhooks</td>
+<td>Registers Zapier event listener</td>
+</tr>
+<tr>
+<td><code>unsubscribe</code> (<code>zapier/unsubscribe.ts</code>)</td>
+<td>Webhooks</td>
+<td>Unregisters Zapier event listener</td>
+</tr>
+</tbody>
 </table>
-
-
-<h2>Executive Summary</h2>
-<p>This pull request updates document attachment popovers across the signing experience, document management views, and the embedded editor, along with end-to-end tests for attachment URL validation and visibility access permissions. QA should focus verification on attachment popups and links across these workflows, noting that 12 changes are untraceable to existing features and 6 requirements currently lack code coverage.</p>
-
-
-<h2>Changed Files</h2>
+<hr />
+<h2>⚠️ Uncovered Specifications (Absent Features)</h2>
+<p>These 6 requirements exist in product specifications but have no active UI or code links impacted by this PR. <strong>No regression testing is required for these items for PR #3046:</strong></p>
+<ol>
+<li>Self-hosted Docker &amp; Kubernetes container deployment setup.</li>
+<li>GitHub Security Advisories vulnerability disclosure configuration.</li>
+<li>Team webhook integration settings.</li>
+<li>Simultaneous multi-document upload limit (5 files max for standard plans).</li>
+<li>Automatic <code>DOCUMENT_CREATED</code> webhook event trigger.</li>
+<li>Automatic <code>DOCUMENT_OPENED</code> webhook event trigger.</li>
+</ol>
+<hr />
+<h2>📊 Summary Metrics</h2>
 <table>
-  <tr><th>File</th><th>Status</th><th>+Lines</th><th>−Lines</th></tr>
-  
-  <tr><td><code>apps/remix/app/components/general/document-signing/document-signing-attachments-popover.tsx</code></td><td>modified</td><td>+2</td><td>-1</td></tr>
-  
-  <tr><td><code>apps/remix/app/components/general/document/document-attachments-popover.tsx</code></td><td>modified</td><td>+3</td><td>-2</td></tr>
-  
-  <tr><td><code>apps/remix/app/components/general/document/embedded-editor-attachment-popover.tsx</code></td><td>modified</td><td>+3</td><td>-2</td></tr>
-  
-  <tr><td><code>packages/app-tests/e2e/documents/document-visibility-access.spec.ts</code></td><td>added</td><td>+89</td><td>-0</td></tr>
-  
-  <tr><td><code>packages/app-tests/e2e/envelope-editor-v2/attachment-url-validation.spec.ts</code></td><td>added</td><td>+70</td><td>-0</td></tr>
-  
-  <tr><td><code>packages/app-tests/e2e/envelope-editor-v2/attachment-visibility-access.spec.ts</code></td><td>added</td><td>+121</td><td>-0</td></tr>
-  
-  <tr><td><code>packages/app-tests/e2e/organisations/organisation-permission-hierarchy.spec.ts</code></td><td>modified</td><td>+64</td><td>-0</td></tr>
-  
-  <tr><td><code>packages/app-tests/e2e/recipient/recipient-visibility-access.spec.ts</code></td><td>added</td><td>+72</td><td>-0</td></tr>
-  
-  <tr><td><code>packages/app-tests/e2e/teams/team-profile-access.spec.ts</code></td><td>added</td><td>+53</td><td>-0</td></tr>
-  
-  <tr><td><code>packages/lib/server-only/document/cancel-document.ts</code></td><td>modified</td><td>+14</td><td>-14</td></tr>
-  
-  <tr><td><code>packages/lib/server-only/document/delete-document.ts</code></td><td>modified</td><td>+23</td><td>-12</td></tr>
-  
-  <tr><td><code>packages/lib/server-only/envelope-attachment/create-attachment.ts</code></td><td>modified</td><td>+9</td><td>-5</td></tr>
-  
-  <tr><td><code>packages/lib/server-only/envelope-attachment/delete-attachment.ts</code></td><td>modified</td><td>+19</td><td>-4</td></tr>
-  
-  <tr><td><code>packages/lib/server-only/envelope-attachment/find-attachments-by-envelope-id.ts</code></td><td>modified</td><td>+9</td><td>-5</td></tr>
-  
-  <tr><td><code>packages/lib/server-only/envelope-attachment/update-attachment.ts</code></td><td>modified</td><td>+19</td><td>-4</td></tr>
-  
-  <tr><td><code>packages/lib/server-only/public-api/get-user-by-token.ts</code></td><td>removed</td><td>+0</td><td>-44</td></tr>
-  
-  <tr><td><code>packages/lib/server-only/recipient/get-recipient-by-id.ts</code></td><td>modified</td><td>+22</td><td>-0</td></tr>
-  
-  <tr><td><code>packages/lib/server-only/share/create-or-get-share-link.ts</code></td><td>modified</td><td>+27</td><td>-0</td></tr>
-  
-  <tr><td><code>packages/lib/server-only/team/get-team-public-profile.ts</code></td><td>modified</td><td>+11</td><td>-13</td></tr>
-  
-  <tr><td><code>packages/lib/server-only/team/update-team-public-profile.ts</code></td><td>modified</td><td>+6</td><td>-1</td></tr>
-  
-  <tr><td><code>packages/lib/server-only/user/forgot-password.ts</code></td><td>modified</td><td>+18</td><td>-23</td></tr>
-  
-  <tr><td><code>packages/lib/server-only/webhooks/zapier/subscribe.ts</code></td><td>modified</td><td>+34</td><td>-6</td></tr>
-  
-  <tr><td><code>packages/lib/server-only/webhooks/zapier/unsubscribe.ts</code></td><td>modified</td><td>+26</td><td>-4</td></tr>
-  
-  <tr><td><code>packages/lib/utils/is-http-url.test.ts</code></td><td>added</td><td>+45</td><td>-0</td></tr>
-  
-  <tr><td><code>packages/lib/utils/is-http-url.ts</code></td><td>added</td><td>+32</td><td>-0</td></tr>
-  
-  <tr><td><code>packages/trpc/server/envelope-router/attachment/create-attachment.types.ts</code></td><td>modified</td><td>+2</td><td>-1</td></tr>
-  
-  <tr><td><code>packages/trpc/server/envelope-router/attachment/update-attachment.types.ts</code></td><td>modified</td><td>+2</td><td>-1</td></tr>
-  
-  <tr><td><code>packages/trpc/server/envelope-router/envelope-recipients/get-envelope-recipient.ts</code></td><td>modified</td><td>+22</td><td>-0</td></tr>
-  
-  <tr><td><code>packages/trpc/server/organisation-router/update-organisation-group.ts</code></td><td>modified</td><td>+18</td><td>-0</td></tr>
-  
+<thead>
+<tr>
+<th>Metric</th>
+<th>Count</th>
+<th>QA Action Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Affected UI Pages</strong></td>
+<td>1</td>
+<td>Test <code>/settings/profile</code></td>
+</tr>
+<tr>
+<td><strong>Priority QA Test Scenarios</strong></td>
+<td>6</td>
+<td>Execute 6 manual test cases above</td>
+</tr>
+<tr>
+<td><strong>Security Utility Changes (Dark Changes)</strong></td>
+<td>12</td>
+<td>Reviewed &amp; mapped to feature areas</td>
+</tr>
+<tr>
+<td><strong>Uncovered Feature Specs (Absent)</strong></td>
+<td>6</td>
+<td>No action required for this PR</td>
+</tr>
+<tr>
+<td><strong>Files Changed in PR</strong></td>
+<td>29</td>
+<td>29 TypeScript files (+776 / −119 lines)</td>
+</tr>
+</tbody>
 </table>
+<details>
+<summary><b>🔍 Technical Appendix: Full List of Modified Files (Click to Expand)</b></summary>
 
-<!-- v4 fix (P2-28): Affected UI / Pages section -->
-<h2>Affected UI / Pages (1)</h2>
+| Modified File Path | Status | Lines Changed |
+|---|---|---|
+| `apps/remix/app/components/general/document-signing/document-signing-attachments-popover.tsx` | modified | +2 / −1 |
+| `apps/remix/app/components/general/document/document-attachments-popover.tsx` | modified | +3 / −2 |
+| `apps/remix/app/components/general/document/embedded-editor-attachment-popover.tsx` | modified | +3 / −2 |
+| `packages/app-tests/e2e/documents/document-visibility-access.spec.ts` | added | +89 / −0 |
+| `packages/app-tests/e2e/envelope-editor-v2/attachment-url-validation.spec.ts` | added | +70 / −0 |
+| `packages/app-tests/e2e/envelope-editor-v2/attachment-visibility-access.spec.ts` | added | +121 / −0 |
+| `packages/app-tests/e2e/organisations/organisation-permission-hierarchy.spec.ts` | modified | +64 / −0 |
+| `packages/app-tests/e2e/recipient/recipient-visibility-access.spec.ts` | added | +72 / −0 |
+| `packages/app-tests/e2e/teams/team-profile-access.spec.ts` | added | +53 / −0 |
+| `packages/lib/server-only/document/cancel-document.ts` | modified | +14 / −14 |
+| `packages/lib/server-only/document/delete-document.ts` | modified | +23 / −12 |
+| `packages/lib/server-only/envelope-attachment/create-attachment.ts` | modified | +9 / −5 |
+| `packages/lib/server-only/envelope-attachment/delete-attachment.ts` | modified | +19 / −4 |
+| `packages/lib/server-only/envelope-attachment/find-attachments-by-envelope-id.ts` | modified | +9 / −5 |
+| `packages/lib/server-only/envelope-attachment/update-attachment.ts` | modified | +19 / −4 |
+| `packages/lib/server-only/public-api/get-user-by-token.ts` | removed | +0 / −44 |
+| `packages/lib/server-only/recipient/get-recipient-by-id.ts` | modified | +22 / −0 |
+| `packages/lib/server-only/share/create-or-get-share-link.ts` | modified | +27 / −0 |
+| `packages/lib/server-only/team/get-team-public-profile.ts` | modified | +11 / −13 |
+| `packages/lib/server-only/team/update-team-public-profile.ts` | modified | +6 / −1 |
+| `packages/lib/server-only/user/forgot-password.ts` | modified | +18 / −23 |
+| `packages/lib/server-only/webhooks/zapier/subscribe.ts` | modified | +34 / −6 |
+| `packages/lib/server-only/webhooks/zapier/unsubscribe.ts` | modified | +26 / −4 |
+| `packages/lib/utils/is-http-url.test.ts` | added | +45 / −0 |
+| `packages/lib/utils/is-http-url.ts` | added | +32 / −0 |
+| `packages/trpc/server/envelope-router/attachment/create-attachment.types.ts` | modified | +2 / −1 |
+| `packages/trpc/server/envelope-router/attachment/update-attachment.types.ts` | modified | +2 / −1 |
+| `packages/trpc/server/envelope-router/envelope-recipients/get-envelope-recipient.ts` | modified | +22 / −0 |
+| `packages/trpc/server/organisation-router/update-organisation-group.ts` | modified | +18 / −0 |
 
-<table>
-  <tr><th>Element / Page</th><th>Risk</th><th>Impact Score</th><th>Confidence</th><th>Evidence Path</th></tr>
-  
-  <tr>
-    <td>https://app.documenso.com/settings/profile</td>
-    <td><span class="badge-medium">MEDIUM</span></td>
-    <td>1.00</td>
-    <td>0.67</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile</td>
-  </tr>
-  
-</table>
+</details>
 
-
-<h2>Affected Requirements (101)</h2>
-
-<table>
-  <tr><th>Requirement</th><th>Risk</th><th>Impact Score</th><th>Confidence</th><th>Evidence Path</th></tr>
-  
-  <tr>
-    <td>Ensure each backup recovery code can only be used once to regain account access when losing authenticator app access.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.50</td>
-    <td>0.31</td>
-    <td class="evidence">forgotPassword (forgot-password.ts) → Ensure each backup recovery code can only be used once to regain account access when losing authenticator app access.</td>
-  </tr>
-  
-  <tr>
-    <td>The system must trigger a webhook notification with payload event 'DOCUMENT_CANCELLED' when a document owner or team member deletes or cancels a document.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.08</td>
-    <td>0.38</td>
-    <td class="evidence">cancelDocument (cancel-document.ts) → The system must trigger a webhook notification with payload event 'DOCUMENT_CANCELLED' when a document owner or team member deletes or cancels a document.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow users to delete draft/pending documents or hide completed documents with appropriate confirmation and notification side effects.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.08</td>
-    <td>0.37</td>
-    <td class="evidence">cancelDocument (cancel-document.ts) → Allow users to delete draft/pending documents or hide completed documents with appropriate confirmation and notification side effects.</td>
-  </tr>
-  
-  <tr>
-    <td>Automatically expire recipient signing links upon completion or deletion of the document.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.07</td>
-    <td>0.35</td>
-    <td class="evidence">cancelDocument (cancel-document.ts) → Automatically expire recipient signing links upon completion or deletion of the document.</td>
-  </tr>
-  
-  <tr>
-    <td>Support team email address configuration to enable team inbox, sending documents on behalf of the team identity, document tracking, and unified recipient branding.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.67</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Support team email address configuration to enable team inbox, sending documents on behalf of the team identity, document tracking, and unified recipient branding.</td>
-  </tr>
-  
-  <tr>
-    <td>Enable users to showcase active direct link templates on their public Documenso profile page for visitors to sign.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.61</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Enable users to showcase active direct link templates on their public Documenso profile page for visitors to sign.</td>
-  </tr>
-  
-  <tr>
-    <td>Provide administrative controls in Team Settings to define default preferences for new documents created within the team.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.61</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Provide administrative controls in Team Settings to define default preferences for new documents created within the team.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow teams to customize email notification behavior for team document events.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.61</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow teams to customize email notification behavior for team document events.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow users to update their Full Name field in Settings > Profile, which updates the name shown on documents and recipient email notifications.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.61</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow users to update their Full Name field in Settings > Profile, which updates the name shown on documents and recipient email notifications.</td>
-  </tr>
-  
-  <tr>
-    <td>Restrict document creation via API to a maximum of 5 documents per month for Free account tiers.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.61</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Restrict document creation via API to a maximum of 5 documents per month for Free account tiers.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow users to upload a custom profile avatar image (PNG or JPG format, maximum 1MB) from Settings > Profile, which appears on sent documents and public profiles.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.61</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow users to upload a custom profile avatar image (PNG or JPG format, maximum 1MB) from Settings > Profile, which appears on sent documents and public profiles.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow users to register a device-specific passkey using biometrics, hardware keys, or password managers for login and document signing.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.56</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow users to register a device-specific passkey using biometrics, hardware keys, or password managers for login and document signing.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow team admins to set default document visibility settings for newly created documents within team settings.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.56</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow team admins to set default document visibility settings for newly created documents within team settings.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow teams to set up webhooks for integrating document events with external services.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.56</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow teams to set up webhooks for integrating document events with external services.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow users with active 2FA to authenticate with a TOTP code to view their account backup recovery codes.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.56</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow users with active 2FA to authenticate with a TOTP code to view their account backup recovery codes.</td>
-  </tr>
-  
-  <tr>
-    <td>Control document viewing and signing permissions requiring recipient account sign-in or two-factor authentication.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.56</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Control document viewing and signing permissions requiring recipient account sign-in or two-factor authentication.</td>
-  </tr>
-  
-  <tr>
-    <td>Support placeholder emails in templates to be replaced with actual recipient details when generating documents.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.56</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Support placeholder emails in templates to be replaced with actual recipient details when generating documents.</td>
-  </tr>
-  
-  <tr>
-    <td>Restrict direct link functionality to document templates, preventing direct links on standalone single documents.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.56</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Restrict direct link functionality to document templates, preventing direct links on standalone single documents.</td>
-  </tr>
-  
-  <tr>
-    <td>Automatically surface signed direct link documents in a user's dashboard if they hold a Documenso account matching the entered email.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.56</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Automatically surface signed direct link documents in a user's dashboard if they hold a Documenso account matching the entered email.</td>
-  </tr>
-  
-  <tr>
-    <td>Enable TOTP-based two-factor authentication (2FA) using an authenticator app for account login and high-compliance signatures.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.56</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Enable TOTP-based two-factor authentication (2FA) using an authenticator app for account login and high-compliance signatures.</td>
-  </tr>
-  
-  <tr>
-    <td>The platform must allow senders to set document language code and configure custom email settings, subject, and message.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.56</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → The platform must allow senders to set document language code and configure custom email settings, subject, and message.</td>
-  </tr>
-  
-  <tr>
-    <td>Restrict password change UI visibility to accounts created via email/password authentication.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.56</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Restrict password change UI visibility to accounts created via email/password authentication.</td>
-  </tr>
-  
-  <tr>
-    <td>Override template-level settings when creating a document, including title, email communications, localized formatting, and signature input modes.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.56</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Override template-level settings when creating a document, including title, email communications, localized formatting, and signature input modes.</td>
-  </tr>
-  
-  <tr>
-    <td>Configure default email preferences at the organisation level with team-level override capabilities.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.56</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Configure default email preferences at the organisation level with team-level override capabilities.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow users with password-based accounts to change their account password from the Security settings tab.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.56</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow users with password-based accounts to change their account password from the Security settings tab.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow settings configuration for managing the public profile and presence of the team.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.56</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow settings configuration for managing the public profile and presence of the team.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow senders to specify a custom Reply-To email address so recipient responses are directed to a non-default inbox.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.56</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow senders to specify a custom Reply-To email address so recipient responses are directed to a non-default inbox.</td>
-  </tr>
-  
-  <tr>
-    <td>The system must send automated transactional emails for signing invitations, signature completion, and document updates using react-email templates.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.56</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → The system must send automated transactional emails for signing invitations, signature completion, and document updates using react-email templates.</td>
-  </tr>
-  
-  <tr>
-    <td>The application must persist user account data, document metadata, signatures, and configuration settings in a PostgreSQL database managed via Prisma ORM.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.56</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → The application must persist user account data, document metadata, signatures, and configuration settings in a PostgreSQL database managed via Prisma ORM.</td>
-  </tr>
-  
-  <tr>
-    <td>Display the user's email address as a read-only field on the profile settings page, requiring support contact for changes.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.56</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Display the user's email address as a read-only field on the profile settings page, requiring support contact for changes.</td>
-  </tr>
-  
-  <tr>
-    <td>Require a valid recipient email address for document invitation delivery.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Require a valid recipient email address for document invitation delivery.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow invited users to accept an organisation invitation via email link after signing in or creating an account.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow invited users to accept an organisation invitation via email link after signing in or creating an account.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow users to initiate document creation from a template via the sidebar templates list context menu or the template detail page.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow users to initiate document creation from a template via the sidebar templates list context menu or the template detail page.</td>
-  </tr>
-  
-  <tr>
-    <td>Document senders can add one or more recipients to a document by entering their full name and email address.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Document senders can add one or more recipients to a document by entering their full name and email address.</td>
-  </tr>
-  
-  <tr>
-    <td>The platform strictly accepts PDF documents for sending and creation, without converting non-PDF file formats automatically.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → The platform strictly accepts PDF documents for sending and creation, without converting non-PDF file formats automatically.</td>
-  </tr>
-  
-  <tr>
-    <td>Documenso must trigger webhook notifications for actions performed on templates, including creation, updates, deletion, and usage.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Documenso must trigger webhook notifications for actions performed on templates, including creation, updates, deletion, and usage.</td>
-  </tr>
-  
-  <tr>
-    <td>Users can click the 'Upload Document' button in the Documents dashboard to open a native file selection dialog.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Users can click the 'Upload Document' button in the Documents dashboard to open a native file selection dialog.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow users to revoke an active API token from the settings interface to immediately invalidate its access.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow users to revoke an active API token from the settings interface to immediately invalidate its access.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow Enterprise organizations to configure custom domain sender email addresses from organization settings.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow Enterprise organizations to configure custom domain sender email addresses from organization settings.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow team administrators to update Team Name, Team URL, Team Avatar, and Team Email under General Team Settings.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow team administrators to update Team Name, Team URL, Team Avatar, and Team Email under General Team Settings.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow users to access the document editor from the dashboard or automatically after completing a document upload.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow users to access the document editor from the dashboard or automatically after completing a document upload.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow teams to set a brand website URL linked to the logo and set custom brand details displayed in email footers.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow teams to set a brand website URL linked to the logo and set custom brand details displayed in email footers.</td>
-  </tr>
-  
-  <tr>
-    <td>Enforce team role access levels (Admin, Manager, Member) for team settings, member management, team deletion, and document visibility.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Enforce team role access levels (Admin, Manager, Member) for team settings, member management, team deletion, and document visibility.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow users to create a custom signature during document signing without modifying their default profile signature.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow users to create a custom signature during document signing without modifying their default profile signature.</td>
-  </tr>
-  
-  <tr>
-    <td>Provides an interface listing active API tokens along with their scope, target account/team, and expiration details.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Provides an interface listing active API tokens along with their scope, target account/team, and expiration details.</td>
-  </tr>
-  
-  <tr>
-    <td>Specify field coordinates and dimensions on PDF documents using relative percentage values (0-100) along with 1-based page numbers and 0-based document file indices.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Specify field coordinates and dimensions on PDF documents using relative percentage values (0-100) along with 1-based page numbers and 0-based document file indices.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow modifying recipient name, email, role, and signing order prior to sending the document.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow modifying recipient name, email, role, and signing order prior to sending the document.</td>
-  </tr>
-  
-  <tr>
-    <td>Provide general document configuration options in editor sidebar including language, signature types, date format, time zone, external ID, and redirect URL.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Provide general document configuration options in editor sidebar including language, signature types, date format, time zone, external ID, and redirect URL.</td>
-  </tr>
-  
-  <tr>
-    <td>Recipients click email link to open document viewer and fill/sign assigned fields.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Recipients click email link to open document viewer and fill/sign assigned fields.</td>
-  </tr>
-  
-  <tr>
-    <td>Add and manage recipient roles for documents generated from a template.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Add and manage recipient roles for documents generated from a template.</td>
-  </tr>
-  
-  <tr>
-    <td>Enforce member limits and team creation restrictions based on current subscription plan (Platform, Teams, Enterprise).</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Enforce member limits and team creation restrictions based on current subscription plan (Platform, Teams, Enterprise).</td>
-  </tr>
-  
-  <tr>
-    <td>Provide a drawing interface in the profile signature editor allowing users to draw a signature using a mouse or touchscreen.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Provide a drawing interface in the profile signature editor allowing users to draw a signature using a mouse or touchscreen.</td>
-  </tr>
-  
-  <tr>
-    <td>Update general template properties and email/redirect metadata.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Update general template properties and email/redirect metadata.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow users to upload an image file of their signature in the profile signature editor.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow users to upload an image file of their signature in the profile signature editor.</td>
-  </tr>
-  
-  <tr>
-    <td>Provide a Send Document button within the editor to initiate distribution and open email or link setup options.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Provide a Send Document button within the editor to initiate distribution and open email or link setup options.</td>
-  </tr>
-  
-  <tr>
-    <td>Open and update an existing template's recipients, fields, or settings.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Open and update an existing template's recipients, fields, or settings.</td>
-  </tr>
-  
-  <tr>
-    <td>The system must integrate with Stripe to manage payment processing, cloud subscriptions, and enterprise account billing.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → The system must integrate with Stripe to manage payment processing, cloud subscriptions, and enterprise account billing.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow users to specify an optional secret key during webhook setup to sign event payloads with the X-Documenso-Secret header for endpoint security verification.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow users to specify an optional secret key during webhook setup to sign event payloads with the X-Documenso-Secret header for endpoint security verification.</td>
-  </tr>
-  
-  <tr>
-    <td>Senders can track real-time recipient status and document progress from the Documents dashboard.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Senders can track real-time recipient status and document progress from the Documents dashboard.</td>
-  </tr>
-  
-  <tr>
-    <td>Enforce organisation-level roles (Owner, Admin, Manager, Member) and their respective permissions for managing settings, teams, members, billing, and organisation deletion.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Enforce organisation-level roles (Owner, Admin, Manager, Member) and their respective permissions for managing settings, teams, members, billing, and organisation deletion.</td>
-  </tr>
-  
-  <tr>
-    <td>The system must allow users to upload PDF documents into the application, storing them securely in S3-compatible object storage for viewing and signature processing.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → The system must allow users to upload PDF documents into the application, storing them securely in S3-compatible object storage for viewing and signature processing.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow teams to enable custom branding or inherit branding settings from the parent organisation.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow teams to enable custom branding or inherit branding settings from the parent organisation.</td>
-  </tr>
-  
-  <tr>
-    <td>Send email notifications to recipients when an envelope is distributed, providing a direct link to sign or view the document.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Send email notifications to recipients when an envelope is distributed, providing a direct link to sign or view the document.</td>
-  </tr>
-  
-  <tr>
-    <td>Capture email and optional display name for each defined recipient slot when generating a document from a template.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Capture email and optional display name for each defined recipient slot when generating a document from a template.</td>
-  </tr>
-  
-  <tr>
-    <td>Ensure generated documents become independent entities, allowing pre-send modifications without altering the original template.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Ensure generated documents become independent entities, allowing pre-send modifications without altering the original template.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow teams to upload a custom branding logo (up to 5MB in JPG, PNG, or WebP format) to display on document signing pages.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow teams to upload a custom branding logo (up to 5MB in JPG, PNG, or WebP format) to display on document signing pages.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow users to initiate creating a reusable document template from the Templates section.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow users to initiate creating a reusable document template from the Templates section.</td>
-  </tr>
-  
-  <tr>
-    <td>Configure default document preferences at the organisation level with team-level override capabilities.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Configure default document preferences at the organisation level with team-level override capabilities.</td>
-  </tr>
-  
-  <tr>
-    <td>Provide a typed signature generator in the profile signature editor allowing users to enter their name and select from generated font styles.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Provide a typed signature generator in the profile signature editor allowing users to enter their name and select from generated font styles.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow users to write a custom message for recipient emails utilizing dynamic template variables.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow users to write a custom message for recipient emails utilizing dynamic template variables.</td>
-  </tr>
-  
-  <tr>
-    <td>Provide functionality to generate and manage API tokens scoped to the team for programmatic access.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Provide functionality to generate and manage API tokens scoped to the team for programmatic access.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow team creator to set whether all organisation members get automatic access to the team's documents or restrict initial access to organisation admins and managers.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow team creator to set whether all organisation members get automatic access to the team's documents or restrict initial access to organisation admins and managers.</td>
-  </tr>
-  
-  <tr>
-    <td>The system must allow senders to configure custom display timezone and date format preferences for dates appearing on documents.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → The system must allow senders to configure custom display timezone and date format preferences for dates appearing on documents.</td>
-  </tr>
-  
-  <tr>
-    <td>Provide a user interface within Team Settings allowing team administrators to configure a new HTTP/HTTPS webhook endpoint.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Provide a user interface within Team Settings allowing team administrators to configure a new HTTP/HTTPS webhook endpoint.</td>
-  </tr>
-  
-  <tr>
-    <td>List all documents generated from a specific template on the template detail page.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → List all documents generated from a specific template on the template detail page.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow users to remove their existing profile avatar image by hovering over the avatar display in Settings > Profile.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow users to remove their existing profile avatar image by hovering over the avatar display in Settings > Profile.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow users to disable active two-factor authentication by verifying a 6-digit code from their authenticator app.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow users to disable active two-factor authentication by verifying a 6-digit code from their authenticator app.</td>
-  </tr>
-  
-  <tr>
-    <td>Standard plans enforce a limit of uploading a maximum of 5 documents simultaneously.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Standard plans enforce a limit of uploading a maximum of 5 documents simultaneously.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow template owners to generate a shareable signing URL for a template, enabling signing without knowing recipient email addresses in advance.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow template owners to generate a shareable signing URL for a template, enabling signing without knowing recipient email addresses in advance.</td>
-  </tr>
-  
-  <tr>
-    <td>Users can drag and drop PDF or DOCX files anywhere on the Documents dashboard to initiate document upload.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Users can drag and drop PDF or DOCX files anywhere on the Documents dashboard to initiate document upload.</td>
-  </tr>
-  
-  <tr>
-    <td>Support two-factor authentication and passkeys as additional security layers for signing high-security and high-compliance documents.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Support two-factor authentication and passkeys as additional security layers for signing high-security and high-compliance documents.</td>
-  </tr>
-  
-  <tr>
-    <td>Webhook configuration and management features must be exclusively accessible to team accounts, explicitly blocking personal accounts from creating or managing webhooks.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Webhook configuration and management features must be exclusively accessible to team accounts, explicitly blocking personal accounts from creating or managing webhooks.</td>
-  </tr>
-  
-  <tr>
-    <td>Send a completed document copy via email to the direct link signer immediately upon signing completion.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Send a completed document copy via email to the direct link signer immediately upon signing completion.</td>
-  </tr>
-  
-  <tr>
-    <td>The platform must support password protection on documents to restrict document access to authorized recipients.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → The platform must support password protection on documents to restrict document access to authorized recipients.</td>
-  </tr>
-  
-  <tr>
-    <td>Allow users to drag field types from a palette and drop them onto specific pages in a document editor.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allow users to drag field types from a palette and drop them onto specific pages in a document editor.</td>
-  </tr>
-  
-  <tr>
-    <td>Display recipient signing order in read-only mode during document generation for sequential signing templates.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Display recipient signing order in read-only mode during document generation for sequential signing templates.</td>
-  </tr>
-  
-  <tr>
-    <td>Retrieve a paginated list of templates with support for filtering by type (PRIVATE or PUBLIC) and folder ID, as well as sorting by creation date.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Retrieve a paginated list of templates with support for filtering by type (PRIVATE or PUBLIC) and folder ID, as well as sorting by creation date.</td>
-  </tr>
-  
-  <tr>
-    <td>API tokens carry full account permissions equivalent to the token owner, with no scoped or granular permission restrictions supported.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → API tokens carry full account permissions equivalent to the token owner, with no scoped or granular permission restrictions supported.</td>
-  </tr>
-  
-  <tr>
-    <td>Users can select or drag multiple PDF and DOCX files simultaneously to create a single envelope containing multiple documents sharing recipients and signing workflow.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Users can select or drag multiple PDF and DOCX files simultaneously to create a single envelope containing multiple documents sharing recipients and signing workflow.</td>
-  </tr>
-  
-  <tr>
-    <td>System checks user account plan limits upon upload and blocks document creation if the monthly quota has been reached.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → System checks user account plan limits upon upload and blocks document creation if the monthly quota has been reached.</td>
-  </tr>
-  
-  <tr>
-    <td>Send an automated notification email containing document details and a unique signing access button to each recipient.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Send an automated notification email containing document details and a unique signing access button to each recipient.</td>
-  </tr>
-  
-  <tr>
-    <td>Allows users to specify lifespan or expiration dates when generating API tokens to enhance security.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Allows users to specify lifespan or expiration dates when generating API tokens to enhance security.</td>
-  </tr>
-  
-  <tr>
-    <td>Configure default document visibility settings at the organisation level with team-level override capabilities.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Configure default document visibility settings at the organisation level with team-level override capabilities.</td>
-  </tr>
-  
-  <tr>
-    <td>Require users to select a pricing plan during organisation creation, with separate billing per organisation.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Require users to select a pricing plan during organisation creation, with separate billing per organisation.</td>
-  </tr>
-  
-  <tr>
-    <td>Generate a direct link template that automatically creates and initiates a signing document when accessed by recipients.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Generate a direct link template that automatically creates and initiates a signing document when accessed by recipients.</td>
-  </tr>
-  
-  <tr>
-    <td>Document creation from templates via POST /template/use does not support PDF placeholder parsing.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Document creation from templates via POST /template/use does not support PDF placeholder parsing.</td>
-  </tr>
-  
-  <tr>
-    <td>Users can upload PDF documents by selecting a file or dragging and dropping it into the designated upload area on the Documents dashboard.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Users can upload PDF documents by selecting a file or dragging and dropping it into the designated upload area on the Documents dashboard.</td>
-  </tr>
-  
-  <tr>
-    <td>Authenticate API requests using an API token provided in the Authorization header. Tokens require the 'api_' prefix.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Authenticate API requests using an API token provided in the Authorization header. Tokens require the 'api_' prefix.</td>
-  </tr>
-  
-  <tr>
-    <td>The web application must render PDF documents natively in the client browser using pdf.js to enable document review and field placement.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → The web application must render PDF documents natively in the client browser using pdf.js to enable document review and field placement.</td>
-  </tr>
-  
-  <tr>
-    <td>Save the created (drawn, typed, or uploaded) signature as the default signature for the account upon clicking 'Update profile'.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Save the created (drawn, typed, or uploaded) signature as the default signature for the account upon clicking 'Update profile'.</td>
-  </tr>
-  
-  <tr>
-    <td>Retrieve a paginated list of envelopes/documents created within the account, including metadata and current status.</td>
-    <td><span class="badge-low">LOW</span></td>
-    <td>0.00</td>
-    <td>0.49</td>
-    <td class="evidence">updateTeamPublicProfile (update-team-public-profile.ts) → https://app.documenso.com/settings/profile → Retrieve a paginated list of envelopes/documents created within the account, including metadata and current status.</td>
-  </tr>
-  
-</table>
-
-
-
-<h2>🟣 Absent Requirements — No Coverage Found (6)</h2>
-<div class="box-absent">
-  <strong>These requirements exist in documentation but have no CodeFunction or UIElement linked in the graph.</strong>
-  Each is a candidate for manual verification: it may be unimplemented, behind authentication not yet crawled, or using different vocabulary than the code.
-  <table style="margin-top:.75rem">
-    <tr><th>Requirement</th><th>Status</th></tr>
-    
-    <tr><td>The software must be packaged as standard Docker container images allowing users to self-host the platform on Docker, Do</td><td><span class="badge-absent">ABSENT</span></td></tr>
-    
-    <tr><td>The platform must support secure vulnerability disclosures via GitHub Security Advisories to protect self-hosted and clo</td><td><span class="badge-absent">ABSENT</span></td></tr>
-    
-    <tr><td>Allow teams to set up webhooks for integrating document events with external services.</td><td><span class="badge-absent">ABSENT</span></td></tr>
-    
-    <tr><td>Standard plans enforce a limit of uploading a maximum of 5 documents simultaneously.</td><td><span class="badge-absent">ABSENT</span></td></tr>
-    
-    <tr><td>The system must trigger a webhook notification with payload event 'DOCUMENT_CREATED' whenever a new document or template</td><td><span class="badge-absent">ABSENT</span></td></tr>
-    
-    <tr><td>The system must trigger a webhook notification with payload event 'DOCUMENT_OPENED' when a recipient opens the document </td><td><span class="badge-absent">ABSENT</span></td></tr>
-    
-  </table>
-</div>
-
-
-
-<h2>⚫ Dark Changes — No Traceable Path (12)</h2>
-<div class="box-dark">
-  <strong>These changed functions have no traceable path to any UI element or requirement in the graph.</strong>
-  They may affect internal logic, configuration, infrastructure, or code outside the indexed scope. Manual review required.
-  <ul><li><code>updatedEnvelope (cancel-document.ts)</code></li><li><code>createAttachment (create-attachment.ts)</code></li><li><code>createOrGetShareLink (create-or-get-share-link.ts)</code></li><li><code>isHttpUrl (is-http-url.ts)</code></li><li><code>updateAttachment (update-attachment.ts)</code></li><li><code>findAttachmentsByEnvelopeId (find-attachments-by-envelope-id.ts)</code></li><li><code>member (update-organisation-group.ts)</code></li><li><code>result (subscribe.ts)</code></li><li><code>deleteAttachment (delete-attachment.ts)</code></li><li><code>getRecipientById (get-recipient-by-id.ts)</code></li><li><code>result (unsubscribe.ts)</code></li><li><code>getEnvelopeRecipientRoute (get-envelope-recipient.ts)</code></li></ul>
-</div>
-
-
-
-<h2>⚠️ Manual Review Required</h2>
-<div class="box-warning">
-  <ul><li>101 node(s) have LOW confidence -- verify before updating test plans.</li><li>12 changed function(s) have no traceable path to UI or requirements: updatedEnvelope (cancel-document.ts), createAttachment (create-attachment.ts), createOrGetShareLink (create-or-get-share-link.ts)...</li><li>6 requirement(s) have no code or UI coverage. They may be unimplemented features or gaps in the crawl coverage.</li></ul>
-</div>
-
-
-<h2>Coverage Statistics</h2>
-<table>
-  <tr><th>Metric</th><th>Count</th></tr>
-  <tr><td>Affected UI elements / pages</td><td>1</td></tr>
-  <tr><td>Affected requirements</td><td>101</td></tr>
-  <tr><td>Absent requirements (no coverage)</td><td>6</td></tr>
-  <tr><td>Dark changes (no graph path)</td><td>12</td></tr>
-  <tr><td>Evidence edges in subgraph</td><td>103</td></tr>
-  <tr><td>Manual review items</td><td>3</td></tr>
-</table>
-
-<footer>
-  Report generated by Blast Radius Analyzer v4 · Run ID: <code>e197c8ef</code><br>
-  Neo4j evidence query (paste into <a href="http://localhost:7474">Neo4j Browser</a>):
-  <pre>MATCH path=(f:CodeFunction)-[*1..6]->(r:Requirement)
-WHERE f.id IN ["packages/trpc/server/organisation-router/update-organisation-group.ts:91:member", "packages/lib/utils/is-http-url.ts:10:isHttpUrl", "packages/lib/utils/is-http-url.ts:25:toSafeHref"]
-RETURN path LIMIT 50</pre>
-</footer>
+<hr />
+<p><em>Report generated by Blast Radius Analyzer v4 · Non-Engineer QA Lead Edition · Run ID: <code>e197c8ef</code></em></p>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Replace markdown code blocks containing 'mermaid' with div.mermaid
+            document.querySelectorAll("pre code.language-mermaid").forEach(function(el) {
+                var parent = el.parentElement;
+                var div = document.createElement("div");
+                div.className = "mermaid";
+                div.textContent = el.textContent;
+                parent.replaceWith(div);
+            });
+            mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+        });
+    </script>
 </body>
 </html>
