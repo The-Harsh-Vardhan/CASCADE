@@ -58,12 +58,12 @@ def main() -> None:
 
     # Print result summary & exported deliverable paths
     print("-" * 50)
-    print(f"✅ Blast Radius Analysis complete for PR #{pr_number}!")
-    print(f"📁 Deliverables saved to: {Path(report_path).parent}")
-    print(f"   • Markdown: {report_path}")
-    print(f"   • HTML:     {Path(report_path).with_suffix('.html')}")
-    print(f"   • PDF:      {Path(report_path).with_suffix('.pdf')}")
-    print(f"   • DOCX:     {Path(report_path).with_suffix('.docx')}")
+    print(f"[OK] Blast Radius Analysis complete for PR #{pr_number}!")
+    print(f"[Output] Deliverables saved to: {Path(report_path).parent}")
+    print(f"   - Markdown: {report_path}")
+    print(f"   - HTML:     {Path(report_path).with_suffix('.html')}")
+    print(f"   - PDF:      {Path(report_path).with_suffix('.pdf')}")
+    print(f"   - DOCX:     {Path(report_path).with_suffix('.docx')}")
     print("-" * 50)
 
 
