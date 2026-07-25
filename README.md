@@ -90,26 +90,38 @@ See a real example: [`blast_radius_report.md`](blast_radius_report.md)
 
 ## How It Works
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                  OFFLINE PIPELINE  (one-time)                   │
-│                                                                 │
-│  Phase 1 — Playwright crawl → PageSnapshot nodes (UI layer)     │
-│  Phase 2 — Docling ingest of MDX docs → Requirement nodes       │
-│  Phase 3 — ast-grep static analysis → CodeFunction nodes        │
-│  Phase 4 — Entity resolution → Neo4j graph (3 layers)           │
-│                                                                 │
-│       Requirements ←── IMPLEMENTS ──── CodeFunctions            │
-│       Requirements ←── COVERS ──────── UIElements               │
-│       UIElements   ←── RENDERS ─────── CodeFunctions            │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓  (graph persists in Neo4j)
-┌─────────────────────────────────────────────────────────────────┐
-│              ONLINE PIPELINE  (per PR — run.py)                 │
-│                                                                 │
-│  parse URL → GitHub API PR diff → Phase 5 (PPR reasoning)       │
-│           → Phase 6 (Jinja2 render) → blast_radius_report.md    │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph OfflinePipeline["OFFLINE PIPELINE (One-Time Setup)"]
+        direction TB
+        subgraph Ingestion["1. Multi-Source Ingestion & Extraction"]
+            P1["Phase 1: Autonomous Crawler<br/><i>Playwright Browser Agent</i>"] -->|DOM & Interactive Elements| UI_Nodes["UIElement & UserFlow Nodes"]
+            P2["Phase 2: Spec Parser<br/><i>Docling MDX + Gemini</i>"] -->|Requirements & Acceptance Criteria| REQ_Nodes["Requirement & Gap Nodes"]
+            P3["Phase 3: Static Analysis<br/><i>ast-grep AST Parser</i>"] -->|Functions & AST Calls| CODE_Nodes["CodeFunction Nodes"]
+        end
+
+        subgraph GraphBuild["2. Heterogeneous Graph Resolution"]
+            P4["Phase 4: Entity Resolution<br/><i>Vector Cosine + Gemini Reranker</i>"]
+            UI_Nodes --> P4
+            REQ_Nodes --> P4
+            CODE_Nodes --> P4
+            P4 -->|Builds Edges| Neo4j[("Neo4j 3-Layer Knowledge Graph<br/><i>Requirements • UI/Flows • Code</i>")]
+        end
+    end
+
+    subgraph OnlinePipeline["ONLINE PIPELINE (Per PR Execution)"]
+        direction TB
+        PR["GitHub PR URL<br/><code>python run.py &lt;url&gt;</code>"] -->|GitHub REST API| Diff["PR Diff Delta<br/><i>Changed Files & Function Seeds</i>"]
+        Diff --> P5["Phase 5: Reason Engine<br/><i>Personalized PageRank (NetworkX)</i>"]
+        Neo4j <-->|Subgraph Retrieval & Propagation| P5
+        P5 -->|Risk Tiers & Dark Changes| P6["Phase 6: Report Generator<br/><i>Jinja2 + Gemini Executive Summary</i>"]
+        P6 --> Report["Blast Radius Report<br/><code>outputs/reports/pr_3046_blast_radius.md</code>"]
+    end
+
+    style OfflinePipeline fill:#0f172a,stroke:#38bdf8,stroke-width:2px,color:#f8fafc
+    style OnlinePipeline fill:#1e1b4b,stroke:#a855f7,stroke-width:2px,color:#f8fafc
+    style Neo4j fill:#0284c7,stroke:#0369a1,stroke-width:2px,color:#fff
+    style Report fill:#15803d,stroke:#166534,stroke-width:2px,color:#fff
 ```
 
 **Phase 5** runs [Personalized PageRank](https://en.wikipedia.org/wiki/PageRank) seeded at the changed functions. Impact scores propagate through `IMPLEMENTS`, `RENDERS`, and `COVERS` edges to produce a risk-ranked list of affected requirements and UI pages.
@@ -121,6 +133,36 @@ See a real example: [`blast_radius_report.md`](blast_radius_report.md)
 ## Knowledge Graph Architecture & Visualization
 
 The system constructs a heterogeneous, 3-layered knowledge graph in Neo4j that bridges the semantic gap between low-level code changes and high-level product requirements.
+
+```mermaid
+graph LR
+    subgraph Layer1 ["Layer 1: Requirements Layer"]
+        REQ["Requirement Node<br/><i>REQ-001: Document Sending</i>"]
+        GAP["GapNode / AbsentRequirement<br/><i>ABSENT-REQ-003: SSO Auth</i>"]
+    end
+
+    subgraph Layer2 ["Layer 2: UI & User Flow Layer"]
+        FLOW["UserFlow Node<br/><i>FLOW-001: Document Signing</i>"]
+        UI["UIElement Node<br/><i>/settings/profile</i>"]
+    end
+
+    subgraph Layer3 ["Layer 3: Code Implementation Layer"]
+        CF1["CodeFunction Node<br/><i>updateTeamPublicProfile()</i>"]
+        CF2["CodeFunction Node<br/><i>checkPermissions()</i>"]
+    end
+
+    CF1 -->|"CALLS (AST)"| CF2
+    CF1 -->|"RENDERS (conf: 0.70)"| UI
+    CF1 -->|"IMPLEMENTS (conf: 0.82)"| REQ
+    FLOW -->|"BELONGS_TO (step_order)"| UI
+    UI -->|"COVERS (keywords)"| REQ
+    FLOW -->|"COVERS (capped at 40)"| REQ
+    GAP -.->|"ABSENT_FROM"| REQ
+
+    style Layer1 fill:#2e1065,stroke:#7c3aed,color:#fff
+    style Layer2 fill:#064e3b,stroke:#059669,color:#fff
+    style Layer3 fill:#78350f,stroke:#d97706,color:#fff
+```
 
 ![Blast Radius 3D Knowledge Graph Explorer](docs/images/graph_explorer.png)
 
