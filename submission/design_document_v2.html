@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blast Radius Analyzer — Design Document v2</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.0/github-markdown.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        .markdown-body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+        }
+        .markdown-body table {
+            display: table;
+            width: 100%;
+        }
+        @media print {
+            body {
+                padding: 15px;
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                font-size: 13px !important;
+                line-height: 1.4 !important;
+            }
+            .markdown-body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+            }
+        }
+    </style>
+</head>
+<body class="markdown-body">
+<h1>Blast Radius Analyzer — Technical Design Document (v2)</h1>
+<p><strong>Assignment:</strong> AI Engineer — Testsigma<br />
+<strong>Target Application:</strong> <a href="https://app.documenso.com">app.documenso.com</a> / <a href="https://github.com/documenso/documenso">github.com/documenso/documenso</a><br />
+<strong>PR Analyzed:</strong> <a href="https://github.com/documenso/documenso/pull/3046">#3046</a> (<em>merge SHA <code>8f683932</code></em>)<br />
+<strong>Pipeline Version:</strong> v4 (6-Phase Hybrid Architecture)  </p>
+<hr />
+<h2>1. Agent Decomposition</h2>
+<h3>Stages of Reasoning, Boundaries &amp; Determinism vs. LLM Trade-Offs</h3>
+<p>The Blast Radius Analyzer translates code changes into product-level impact. To avoid building a "chain of prompts dressed up as an agent," the pipeline explicitly separates <strong>deterministic computation</strong> (static AST parsing, graph linear algebra) from <strong>LLM semantic reasoning</strong> (document parsing, cross-domain reranking, prose synthesis).</p>
+<pre><code class="language-mermaid">sequenceDiagram
+    autonumber
+    participant App as Target App / GitHub
+    participant P1 as Phase 1: Playwright Crawl
+    participant P2 as Phase 2: Spec Parser (Docling)
+    participant P3 as Phase 3: Static Code Analysis (ast-grep)
+    participant P4 as Phase 4: Neo4j Graph Builder
+    participant P5 as Phase 5: PPR Reason Engine (NetworkX)
+    participant P6 as Phase 6: Jinja2 Report Renderer
+    participant Gemini as Google Gemini API
+
+    Note over P1,P3: Offline Pipeline Execution (One-Time Setup)
+    App-&gt;&gt;P1: Visit Auth/Unauth Pages (DOM + Text)
+    P1-&gt;&gt;Gemini: Label Components &amp; UserFlows (Phase 1b)
+    Gemini--&gt;&gt;P1: Return PageAnalysis JSON
+    App-&gt;&gt;P2: Raw MDX Specs (25 files)
+    P2-&gt;&gt;Gemini: Extract Structured Requirements
+    Gemini--&gt;&gt;P2: Return Requirement JSON List
+    App-&gt;&gt;P3: TypeScript Repository AST
+    P3-&gt;&gt;P3: ast-grep Function Extraction
+
+    Note over P4: Cross-Layer Resolution
+    P3--&gt;&gt;P4: CodeFunction Nodes
+    P1--&gt;&gt;P4: UIElement &amp; UserFlow Nodes
+    P2--&gt;&gt;P4: Requirement Nodes
+    P4-&gt;&gt;P4: Vector Cosine Similarity (Top-15 Candidates)
+    P4-&gt;&gt;Gemini: Rerank &amp; Confirm IMPLEMENTS Links
+    Gemini--&gt;&gt;P4: Confirmed Edges + Confidence Scores
+    P4-&gt;&gt;Neo4j: Persist 3-Layer Graph &amp; GapNodes
+
+    Note over P5,P6: Online PR Analysis Execution (Per-PR Command)
+    App-&gt;&gt;P5: Fetch PR Diff (GitHub REST API)
+    P4--&gt;&gt;P5: Retrieve Subgraph &amp; Seed Functions
+    P5-&gt;&gt;P5: Calculate Personalized PageRank (NetworkX, α=0.85)
+    P5--&gt;&gt;P6: Structured BlastRadiusReport JSON
+    P6-&gt;&gt;Gemini: Generate Executive Prose Summary
+    Gemini--&gt;&gt;P6: Non-Engineer Summary
+    P6--&gt;&gt;App: Final Markdown, HTML &amp; PDF Blast Radius Report
+</code></pre>
+<h3>Phase Rationale Breakdown</h3>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Core Mechanism</th>
+<th>Category</th>
+<th>Architectural Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Phase 1: Crawl</strong></td>
+<td>Playwright Chromium + Gemini DOM Labeler</td>
+<td><strong>Hybrid</strong></td>
+<td>Playwright captures DOM elements deterministically; Gemini labels component semantics and user flows. Fallback URL stub handles rate limits safely.</td>
+</tr>
+<tr>
+<td><strong>Phase 2: Ingest</strong></td>
+<td>Docling MDX Parser + Gemini Extractor</td>
+<td><strong>LLM-Driven</strong></td>
+<td>Unstructured MDX docs require semantic understanding to extract typed acceptance criteria, feature areas, and domain keywords.</td>
+</tr>
+<tr>
+<td><strong>Phase 3: Code</strong></td>
+<td><code>ast-grep</code> AST Parser + GitHub API</td>
+<td><strong>Deterministic</strong></td>
+<td>AST function definitions and PR file diffs are exact code structures — zero LLM non-determinism required.</td>
+</tr>
+<tr>
+<td><strong>Phase 4: Graph</strong></td>
+<td>SentenceTransformers Cosine + Gemini Reranker</td>
+<td><strong>Hybrid</strong></td>
+<td>Vector cosine similarity filters top-15 candidate pairs; LLM performs final semantic reranking to eliminate false positives.</td>
+</tr>
+<tr>
+<td><strong>Phase 5: Reason</strong></td>
+<td>Personalized PageRank (NetworkX)</td>
+<td><strong>Deterministic</strong></td>
+<td>Linear algebra propagation over Neo4j subgraph. Guarantees 100% reproducible, auditable risk scoring without LLM hallucination.</td>
+</tr>
+<tr>
+<td><strong>Phase 6: Report</strong></td>
+<td>Jinja2 Templates + Gemini Prose Summarizer</td>
+<td><strong>LLM-Driven</strong></td>
+<td>Transforms mathematical risk vectors into clear prose tailored for a non-engineer QA lead.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>2. Knowledge Graph Schema with Justification</h2>
+<p>The graph links 3 distinct layers in Neo4j to translate a code-level diff into product risk.</p>
+<pre><code class="language-mermaid">graph TD
+    subgraph Requirements_Layer [&quot;1. Product Requirements Layer&quot;]
+        REQ[&quot;&lt;b&gt;Requirement Node&lt;/b&gt;&lt;br/&gt;• id: REQ-001&lt;br/&gt;• title: Document Sending&lt;br/&gt;• feature_area: sending&lt;br/&gt;• coverage_status: COVERED&quot;]
+        GAP[&quot;&lt;b&gt;GapNode / AbsentRequirement&lt;/b&gt;&lt;br/&gt;• id: ABSENT-REQ-003&lt;br/&gt;• requirement_id: REQ-003&lt;br/&gt;• absence_type: AUTH_GATED&lt;br/&gt;• reason: Admin permission required&quot;]
+    end
+
+    subgraph UI_Layer [&quot;2. UI Structure &amp; User Flow Layer&quot;]
+        FLOW[&quot;&lt;b&gt;UserFlow Node&lt;/b&gt;&lt;br/&gt;• id: FLOW-001&lt;br/&gt;• name: Document Signing&lt;br/&gt;• steps: ['upload', 'fields', 'send']&quot;]
+        UI[&quot;&lt;b&gt;UIElement Node&lt;/b&gt;&lt;br/&gt;• id: page:{sha256}&lt;br/&gt;• label: /settings/profile&lt;br/&gt;• selector: [data-testid='profile-form']&quot;]
+    end
+
+    subgraph Code_Layer [&quot;3. Code Implementation Layer&quot;]
+        CF1[&quot;&lt;b&gt;CodeFunction Node&lt;/b&gt;&lt;br/&gt;• id: sendDocument&lt;br/&gt;• file: packages/lib/server-only/send.ts&lt;br/&gt;• signature: sendDocument(id: string)&quot;]
+        CF2[&quot;&lt;b&gt;CodeFunction Node&lt;/b&gt;&lt;br/&gt;• id: checkPermissions&lt;br/&gt;• file: packages/lib/server-only/auth.ts&lt;br/&gt;• signature: checkPermissions(userId)&quot;]
+    end
+
+    CF1 --&gt;|&quot;CALLS&lt;br/&gt;(ast-grep AST)&quot;| CF2
+    CF1 --&gt;|&quot;RENDERS&lt;br/&gt;(URL pattern, conf: 0.70)&quot;| UI
+    CF1 --&gt;|&quot;IMPLEMENTS&lt;br/&gt;(LLM rerank, conf: 0.65 - 1.0)&quot;| REQ
+    FLOW --&gt;|&quot;BELONGS_TO&lt;br/&gt;(step_order)&quot;| UI
+    UI --&gt;|&quot;COVERS&lt;br/&gt;(UI vocabulary)&quot;| REQ
+    FLOW --&gt;|&quot;COVERS&lt;br/&gt;(keyword match, max 40)&quot;| REQ
+    GAP -.-&gt;|&quot;ABSENT_FROM&quot;| REQ
+
+    style Requirements_Layer fill:#2e1065,stroke:#7c3aed,color:#fff
+    style UI_Layer fill:#064e3b,stroke:#059669,color:#fff
+    style Code_Layer fill:#78350f,stroke:#d97706,color:#fff
+</code></pre>
+<h3>Node Specifications</h3>
+<table>
+<thead>
+<tr>
+<th>Node Type</th>
+<th>Layer</th>
+<th>Description</th>
+<th>Key Attributes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>Requirement</code></strong></td>
+<td>Requirements (Top)</td>
+<td>Testable product capability extracted from MDX docs.</td>
+<td><code>id</code>, <code>title</code>, <code>description</code>, <code>feature_area</code>, <code>coverage_status</code></td>
+</tr>
+<tr>
+<td><strong><code>GapNode</code></strong></td>
+<td>Requirements (Top)</td>
+<td>Explicit representation of an un-implemented or un-crawled spec.</td>
+<td><code>id</code>, <code>requirement_id</code>, <code>absence_type</code>, <code>reason</code></td>
+</tr>
+<tr>
+<td><strong><code>UIElement</code></strong></td>
+<td>UI &amp; UserFlow (Mid)</td>
+<td>Crawled web page surface or interactive component.</td>
+<td><code>id</code>, <code>label</code>, <code>url</code>, <code>selector</code>, <code>page_title</code></td>
+</tr>
+<tr>
+<td><strong><code>UserFlow</code></strong></td>
+<td>UI &amp; UserFlow (Mid)</td>
+<td>Canonical multi-step user journey (10 seeded flows).</td>
+<td><code>id</code>, <code>name</code>, <code>steps</code>, <code>pages_involved</code></td>
+</tr>
+<tr>
+<td><strong><code>CodeFunction</code></strong></td>
+<td>Code (Bottom)</td>
+<td>Function, handler, or route extracted via static AST parsing.</td>
+<td><code>id</code>, <code>label</code>, <code>file</code>, <code>name</code>, <code>signature</code></td>
+</tr>
+</tbody>
+</table>
+<h3>Edge Specifications &amp; Relationships</h3>
+<table>
+<thead>
+<tr>
+<th>Relationship</th>
+<th>Direction</th>
+<th>Source $\rightarrow$ Target</th>
+<th>Confidence / Constraints</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>IMPLEMENTS</code></strong></td>
+<td>Cross-Layer</td>
+<td><code>CodeFunction</code> $\rightarrow$ <code>Requirement</code></td>
+<td>LLM-confirmed link ($0.65 - 1.0$).</td>
+</tr>
+<tr>
+<td><strong><code>RENDERS</code></strong></td>
+<td>Cross-Layer</td>
+<td><code>CodeFunction</code> $\rightarrow$ <code>UIElement</code></td>
+<td>Code rendering UI component ($0.70$).</td>
+</tr>
+<tr>
+<td><strong><code>COVERS</code></strong></td>
+<td>Cross-Layer</td>
+<td><code>UIElement</code> / <code>UserFlow</code> $\rightarrow$ <code>Requirement</code></td>
+<td>UI/Flow satisfying requirement (capped at 40/flow).</td>
+</tr>
+<tr>
+<td><strong><code>BELONGS_TO</code></strong></td>
+<td>Intra-Layer</td>
+<td><code>UserFlow</code> $\rightarrow$ <code>UIElement</code></td>
+<td>Flow step sequence (<code>step_order</code>).</td>
+</tr>
+<tr>
+<td><strong><code>CALLS</code></strong></td>
+<td>Intra-Layer</td>
+<td><code>CodeFunction</code> $\rightarrow$ <code>CodeFunction</code></td>
+<td>Static AST function call graph.</td>
+</tr>
+<tr>
+<td><strong><code>ABSENT_FROM</code></strong></td>
+<td>Cross-Layer</td>
+<td><code>GapNode</code> $\rightarrow$ <code>Requirement</code></td>
+<td>Links missing coverage to parent spec.</td>
+</tr>
+</tbody>
+</table>
+<h3>Anchor Cypher Traversal Query</h3>
+<p>The following query retrieves all product requirements at risk from a given set of PR diff file paths:</p>
+<pre><code class="language-cypher">// Find requirements reachable from modified code files
+MATCH (cf:CodeFunction)
+WHERE cf.file IN $changed_file_paths
+
+// 1. Direct IMPLEMENTS path (depth 1)
+OPTIONAL MATCH (cf)-[:IMPLEMENTS]-&gt;(r1:Requirement)
+
+// 2. Call graph propagation (up to 3 hops)
+OPTIONAL MATCH (cf)-[:CALLS*1..3]-&gt;(cf2:CodeFunction)-[:IMPLEMENTS]-&gt;(r2:Requirement)
+
+// 3. UI-mediated path (Code -&gt; UI -&gt; Requirement)
+OPTIONAL MATCH (cf)-[:RENDERS]-&gt;(ui:UIElement)-[:COVERS]-&gt;(r3:Requirement)
+
+WITH collect(DISTINCT r1) + collect(DISTINCT r2) + collect(DISTINCT r3) AS all_reqs
+UNWIND all_reqs AS r
+RETURN DISTINCT r.id AS requirement_id, r.title AS title, r.coverage_status AS status
+ORDER BY r.title
+</code></pre>
+<h3>Absence Modeling via GapNodes</h3>
+<p>Rather than relying on implicit missing query results (<code>NULL</code>), the pipeline explicitly instantiates <code>GapNode</code> / <code>AbsentRequirement</code> nodes for specs lacking code or UI coverage. A rule-based classifier prunes noise and categorizes absent nodes into 4 operational types: <code>AUTH_GATED</code> (requires login/permissions), <code>NOT_CRAWLED</code> (API/embed endpoints), <code>NOT_IMPLEMENTED</code> (roadmap/future features), or <code>UNKNOWN</code>.</p>
+<hr />
+<h2>3. Confidence Handling Under Ambiguity</h2>
+<p>To prevent low-confidence semantic links from triggering false alarms, every finding is evaluated using a <strong>Dual-Score Multiplier Model</strong>:</p>
+<p>$$\text{Combined Score} = \text{impact_score (PPR)} \times \text{traceability_confidence (LLM/Cosine)}$$</p>
+<pre><code class="language-mermaid">flowchart TD
+    Start[&quot;Seeded Changed CodeFunction&lt;br/&gt;(From PR Diff)&quot;] --&gt; PPR[&quot;Compute Personalized PageRank (PPR)&lt;br/&gt;(NetworkX, α=0.85, 2.5× Sink Boost)&quot;]
+    PPR --&gt; Impact[&quot;Get Node PPR Score&lt;br/&gt;(impact_score)&quot;]
+
+    Impact --&gt; EdgeCheck{&quot;Has Graph Path to&lt;br/&gt;Requirement / UI?&quot;}
+    EdgeCheck -- No --&gt; Dark[&quot;Classify as &lt;b&gt;DARK_CHANGE&lt;/b&gt;&lt;br/&gt;• Flagged for Mandatory Manual QA Review&quot;]
+
+    EdgeCheck -- Yes --&gt; TraceConf[&quot;Get Edge Traceability Confidence&lt;br/&gt;(traceability_confidence)&quot;]
+    TraceConf --&gt; Multiply[&quot;Combined Score = &lt;br/&gt;impact_score × traceability_confidence&quot;]
+
+    Multiply --&gt; TierCheck{&quot;Combined Score Range&quot;}
+    TierCheck -- &quot;Score ≥ 0.50&quot; --&gt; High[&quot;Risk Tier: &lt;b&gt;HIGH&lt;/b&gt; 🔴&lt;br/&gt;• Red Flagged in Report&lt;br/&gt;• Mandatory QA Action Required&quot;]
+    TierCheck -- &quot;0.20 ≤ Score &lt; 0.50&quot; --&gt; Med[&quot;Risk Tier: &lt;b&gt;MEDIUM&lt;/b&gt; 🟠&lt;br/&gt;• Amber Flagged in Report&lt;br/&gt;• Recommended QA Review&quot;]
+    TierCheck -- &quot;Score &lt; 0.20&quot; --&gt; Low[&quot;Risk Tier: &lt;b&gt;LOW&lt;/b&gt; 🟡&lt;br/&gt;• Surfaced with Caveat&lt;br/&gt;• Verify before updating test plans&quot;]
+
+    style High fill:#7f1d1d,stroke:#ef4444,color:#fff
+    style Med fill:#78350f,stroke:#f59e0b,color:#fff
+    style Low fill:#713f12,stroke:#eab308,color:#fff
+    style Dark fill:#111827,stroke:#6b7280,color:#fff
+</code></pre>
+<h3>Risk Tier Definitions</h3>
+<ul>
+<li><strong>HIGH (🔴 $\ge 0.50$):</strong> Strongly linked impact. Red-flagged on QA test checklist.</li>
+<li><strong>MEDIUM (🟠 $0.20 - 0.49$):</strong> Indirect or medium-confidence impact. Recommended QA review.</li>
+<li><strong>LOW (🟡 $&lt; 0.20$):</strong> Minor/background propagation. Collapsed into appendix.</li>
+<li><strong>DARK_CHANGE (⚫):</strong> Modified function with no graph path to UI or requirements (e.g. security utility refactors). Flagged for mandatory manual code review.</li>
+<li><strong>ABSENT_REQUIREMENT (⚠️):</strong> Product spec with zero code/UI coverage.</li>
+</ul>
+<h3>Worked Example: <code>sendDocument()</code> in PR #3046</h3>
+<ol>
+<li><strong>PPR Impact Score ($0.61$):</strong> Directly seeded from diff + $2.5\times$ sink boost for terminal requirement nodes.</li>
+<li><strong>Traceability Confidence ($0.82$):</strong> LLM reranker confirmed <code>sendDocument()</code> $\rightarrow$ "Document Sending".</li>
+<li><strong>Combined Score:</strong> $0.61 \times 0.82 = 0.50 \rightarrow$ <strong>HIGH Risk Tier</strong>.</li>
+</ol>
+<hr />
+<h2>4. Evaluation Approach &amp; Verification</h2>
+<h3>Empirical Stability &amp; Quality Matrix</h3>
+<table>
+<thead>
+<tr>
+<th>Evaluation Dimension</th>
+<th>Measurement Method</th>
+<th>Target Benchmark</th>
+<th>Actual Measured Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Phase 2 Ingest Stability</strong></td>
+<td>2-run extraction overlap</td>
+<td>$\ge 90\%$ overlap</td>
+<td><strong>100% overlap</strong> (identical 25 requirement titles)</td>
+</tr>
+<tr>
+<td><strong>Phase 4 Rerank Stability</strong></td>
+<td>2-run LLM rerank comparison</td>
+<td>$\ge 85\%$ edge stability</td>
+<td><strong>95.6% edge stability</strong> (22/23 edges identical)</td>
+</tr>
+<tr>
+<td><strong>Phase 4 Precision</strong></td>
+<td>Manual sample of 10 IMPLEMENTS links</td>
+<td>$\ge 80\%$ precision</td>
+<td><strong>100% precision</strong> (10/10 links semantically correct)</td>
+</tr>
+<tr>
+<td><strong>Document Sending Recall</strong></td>
+<td>Ground-truth code audit (5 functions)</td>
+<td>$\ge 50\%$ recall</td>
+<td><strong>60% recall</strong> (3/5 captured; 2 blocked by tRPC gap)</td>
+</tr>
+<tr>
+<td><strong>PPR Determinism</strong></td>
+<td>NetworkX PageRank iteration</td>
+<td>100% reproducible</td>
+<td><strong>100% deterministic</strong> (0 variance across runs)</td>
+</tr>
+<tr>
+<td><strong>Unit Test Coverage</strong></td>
+<td>Pytest execution (<code>tests/unit/</code>)</td>
+<td>100% pass rate</td>
+<td><strong>34/34 unit tests passing</strong> (0.33s runtime)</td>
+</tr>
+</tbody>
+</table>
+<h3>Smoke Test Gates</h3>
+<p>Each pipeline phase enforces automated gate criteria before writing outputs:
+- <strong>Phase 1 Gate:</strong> $\ge 5$ page snapshots captured; zero pages return empty components.
+- <strong>Phase 2 Gate:</strong> $\ge 50$ total requirements across all 8 required feature areas.
+- <strong>Phase 3 Gate:</strong> Non-empty <code>call_graph.json</code> + valid PR diff JSON.
+- <strong>Phase 4 Gate:</strong> $\ge 1$ IMPLEMENTS edge; direction check (<code>CodeFunction</code> $\rightarrow$ <code>Requirement</code>).
+- <strong>Phase 5 Gate:</strong> $\ge 1$ seed function matches PR diff file paths (path alignment gate).</p>
+<hr />
+<h2>5. Scope Decisions &amp; Architecture Defense</h2>
+<h3>Scoped Down vs. Prioritized Deep Matrix</h3>
+<table>
+<thead>
+<tr>
+<th>Component / Layer</th>
+<th>Scope Decision</th>
+<th>Rationale &amp; Defense</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Static Code Analysis</strong></td>
+<td>Depth-1 <code>ast-grep</code> AST</td>
+<td><strong>Prioritized deep on core functions.</strong> Scoped down tRPC network resolution; un-traced handlers surface as <strong>Dark Changes</strong>.</td>
+</tr>
+<tr>
+<td><strong>Requirements Ingestion</strong></td>
+<td>GitHub Raw MDX Ingestion</td>
+<td><strong>Prioritized deep on spec quality.</strong> Switched from scraping dynamic Next.js DOM to reading canonical raw MDX files.</td>
+</tr>
+<tr>
+<td><strong>Browser Crawler</strong></td>
+<td>20-Page Breadth-First + Fixtures</td>
+<td><strong>Prioritized resilience.</strong> Fixture mode (<code>CRAWL_USE_FIXTURE=true</code>) ensures evaluators can run offline seamlessly.</td>
+</tr>
+<tr>
+<td><strong>Reasoning Engine</strong></td>
+<td>Deterministic PPR PageRank</td>
+<td><strong>Prioritized reproducibility.</strong> Kept LLM non-determinism out of graph propagation to ensure auditable findings.</td>
+</tr>
+</tbody>
+</table>
+<h3>The tRPC Network Boundary Gap</h3>
+<p>The primary static analysis limitation is the tRPC protocol boundary: client-side React hooks (<code>trpc.attachment.create.useMutation()</code>) do not contain explicit TypeScript import references to server handlers (<code>createAttachment.ts</code>).</p>
+<pre><code class="language-mermaid">flowchart LR
+    subgraph Frontend [&quot;Client-Side React Component&quot;]
+        ClientComp[&quot;AttachmentPopover.tsx&lt;br/&gt;&lt;code&gt;trpc.attachment.create.useMutation()&lt;/code&gt;&quot;]
+    end
+
+    subgraph NetworkBoundary [&quot;tRPC Network Abstraction Boundary&quot;]
+        RPC[&quot;tRPC Router Protocol Contract&lt;br/&gt;&lt;i&gt;(No Direct TypeScript Function Import)&lt;/i&gt;&quot;]
+    end
+
+    subgraph Backend [&quot;Server-Side Handler&quot;]
+        ServerHandler[&quot;createAttachment.ts&lt;br/&gt;&lt;code&gt;export const createAttachment = ...&lt;/code&gt;&quot;]
+    end
+
+    ClientComp -.-&gt;|&quot;tRPC Hook Invocation&lt;br/&gt;(Invisible to ast-grep)&quot;| RPC
+    RPC -.-&gt;|&quot;RPC Contract Mapping&quot;| ServerHandler
+
+    ServerHandler --&gt;|&quot;Result in Phase 5&quot;| DarkResult[&quot;Classified as &lt;b&gt;DARK_CHANGE&lt;/b&gt;&lt;br/&gt;&lt;i&gt;(Surfaced in Report for Manual Review)&lt;/i&gt;&quot;]
+
+    style Frontend fill:#1e293b,stroke:#38bdf8,color:#fff
+    style NetworkBoundary fill:#312e81,stroke:#6366f1,stroke-dasharray: 5 5,color:#fff
+    style Backend fill:#1e293b,stroke:#f59e0b,color:#fff
+    style DarkResult fill:#881337,stroke:#f43f5e,color:#fff
+</code></pre>
+<p><strong>System Handling:</strong> Rather than silently dropping these functions, the pipeline classifies all 12 un-linked functions in PR #3046 as <strong>Dark Changes</strong>, explicitly alerting the QA lead to perform targeted manual testing.</p>
+<hr />
+<h2>6. What Would Be Built Next (1-Week Roadmap)</h2>
+<p>If granted an additional week of development, the 3 highest-value engineering priorities are:</p>
+<ol>
+<li><strong>LLM Extraction &amp; Reranking Eval Harness:</strong><br />
+   Build a ground-truth benchmark suite (<code>requirements_gt.json</code> &amp; <code>entity_links_gt.json</code>) to automatically compute Precision/Recall regression metrics for Phase 2 &amp; Phase 4 on every prompt change.</li>
+<li><strong>tRPC Compiler AST Bridging (<code>ts-morph</code>):</strong><br />
+   Integrate TypeScript Compiler API to parse tRPC router definitions, mapping client-side <code>trpc.&lt;router&gt;.&lt;procedure&gt;</code> calls directly to server handlers, resolving 80%+ of current Dark Changes.</li>
+<li><strong>CI/CD GitHub Action &amp; Incremental Crawl:</strong><br />
+   Package the online pipeline into a reusable GitHub Action that runs automatically on every pull request, re-crawling only the modified page URLs.</li>
+</ol>
+<hr />
+<h2>Appendix: Technical Reference &amp; Parameters</h2>
+<h3>Pipeline Artifact Schema Map</h3>
+<table>
+<thead>
+<tr>
+<th>Artifact File</th>
+<th>Phase Written</th>
+<th>Format / Model</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>data/crawl/page_snapshots/*.json</code></td>
+<td>Phase 1</td>
+<td><code>PageSnapshot[]</code></td>
+</tr>
+<tr>
+<td><code>outputs/requirements/requirements.json</code></td>
+<td>Phase 2</td>
+<td><code>Requirement[]</code> (272 items across 9 feature areas)</td>
+</tr>
+<tr>
+<td><code>data/code/call_graph.json</code></td>
+<td>Phase 3</td>
+<td><code>CodeFunction[]</code> (1,622 AST nodes)</td>
+</tr>
+<tr>
+<td><code>data/code/pr_{n}.json</code></td>
+<td>Phase 3</td>
+<td><code>PRDelta</code> (29 changed files)</td>
+</tr>
+<tr>
+<td><code>data/graph/entity_links.json</code></td>
+<td>Phase 4</td>
+<td><code>EntityLink[]</code> (3,485 links)</td>
+</tr>
+<tr>
+<td><code>data/graph/gap_nodes.json</code></td>
+<td>Phase 4</td>
+<td><code>GapNode[]</code> (20 pruned nodes)</td>
+</tr>
+<tr>
+<td><code>outputs/reports/pr_{n}_blast_radius.md</code></td>
+<td>Phase 5 &amp; 6</td>
+<td>Final QA Blast Radius Report (Markdown/HTML/PDF)</td>
+</tr>
+</tbody>
+</table>
+<h3>Key System Hyperparameters</h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Value</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SentenceTransformers Model</strong></td>
+<td><code>all-MiniLM-L6-v2</code></td>
+<td>Lightweight 384-dim embeddings for initial candidate search.</td>
+</tr>
+<tr>
+<td><strong>Cosine Similarity Threshold</strong></td>
+<td><code>0.25</code></td>
+<td>Generous pre-filter; LLM reranker acts as quality gate.</td>
+</tr>
+<tr>
+<td><strong>LLM Rerank Threshold</strong></td>
+<td><code>0.65</code></td>
+<td>Minimum confidence required to form an <code>IMPLEMENTS</code> edge.</td>
+</tr>
+<tr>
+<td><strong>PageRank Damping Factor ($\alpha$)</strong></td>
+<td><code>0.85</code></td>
+<td>Standard PageRank parameter balancing graph diffusion vs. locality.</td>
+</tr>
+<tr>
+<td><strong>Terminal Sink Boost</strong></td>
+<td>$2.5\times$</td>
+<td>Corrects PPR score attenuation on terminal Requirement sink nodes.</td>
+</tr>
+<tr>
+<td><strong>Risk Tier Thresholds</strong></td>
+<td>HIGH $\ge 0.50$, MED $\ge 0.20$</td>
+<td>Calibrated for Documenso Neo4j graph density.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>Design Document v2 · Streamlined Edition · Testsigma AI Engineer Take-Home</em></p>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll("pre code.language-mermaid").forEach(function(el) {
+                var parent = el.parentElement;
+                var div = document.createElement("div");
+                div.className = "mermaid";
+                div.textContent = el.textContent;
+                parent.replaceWith(div);
+            });
+            mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+        });
+    </script>
+</body>
+</html>
