@@ -566,7 +566,9 @@
   </div>
 
   <script>
-    const CACHE_KEY = 'blast_radius_3d_graph_cache_v2';
+    const CACHE_KEY = 'blast_radius_3d_graph_cache_v3';
+    const MAX_CACHE_TEXT_LENGTH = 900000;
+    const CTRL_F_OVERLAY_BATCH_SIZE = 120;
     let fullGraphData = { nodes: [], links: [] };
     let nodeMap = new Map();
     let filteredNodes = [];
@@ -580,6 +582,12 @@
     let clustersGroup = null;
     let labelsVisible = false;
     let clustersVisible = false;
+    let degreeCache = null;
+    let adjacencyCache = null;
+    let ctrlFOverlayBuilt = false;
+    let ctrlFOverlayScheduled = false;
+    let ctrlFOverlayIndex = 0;
+    let manualNodeLimitOverride = false;
 
 
     function isInterLayerLink(link) {
@@ -637,9 +645,44 @@
       updatePhysicsForces();
     });
 
+    function resolveInitialNodeLimit(totalNodes = 0) {
+      const coreCount = navigator.hardwareConcurrency || 4;
+      const viewportWidth = window.innerWidth || 1280;
+      let limit = 360;
+
+      if (coreCount <= 4) limit = 180;
+      else if (coreCount <= 8) limit = 260;
+
+      if (viewportWidth < 1200) {
+        limit = Math.min(limit, 220);
+      }
+
+      if (totalNodes > 0) {
+        limit = Math.min(limit, totalNodes);
+      }
+
+      return Math.max(100, Math.round(limit / 10) * 10);
+    }
+
+    function syncNodeLimitControl() {
+      const slider = document.getElementById('node-limit-slider');
+      const label = document.getElementById('node-limit-val');
+      if (slider) slider.value = maxVisibleNodes;
+      if (label) label.innerText = maxVisibleNodes >= 2400 ? 'ALL' : String(maxVisibleNodes);
+    }
+
+    function resetDerivedCaches() {
+      degreeCache = null;
+      adjacencyCache = null;
+      ctrlFOverlayBuilt = false;
+      ctrlFOverlayScheduled = false;
+      ctrlFOverlayIndex = 0;
+    }
+
     // Node Limit Slider Control
-    let maxVisibleNodes = 500;
+    let maxVisibleNodes = resolveInitialNodeLimit();
     document.getElementById('node-limit-slider').addEventListener('input', (e) => {
+      manualNodeLimitOverride = true;
       maxVisibleNodes = parseInt(e.target.value);
       document.getElementById('node-limit-val').innerText = maxVisibleNodes >= 2400 ? 'ALL' : maxVisibleNodes;
       applyActiveFilters();
@@ -736,9 +779,23 @@
       else if (clustersVisible) drawClusterLabels();
     });
 
+    function shouldUseLocalCache(serializedText) {
+      return Boolean(serializedText) && serializedText.length <= MAX_CACHE_TEXT_LENGTH;
+    }
+
     function saveToCache(data) {
+      if ((data.nodes?.length || 0) > 1200 || (data.links?.length || 0) > 5000) {
+        localStorage.removeItem(CACHE_KEY);
+        return;
+      }
+
       try {
-        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+        const serialized = JSON.stringify(data);
+        if (!shouldUseLocalCache(serialized)) {
+          localStorage.removeItem(CACHE_KEY);
+          return;
+        }
+        localStorage.setItem(CACHE_KEY, serialized);
       } catch (e) {
         console.warn('[Cache] localStorage quota skipped:', e);
       }
@@ -766,7 +823,7 @@
 
         // 2. Check localStorage cache
         const cached = localStorage.getItem(CACHE_KEY);
-        if (cached) {
+        if (shouldUseLocalCache(cached)) {
           try {
             const parsed = JSON.parse(cached);
             if (parsed.nodes && parsed.nodes.length > 0) {
@@ -830,11 +887,15 @@
 
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
 
+      resetDerivedCaches();
+
       // Build quick lookup map for nodes
       nodeMap = new Map(fullGraphData.nodes.map(n => [n.id, n]));
 
-      // Populate DOM text layer for Ctrl+F native searchability
-      updateCtrlFOverlay();
+      if (!manualNodeLimitOverride) {
+        maxVisibleNodes = resolveInitialNodeLimit(fullGraphData.nodes.length);
+        syncNodeLimitControl();
+      }
 
       // Compute degree-based baseline for initial render to prevent UI thread lockup
       const degrees = computeNodeDegrees();
@@ -923,16 +984,17 @@
       // Configure degree-aware repulsive forces & link distances
       updatePhysicsForces();
 
-      // Initial Sidebar Populate
-      updateNodeListCards();
+      requestAnimationFrame(() => {
+        updateNodeListCards();
+        scheduleCtrlFOverlayBuild();
 
-      // Hide Loading Screen
-      const loadingScreen = document.getElementById('loading-screen');
-      if (loadingScreen) {
-        loadingScreen.style.opacity = '0';
-        loadingScreen.style.display = 'none';
-        loadingScreen.style.pointerEvents = 'none';
-      }
+        const loadingScreen = document.getElementById('loading-screen');
+        if (loadingScreen) {
+          loadingScreen.style.opacity = '0';
+          loadingScreen.style.display = 'none';
+          loadingScreen.style.pointerEvents = 'none';
+        }
+      });
     }
 
     // Add semi-transparent 3D Layer Planes (Dynamic size centered at origin)
@@ -1015,7 +1077,9 @@
     }
 
     // 2. Interconnected Component Clustering & Group Labeling
-    function findConnectedClusters() {
+    function getAdjacencyMap() {
+      if (adjacencyCache) return adjacencyCache;
+
       const adj = new Map();
       fullGraphData.nodes.forEach(n => adj.set(n.id, []));
 
@@ -1023,10 +1087,17 @@
         const sId = typeof l.source === 'object' ? l.source.id : l.source;
         const tId = typeof l.target === 'object' ? l.target.id : l.target;
         if (adj.has(sId) && adj.has(tId)) {
-          adj.get(sId).push(tId);
-          adj.get(tId).push(sId);
+          adj.get(sId).push({ neighborId: tId, link: l });
+          adj.get(tId).push({ neighborId: sId, link: l });
         }
       });
+
+      adjacencyCache = adj;
+      return adjacencyCache;
+    }
+
+    function findConnectedClusters() {
+      const adj = getAdjacencyMap();
 
       const visited = new Set();
       const clusters = [];
@@ -1043,7 +1114,8 @@
             if (currNode) component.push(currNode);
 
             const neighbors = adj.get(curr) || [];
-            neighbors.forEach(nbr => {
+            neighbors.forEach(({ neighborId }) => {
+              const nbr = neighborId;
               if (!visited.has(nbr)) {
                 visited.add(nbr);
                 queue.push(nbr);
@@ -1151,26 +1223,50 @@
     }
 
     // Searchable DOM overlay for native browser Ctrl+F
-    function updateCtrlFOverlay() {
-      let overlay = document.getElementById('ctrl-f-overlay');
+    function scheduleCtrlFOverlayBuild() {
+      if (ctrlFOverlayBuilt || ctrlFOverlayScheduled) return;
+
+      ctrlFOverlayScheduled = true;
+      const schedule = window.requestIdleCallback || ((cb) => setTimeout(() => cb({ timeRemaining: () => 10 }), 32));
+      schedule((deadline) => {
+        ctrlFOverlayScheduled = false;
+        buildCtrlFOverlay(deadline);
+      });
+    }
+
+    function buildCtrlFOverlay(deadline) {
+      const overlay = document.getElementById('ctrl-f-overlay');
       if (!overlay) return;
 
-      let html = '';
-      fullGraphData.nodes.forEach(n => {
-        html += `<div class="searchable-item" onclick="focusNodeById('${n.id}')">Node: ${n.name} (${n.node_type} - ${n.layer.toUpperCase()})</div>`;
-      });
+      if (ctrlFOverlayIndex === 0) {
+        overlay.replaceChildren();
+      }
 
-      fullGraphData.links.forEach(l => {
-        const sId = typeof l.source === 'object' ? l.source.id : l.source;
-        const tId = typeof l.target === 'object' ? l.target.id : l.target;
-        const sNode = nodeMap.get(sId);
-        const tNode = nodeMap.get(tId);
-        if (sNode && tNode) {
-          html += `<div class="searchable-item">Link ${l.rel_type}: ${sNode.name} to ${tNode.name}</div>`;
+      const fragment = document.createDocumentFragment();
+      const nodes = fullGraphData.nodes || [];
+      let processed = 0;
+
+      while (ctrlFOverlayIndex < nodes.length && processed < CTRL_F_OVERLAY_BATCH_SIZE) {
+        if (deadline && processed > 0 && deadline.timeRemaining() <= 2) {
+          break;
         }
-      });
 
-      overlay.innerHTML = html;
+        const node = nodes[ctrlFOverlayIndex++];
+        const item = document.createElement('div');
+        item.className = 'searchable-item';
+        item.dataset.nodeId = node.id;
+        item.textContent = `Node: ${node.name} (${node.node_type} - ${(node.layer || 'code').toUpperCase()})`;
+        fragment.appendChild(item);
+        processed++;
+      }
+
+      overlay.appendChild(fragment);
+
+      if (ctrlFOverlayIndex < nodes.length) {
+        scheduleCtrlFOverlayBuild();
+      } else {
+        ctrlFOverlayBuilt = true;
+      }
     }
 
     function focusNodeById(id) {
@@ -1221,6 +1317,8 @@
     let hideDisconnectedInter = false;
 
     function computeNodeDegrees() {
+      if (degreeCache) return degreeCache;
+
       const degrees = new Map();
       fullGraphData.nodes.forEach(n => {
         degrees.set(n.id, { total: 0, intra: 0, inter: 0 });
@@ -1251,7 +1349,8 @@
         }
       });
 
-      return degrees;
+      degreeCache = degrees;
+      return degreeCache;
     }
 
     function applyActiveFilters() {
@@ -1574,17 +1673,7 @@
     let activeBlastComponent = { nodes: new Set(), links: new Set() };
 
     function findFullConnectedComponent(startNodeId) {
-      const adj = new Map();
-      fullGraphData.nodes.forEach(n => adj.set(n.id, []));
-
-      fullGraphData.links.forEach(l => {
-        const sId = typeof l.source === 'object' ? l.source.id : l.source;
-        const tId = typeof l.target === 'object' ? l.target.id : l.target;
-        if (adj.has(sId) && adj.has(tId)) {
-          adj.get(sId).push({ neighborId: tId, link: l });
-          adj.get(tId).push({ neighborId: sId, link: l });
-        }
-      });
+      const adj = getAdjacencyMap();
 
       const visitedNodes = new Set([startNodeId]);
       const connectedLinks = new Set();
@@ -1680,6 +1769,14 @@
     // Initialize Page
     window.addEventListener('DOMContentLoaded', () => {
       initTheme();
+      syncNodeLimitControl();
+      document.getElementById('ctrl-f-overlay')?.addEventListener('click', (event) => {
+        const target = event.target.closest('.searchable-item');
+        const nodeId = target?.dataset?.nodeId;
+        if (nodeId) {
+          focusNodeById(nodeId);
+        }
+      });
       loadGraphData();
     });
   </script>
