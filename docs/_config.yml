@@ -1,0 +1,4 @@
+theme: jekyll-theme-cayman
+title: CASCADE
+description: Evidence-backed blast radius analysis for pull requests, built on a 3-layer product knowledge graph.
+show_downloads: false
